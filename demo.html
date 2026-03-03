@@ -112,8 +112,8 @@ html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-se
 .url-bar{background:#0f172a;padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.06)}
 .url-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .url-text{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.url-open{font-size:9px;font-weight:700;color:var(--blue);text-decoration:none;background:rgba(0,61,165,.2);padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0}
-.url-open:hover{background:rgba(0,61,165,.4);color:#7eb8ff}
+.url-open{font-size:9px;font-weight:700;color:#7eb8ff;background:rgba(0,61,165,.25);padding:4px 10px;border-radius:4px;white-space:nowrap;flex-shrink:0;border:1px solid rgba(0,61,165,.4);cursor:pointer;font-family:"DM Sans",sans-serif}
+.url-open:hover{background:rgba(0,61,165,.5);color:#fff}
 .sl-eye{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
 .sl-h{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin:3px 0 6px}
 .sl-sub{font-size:12px;color:var(--muted);line-height:1.5}
@@ -304,7 +304,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/index.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="frame-index" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-index').src='https://tripfactory-ajay.github.io/capeyecommandcentre/index.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -336,7 +336,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html" target="frame-inventory" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-inventory').src='https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -368,7 +368,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html" target="frame-workflow" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-workflow').src='https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -435,7 +435,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html" target="frame-alerts" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-alerts').src='https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -467,7 +467,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html" target="frame-analytics" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-analytics').src='https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -499,7 +499,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html" target="frame-keys" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-keys').src='https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -532,7 +532,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/import.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/import.html" target="frame-import" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-import').src='https://tripfactory-ajay.github.io/capeyecommandcentre/import.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
@@ -564,7 +564,7 @@ const SLIDES = [
           <div class="url-bar">
             <div class="url-dot" style="background:#22c55e"></div>
             <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html</span>
-            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html" target="frame-audit" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+            <button class="url-open" onclick="document.getElementById('frame-audit').src='https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
           </div>
         </div>
       </div>`,
