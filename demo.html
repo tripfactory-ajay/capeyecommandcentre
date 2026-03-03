@@ -3,655 +3,994 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CapeEye — Demo Presentation</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>CapeEye — System Proposal · Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{
-  --red:#C8102E;--blue:#003DA5;--dark:#0a0f1e;
-  --bg:#f4f6f9;--border:#e2e6ed;--muted:#7a8fa6;
-  --gold:#d4980a;--green:#1a7f37;
+:root {
+  --red: #C8102E; --navy: #003DA5; --dark: #0B1120;
+  --ink: #111827; --ink2: #374151; --ink3: #6B7280;
+  --bg: #F7F8FA; --white: #FFFFFF;
+  --border: #E5E7EB; --border2: #D1D5DB;
+  --green: #15803D; --gold: #A16207;
+  --red-t: rgba(200,16,46,.07);
+  --navy-t: rgba(0,61,165,.07);
+  --green-t: rgba(21,128,61,.07);
+  --gold-t: rgba(161,98,7,.07);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--dark)}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100vh; overflow:hidden; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); }
 
-/* ══ ROOT LAYOUT ══ */
-.app{
-  display:grid;
-  grid-template-columns:260px 1fr;
-  grid-template-rows:50px calc(100vh - 50px);
-  height:100vh;overflow:hidden;
-}
+/* ═══ SHELL ═══ */
+.shell { display:grid; grid-template-rows:54px 1fr 60px; height:100vh; }
 
 /* ── TOPBAR ── */
-.topbar{
-  grid-column:1/-1;grid-row:1;
-  background:#fff;border-bottom:2px solid var(--border);
-  display:flex;align-items:center;gap:10px;padding:0 14px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:100;
+.topbar {
+  background:#fff; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 32px; gap:14px;
+  box-shadow:0 1px 6px rgba(0,0,0,.05); z-index:10;
 }
-.tb-brand{display:flex;align-items:center;gap:8px;margin-right:8px;padding-right:14px;border-right:1px solid var(--border);flex-shrink:0}
-.tb-mark{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;padding:4px 8px;border-radius:5px;letter-spacing:1px}
-.tb-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:var(--dark);line-height:1}
-.tb-sub2{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase}
-.tb-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:8px}
-.slide-ctr{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;white-space:nowrap}
-.prog-track{width:160px;height:3px;background:var(--border);border-radius:2px;flex-shrink:0}
-.prog-fill{height:100%;background:var(--red);border-radius:2px;transition:width .35s ease}
-.tb-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.tbtn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
-.tbtn-ghost{background:var(--bg);border:1px solid var(--border);color:var(--muted)}.tbtn-ghost:hover{color:var(--dark)}
-.tbtn-red{background:var(--red);color:#fff}.tbtn-red:hover{background:#a00d24}
-.tbtn-blue{background:var(--blue);color:#fff}.tbtn-blue:hover{background:#002d7a}
-.kbd{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:9px;color:var(--muted);font-family:'DM Mono',monospace}
-
-/* ── SIDEBAR ── */
-.sidebar{
-  grid-column:1;grid-row:2;
-  background:#0f172a;overflow-y:auto;
-  border-right:1px solid rgba(255,255,255,.06);
-}
-.sidebar::-webkit-scrollbar{width:3px}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-.sec-lbl{padding:14px 14px 5px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25)}
-.sthumb{padding:8px 12px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;display:flex;align-items:flex-start;gap:8px}
-.sthumb:hover{background:rgba(255,255,255,.04);border-left-color:rgba(255,255,255,.15)}
-.sthumb.active{background:rgba(200,16,46,.12);border-left-color:var(--red)}
-.sth-num{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);min-width:16px;margin-top:2px;font-family:'DM Mono',monospace}
-.sth-title{font-size:11px;font-weight:600;color:rgba(255,255,255,.55);line-height:1.3}
-.sthumb.active .sth-title{color:#fff}
-.sthumb.active .sth-num{color:var(--red)}
-.sth-time{font-size:9px;color:rgba(255,255,255,.2);margin-top:1px}
-.sth-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;margin-top:3px;letter-spacing:.3px}
-.b-intro{background:rgba(200,16,46,.2);color:#ff8096}
-.b-demo{background:rgba(0,61,165,.3);color:#7eb8ff}
-.b-detail{background:rgba(26,127,55,.2);color:#6ee7a0}
-
-/* ── RIGHT COLUMN: slide + notes ── */
-.right-col{
-  grid-column:2;grid-row:2;
-  display:grid;
-  grid-template-rows:1fr 160px;
-  overflow:hidden;
-}
+.t-mark { background:var(--red); color:#fff; font-family:'Fraunces',serif; font-size:13px; font-weight:900; padding:4px 9px; border-radius:5px; letter-spacing:.5px; flex-shrink:0; }
+.t-name { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--ink); flex-shrink:0; }
+.t-div  { width:1px; height:22px; background:var(--border); flex-shrink:0; }
+.t-sub  { font-size:11px; font-weight:600; color:var(--ink3); letter-spacing:.3px; flex-shrink:0; }
+.t-mid  { flex:1; display:flex; align-items:center; justify-content:center; gap:10px; }
+.dots   { display:flex; gap:5px; align-items:center; }
+.dot    { width:7px; height:7px; border-radius:50%; background:var(--border2); cursor:pointer; transition:all .3s ease; }
+.dot.done   { background:var(--navy); }
+.dot.active { background:var(--red); width:22px; border-radius:4px; }
+.t-count { font-family:'DM Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); }
+.t-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.tbtn { padding:7px 16px; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer; border:none; font-family:'DM Sans',sans-serif; transition:all .18s; display:inline-flex; align-items:center; gap:5px; }
+.tbtn-ghost { background:transparent; border:1px solid var(--border2); color:var(--ink3); }
+.tbtn-ghost:hover { border-color:var(--ink); color:var(--ink); }
+.tbtn-red { background:var(--red); color:#fff; }
+.tbtn-red:hover { background:#A50025; }
 
 /* ── SLIDE AREA ── */
-.slide-area{overflow:hidden;background:var(--dark);position:relative}
-.slide{display:none;width:100%;height:100%}
-.slide.active{display:flex;animation:sIn .25s ease}
-@keyframes sIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.slide-area { position:relative; overflow:hidden; }
+.slide { display:none; position:absolute; inset:0; overflow-y:auto; }
+.slide.active { display:flex; animation:sIn .3s ease; }
+@keyframes sIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-/* ── TITLE SLIDE ── */
-.sl-title{
-  flex-direction:column;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#070c1a 0%,#0c1836 60%,#070c1a 100%);
-  padding:40px;text-align:center;position:relative;overflow:hidden;
+/* ── BOTTOM BAR ── */
+.botbar {
+  background:#fff; border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px; box-shadow:0 -1px 6px rgba(0,0,0,.04);
 }
-.sl-title::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 350px at 50% 55%,rgba(0,61,165,.25),transparent);pointer-events:none}
-.sl-title::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--blue));pointer-events:none}
-.t-eye{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(200,16,46,.7);margin-bottom:12px}
-.t-h1{font-family:'Barlow Condensed',sans-serif;font-size:68px;font-weight:900;color:#fff;line-height:.9;letter-spacing:-1px;margin-bottom:12px}
-.t-h1 span{color:var(--red)}
-.t-h2{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:18px}
-.t-body{font-size:14px;color:rgba(255,255,255,.45);max-width:480px;line-height:1.6}
-.t-pills{display:flex;gap:6px;justify-content:center;margin-top:20px;flex-wrap:wrap}
-.t-pill{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
-.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:rgba(26,127,55,.1);padding:4px 10px;border-radius:20px;border:1px solid rgba(26,127,55,.2)}
-.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.bot-label { font-size:12px; font-weight:700; color:var(--ink2); display:flex; align-items:center; gap:8px; }
+.bot-label::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--red); flex-shrink:0; display:block; }
+.bot-right { display:flex; align-items:center; gap:10px; }
+.kbd-hint { font-size:10px; color:var(--ink3); display:flex; align-items:center; gap:4px; }
+.k { background:var(--bg); border:1px solid var(--border2); border-radius:3px; padding:1px 6px; font-family:'DM Mono',monospace; font-size:9px; }
+.demo-btn {
+  padding:9px 22px; border-radius:7px; font-size:12px; font-weight:700;
+  background:var(--navy); color:#fff; text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px; transition:all .18s;
+}
+.demo-btn:hover { background:#002070; transform:translateY(-1px); box-shadow:0 4px 14px rgba(0,61,165,.3); }
+.demo-btn.hidden { visibility:hidden; }
 
-/* ── SPLIT SLIDE ── */
-.sl-split{flex-direction:row}
-.sp-left{width:320px;flex-shrink:0;padding:24px 22px;background:#fff;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;gap:12px}
-.sp-right{flex:1;overflow:hidden;position:relative;background:#eef0f5}
-.sp-right iframe{width:100%;height:100%;border:none;display:block}
-.iframe-tag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;z-index:10;pointer-events:none}
-/* URL bar on split slides */
-.sp-right{position:relative;display:flex;flex-direction:column}
-.sp-right iframe{flex:1;min-height:0}
-.url-bar{background:#0f172a;padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.06)}
-.url-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.url-text{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.url-open{font-size:9px;font-weight:700;color:#7eb8ff;background:rgba(0,61,165,.25);padding:4px 10px;border-radius:4px;white-space:nowrap;flex-shrink:0;border:1px solid rgba(0,61,165,.4);cursor:pointer;font-family:"DM Sans",sans-serif}
-.url-open:hover{background:rgba(0,61,165,.5);color:#fff}
-.sl-eye{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
-.sl-h{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin:3px 0 6px}
-.sl-sub{font-size:12px;color:var(--muted);line-height:1.5}
-.pts{display:flex;flex-direction:column;gap:7px;flex:1}
-.pt{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--bg);border-radius:7px;border-left:3px solid var(--red)}
-.pt i{color:var(--red);font-size:12px;margin-top:1px;flex-shrink:0}
-.pt-t{font-size:12px;color:#1e293b;font-weight:500;line-height:1.4}
-.pt-t strong{color:var(--red)}
-.pt.b{border-left-color:var(--blue)}.pt.b i{color:var(--blue)}.pt.b .pt-t strong{color:var(--blue)}
-.pt.g{border-left-color:var(--green)}.pt.g i{color:var(--green)}.pt.g .pt-t strong{color:var(--green)}
-.pt.o{border-left-color:var(--gold)}.pt.o i{color:var(--gold)}.pt.o .pt-t strong{color:var(--gold)}
-.sp-note{font-size:11px;color:var(--muted);background:var(--bg);padding:9px 11px;border-radius:7px;border-left:3px solid var(--blue);line-height:1.5}
+/* ═══════════════════════
+   SLIDE LAYOUTS
+═══════════════════════ */
 
-/* ── STATS/DETAIL SLIDE ── */
-.sl-detail{flex-direction:column;background:#fff;padding:32px 36px;gap:20px;overflow-y:auto}
-.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.sc{background:var(--bg);border-radius:10px;padding:18px;border-top:3px solid var(--sc,var(--red));text-align:center}
-.sc-v{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;color:var(--sc,var(--red));line-height:1}
-.sc-l{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
-.sc-s{font-size:11px;color:var(--muted);margin-top:3px}
+/* shared heading */
+.eyebrow { font-size:10px; font-weight:700; letter-spacing:3.5px; text-transform:uppercase; color:var(--red); margin-bottom:8px; }
+.slide-h { font-family:'Fraunces',serif; font-size:42px; font-weight:900; color:var(--ink); line-height:.97; letter-spacing:-1px; margin-bottom:10px; }
+.slide-h em { color:var(--red); font-style:normal; }
+.slide-sub { font-size:14px; color:var(--ink3); line-height:1.65; max-width:640px; }
 
-/* ── NOTES PANEL ── */
-/* ── KEY POINTS BAR ── */
-.notes-panel{
-  background:#0f172a;
-  border-top:2px solid rgba(200,16,46,.4);
-  padding:0;overflow:hidden;
-  display:flex;flex-direction:column;
+/* ── SLIDE 1: COVER ── */
+.s-cover { flex-direction:row; background:#fff; }
+.cv-l {
+  width:46%; background:var(--dark); padding:64px 56px;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden; flex-shrink:0;
 }
-.kp-hdr{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 18px 6px;border-bottom:1px solid rgba(255,255,255,.06);
-  flex-shrink:0;
+.cv-l::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 700px 600px at -5% 110%, rgba(0,61,165,.45), transparent);
+  pointer-events:none;
 }
-.kp-lbl{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
-.kp-slide-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);margin-left:auto}
-.kp-body{display:flex;gap:10px;padding:10px 16px;overflow-x:auto;align-items:stretch;flex:1}
-.kp-body::-webkit-scrollbar{height:3px}
-.kp-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-.kp{
-  flex-shrink:0;min-width:180px;max-width:220px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;padding:10px 13px;
-  display:flex;flex-direction:column;gap:5px;
-  border-top:2px solid var(--kc,var(--red));
+.cv-l::after {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:linear-gradient(180deg, var(--red) 0%, var(--navy) 100%);
 }
-.kp-icon{font-size:16px;line-height:1}
-.kp-title{font-size:11px;font-weight:800;color:#fff;line-height:1.2}
-.kp-desc{font-size:10px;color:rgba(255,255,255,.5);line-height:1.5;flex:1}
+.cv-tag { font-size:10px; font-weight:700; letter-spacing:3.5px; text-transform:uppercase; color:rgba(200,16,46,.7); margin-bottom:16px; position:relative; z-index:1; }
+.cv-big { font-family:'Fraunces',serif; font-size:88px; font-weight:900; color:#fff; line-height:.85; letter-spacing:-3px; position:relative; z-index:1; margin-bottom:10px; }
+.cv-big em { color:var(--red); font-style:normal; }
+.cv-strap { font-family:'Fraunces',serif; font-size:20px; font-weight:300; font-style:italic; color:rgba(255,255,255,.4); position:relative; z-index:1; margin-bottom:32px; }
+.cv-live { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:#22C55E; background:rgba(34,197,94,.1); padding:6px 14px; border-radius:20px; border:1px solid rgba(34,197,94,.2); position:relative; z-index:1; }
+.pulse { width:7px; height:7px; border-radius:50%; background:#22C55E; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+.cv-r { flex:1; background:#fff; padding:56px 52px; display:flex; flex-direction:column; justify-content:center; }
+.cv-r-eye { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--ink3); margin-bottom:16px; }
+.cv-r-h { font-family:'Fraunces',serif; font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.5px; line-height:1.2; margin-bottom:14px; }
+.cv-r-body { font-size:14px; color:var(--ink2); line-height:1.75; margin-bottom:24px; }
+.cv-pills { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:26px; }
+.cv-pill { padding:5px 13px; border-radius:20px; font-size:11px; font-weight:600; background:var(--bg); border:1px solid var(--border); color:var(--ink2); }
+.cv-url { padding-top:20px; border-top:1px solid var(--border); font-size:11px; color:var(--ink3); display:flex; align-items:center; gap:7px; }
+.cv-url a { color:var(--navy); font-family:'DM Mono',monospace; font-size:10px; font-weight:600; text-decoration:none; }
+.cv-url a:hover { text-decoration:underline; }
+
+/* ── SLIDE 2: PROBLEM ── */
+.s-problem { flex-direction:column; background:#fff; padding:48px 56px; }
+.prob-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-top:28px; }
+.prob {
+  border:1px solid var(--border); border-radius:11px; padding:20px;
+  position:relative; overflow:hidden; background:#fff; transition:box-shadow .2s;
+}
+.prob:hover { box-shadow:0 4px 20px rgba(0,0,0,.08); }
+.prob::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--pc); }
+.p-ico { font-size:24px; margin-bottom:9px; }
+.p-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:5px; }
+.p-body { font-size:12px; color:var(--ink3); line-height:1.6; margin-bottom:10px; }
+.p-fix { font-size:11px; font-weight:700; color:var(--green); display:flex; align-items:center; gap:5px; }
+
+/* ── SLIDE 3: SYSTEM OVERVIEW ── */
+.s-system { flex-direction:column; background:var(--bg); padding:48px 56px; }
+.sys-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:26px; }
+.sys-card {
+  background:#fff; border:1px solid var(--border); border-radius:11px;
+  padding:20px; display:flex; flex-direction:column; gap:8px;
+  transition:all .2s;
+}
+.sys-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08); transform:translateY(-2px); }
+.sys-n { font-family:'DM Mono',monospace; font-size:9px; font-weight:700; color:var(--ink3); }
+.sys-ico { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.sys-title { font-size:13px; font-weight:800; color:var(--ink); }
+.sys-desc { font-size:11px; color:var(--ink3); line-height:1.55; }
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-top:18px; }
+.stat { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px 20px; border-left:3px solid var(--sc); }
+.stat-v { font-family:'Fraunces',serif; font-size:40px; font-weight:900; color:var(--sc); line-height:1; }
+.stat-l { font-size:10px; font-weight:700; color:var(--ink3); text-transform:uppercase; letter-spacing:.5px; margin-top:4px; }
+
+/* ── SLIDE 4: WORKFLOW ── */
+.s-workflow { flex-direction:column; background:#fff; padding:48px 56px; }
+.pipeline { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin-top:26px; }
+.ps {
+  background:var(--bg); border:1px solid var(--border); border-radius:9px;
+  padding:13px 8px; text-align:center; position:relative;
+}
+.ps + .ps::before {
+  content:'›'; position:absolute; left:-8px; top:50%; transform:translateY(-50%);
+  font-size:14px; color:var(--border2); font-weight:900; line-height:1;
+}
+.ps.hl { background:var(--navy-t); border-color:rgba(0,61,165,.22); }
+.ps.hl .ps-nm { color:var(--navy); }
+.ps-n { font-family:'DM Mono',monospace; font-size:8px; font-weight:700; color:var(--ink3); margin-bottom:3px; }
+.ps-ico { font-size:18px; line-height:1; margin-bottom:3px; }
+.ps-nm { font-size:10px; font-weight:800; color:var(--ink); line-height:1.2; }
+.ps-dp { font-size:9px; color:var(--ink3); margin-top:2px; }
+.wf-row { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-top:18px; }
+.wf-box { background:var(--bg); border-radius:10px; padding:16px 18px; border-left:3px solid var(--wc); }
+.wf-t { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.wf-d { font-size:12px; color:var(--ink3); line-height:1.55; }
+
+/* ── SLIDE 5: WINS ── */
+.s-wins { flex-direction:row; background:#fff; }
+.wins-l {
+  width:42%; background:var(--dark); padding:56px 50px;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.wins-l::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 600px 700px at 120% -10%, rgba(0,61,165,.4), transparent);
+  pointer-events:none;
+}
+.wins-l-tag { font-size:10px; font-weight:700; letter-spacing:3.5px; text-transform:uppercase; color:rgba(200,16,46,.7); margin-bottom:12px; position:relative; z-index:1; }
+.wins-l-h { font-family:'Fraunces',serif; font-size:50px; font-weight:900; color:#fff; line-height:.9; letter-spacing:-1.5px; margin-bottom:14px; position:relative; z-index:1; }
+.wins-l-h em { color:var(--red); font-style:normal; }
+.wins-l-sub { font-size:13px; color:rgba(255,255,255,.4); line-height:1.65; margin-bottom:28px; position:relative; z-index:1; }
+.win-stats { display:flex; flex-direction:column; gap:9px; position:relative; z-index:1; }
+.wst { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09); border-radius:9px; padding:13px 16px; display:flex; align-items:center; gap:14px; }
+.wst-v { font-family:'Fraunces',serif; font-size:32px; font-weight:900; color:#fff; line-height:1; min-width:66px; }
+.wst-l { font-size:11px; color:rgba(255,255,255,.45); line-height:1.5; }
+.wins-r { flex:1; background:#fff; padding:44px 46px; display:flex; flex-direction:column; justify-content:center; gap:11px; overflow-y:auto; }
+.win-card { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:15px 17px; display:flex; align-items:flex-start; gap:12px; transition:box-shadow .2s; }
+.win-card:hover { box-shadow:0 3px 14px rgba(0,0,0,.07); }
+.win-ico { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.win-t { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:3px; }
+.win-d { font-size:12px; color:var(--ink3); line-height:1.55; }
+
+/* ── SLIDE 6: LIVE PAGES ── */
+.s-pages { flex-direction:column; background:var(--bg); padding:48px 56px; }
+.pages-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-top:26px; }
+.pg {
+  background:#fff; border:1px solid var(--border); border-radius:11px;
+  padding:18px; display:flex; flex-direction:column; gap:6px;
+  text-decoration:none; transition:all .22s; position:relative; overflow:hidden;
+}
+.pg::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--pc); }
+.pg:hover { box-shadow:0 6px 26px rgba(0,0,0,.1); transform:translateY(-3px); border-color:transparent; }
+.pg-n { font-family:'DM Mono',monospace; font-size:9px; font-weight:700; color:var(--ink3); }
+.pg-ico { font-size:24px; }
+.pg-nm { font-size:14px; font-weight:800; color:var(--ink); }
+.pg-d { font-size:11px; color:var(--ink3); line-height:1.55; flex:1; }
+.pg-cta { margin-top:8px; font-size:11px; font-weight:700; color:var(--navy); display:flex; align-items:center; gap:5px; }
+
+/* ── SLIDE 7: NEXT STEPS ── */
+.s-next { flex-direction:column; background:#fff; padding:48px 56px; }
+.phases { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px; }
+.phase { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:24px; position:relative; overflow:hidden; }
+.phase::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--nc); }
+.ph-badge { display:inline-flex; align-items:center; gap:5px; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 9px; border-radius:4px; border:1px solid; margin-bottom:12px; }
+.ph-num { font-family:'Fraunces',serif; font-size:48px; font-weight:900; line-height:1; margin-bottom:6px; }
+.ph-title { font-size:15px; font-weight:800; color:var(--ink); margin-bottom:12px; }
+.ph-list { display:flex; flex-direction:column; gap:6px; }
+.phi { font-size:12px; color:var(--ink2); line-height:1.45; display:flex; align-items:baseline; gap:7px; }
+.phi::before { content:'→'; color:var(--ink3); font-weight:700; font-size:11px; flex-shrink:0; }
+.cta-strip {
+  background:var(--dark); border-radius:11px; padding:22px 28px;
+  margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.cta-text-h { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:#fff; margin-bottom:4px; }
+.cta-text-s { font-size:12px; color:rgba(255,255,255,.45); max-width:500px; line-height:1.5; }
+.cta-go { padding:11px 26px; background:var(--red); color:#fff; border-radius:8px; font-size:13px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; transition:all .18s; flex-shrink:0; }
+.cta-go:hover { background:#A50025; transform:translateY(-1px); }
+
+/* ── SLIDE 8: CLOSE ── */
+.s-close { flex-direction:row; background:#fff; }
+.cl-l {
+  width:45%; background:var(--dark); padding:60px 52px;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.cl-l::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 600px 600px at 105% 105%, rgba(200,16,46,.18), transparent);
+  pointer-events:none;
+}
+.cl-l::after { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--red),var(--navy)); }
+.cl-tag { font-size:10px; font-weight:700; letter-spacing:3.5px; text-transform:uppercase; color:rgba(200,16,46,.65); margin-bottom:14px; position:relative; z-index:1; }
+.cl-h { font-family:'Fraunces',serif; font-size:54px; font-weight:900; color:#fff; line-height:.92; letter-spacing:-1.5px; position:relative; z-index:1; margin-bottom:30px; }
+.cl-h em { color:var(--red); font-style:normal; }
+.cl-url-box { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:9px; padding:16px 18px; position:relative; z-index:1; }
+.cl-url-lbl { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:6px; }
+.cl-url-link { font-family:'DM Mono',monospace; font-size:11px; color:rgba(120,190,255,.85); text-decoration:none; line-height:1.6; display:block; }
+.cl-url-link:hover { color:#90CAFF; }
+.cl-r { flex:1; background:#fff; padding:50px 48px; display:flex; flex-direction:column; justify-content:center; gap:11px; overflow-y:auto; }
+.recap { display:flex; align-items:flex-start; gap:11px; padding:13px 16px; background:var(--bg); border-radius:9px; border-left:3px solid var(--rc); }
+.recap-ico { font-size:18px; flex-shrink:0; }
+.recap-t { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:3px; }
+.recap-d { font-size:12px; color:var(--ink3); line-height:1.5; }
+.approve { background:var(--red); border-radius:10px; padding:18px 20px; color:#fff; }
+.approve-t { font-size:14px; font-weight:800; margin-bottom:5px; }
+.approve-d { font-size:12px; opacity:.82; line-height:1.6; }
+
+/* ═══════════════════════
+   COVER HERO SLIDE
+═══════════════════════ */
+.s-cover-hero {
+  position:relative; width:100%; height:100%;
+  display:flex; flex-direction:column;
+}
+.cover-bg-img {
+  position:absolute; inset:0;
+  background-image:
+    url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1600&q=80');
+  background-size:cover; background-position:center 40%;
+  filter:saturate(0.7);
+}
+.cover-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(10,14,26,.96) 0%,
+    rgba(10,14,26,.88) 40%,
+    rgba(0,30,80,.82) 70%,
+    rgba(10,14,26,.9) 100%
+  );
+}
+.cover-content {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  height:100%; padding:36px 56px;
+}
+.cover-top {
+  display:flex; align-items:center; gap:16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding-bottom:20px; margin-bottom:0;
+}
+.cover-logo {
+  height:44px; width:auto; object-fit:contain;
+  filter:brightness(0) invert(1);
+  opacity:.9;
+}
+.cover-logo-fallback {
+  font-family:'Fraunces',serif; font-size:18px; font-weight:900;
+  color:#fff; letter-spacing:2px; opacity:.7;
+}
+.cover-hero {
+  flex:1; display:flex; flex-direction:column;
+  justify-content:center; max-width:760px;
+}
+.cover-pre {
+  font-size:10px; font-weight:700; letter-spacing:4px;
+  text-transform:uppercase; color:rgba(200,16,46,.8);
+  margin-bottom:14px;
+}
+.cover-title {
+  font-family:'Fraunces',serif; font-size:96px; font-weight:900;
+  color:#fff; line-height:.85; letter-spacing:-3px; margin-bottom:10px;
+}
+.cover-title em { color:var(--red); font-style:normal; }
+.cover-subtitle {
+  font-family:'Fraunces',serif; font-size:28px; font-weight:300;
+  font-style:italic; color:rgba(255,255,255,.45); margin-bottom:20px;
+  letter-spacing:1px;
+}
+.cover-desc {
+  font-size:16px; color:rgba(255,255,255,.55); line-height:1.7;
+  max-width:580px; margin-bottom:28px;
+}
+.cover-badges {
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+}
+.cbadge {
+  padding:6px 16px; border-radius:20px; font-size:11px; font-weight:600;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.7);
+}
+.cbadge-live {
+  background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.25);
+  color:#22C55E; display:inline-flex; align-items:center; gap:6px;
+}
+.cover-bottom {
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.08); padding-top:18px;
+}
+.cover-url-strip {
+  display:flex; align-items:center; gap:8px; color:#fff;
+}
+.cover-url-link {
+  font-family:'DM Mono',monospace; font-size:11px; font-weight:600;
+  color:rgba(120,180,255,.8); text-decoration:none;
+}
+.cover-url-link:hover { color:#90CAFF; text-decoration:underline; }
+.cover-scroll-hint {
+  font-size:11px; color:rgba(255,255,255,.3);
+  display:flex; align-items:center; gap:5px;
+}
+
+/* ═══════════════════════
+   CLOSE HERO SLIDE
+═══════════════════════ */
+.s-close-hero {
+  position:relative; width:100%; height:100%;
+  display:flex;
+}
+.close-bg-img {
+  position:absolute; inset:0;
+  background-image:
+    url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80');
+  background-size:cover; background-position:center 55%;
+  filter:saturate(0.5);
+}
+.close-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(
+    110deg,
+    rgba(10,14,26,.97) 0%,
+    rgba(10,14,26,.92) 55%,
+    rgba(0,30,80,.75) 100%
+  );
+}
+.close-content {
+  position:relative; z-index:1; width:100%;
+  display:flex; flex-direction:column; padding:36px 56px; gap:0;
+}
+.close-top {
+  padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:24px;
+}
+.close-main {
+  flex:1; display:flex; gap:48px;
+}
+/* close-content override - grid for rows */
+.close-row { display:flex; gap:48px; align-items:flex-start; }
+.close-left { flex:1; display:flex; flex-direction:column; gap:16px; }
+.close-right { width:280px; flex-shrink:0; display:flex; align-items:center; }
+.close-tag {
+  font-size:10px; font-weight:700; letter-spacing:3.5px;
+  text-transform:uppercase; color:rgba(200,16,46,.7);
+}
+.close-h {
+  font-family:'Fraunces',serif; font-size:52px; font-weight:900;
+  color:#fff; line-height:.92; letter-spacing:-1.5px;
+}
+.close-h em { color:var(--red); font-style:normal; }
+.close-recap-list { display:flex; flex-direction:column; gap:9px; }
+.cr-item {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:12px; color:rgba(255,255,255,.55); line-height:1.5;
+}
+.cr-dot {
+  width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:4px;
+}
+.cr-item strong { color:rgba(255,255,255,.85); font-weight:700; }
+.close-cta-box {
+  background:var(--red); border-radius:10px; padding:18px 20px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.close-cta-t { font-size:14px; font-weight:800; color:#fff; }
+.close-cta-d { font-size:12px; color:rgba(255,255,255,.75); line-height:1.55; }
+.close-cta-btn {
+  margin-top:8px; align-self:flex-start;
+  padding:9px 22px; background:#fff; color:var(--red);
+  border-radius:7px; font-size:12px; font-weight:700;
+  text-decoration:none; display:inline-flex; align-items:center; gap:7px;
+  transition:all .18s;
+}
+.close-cta-btn:hover { background:rgba(255,255,255,.9); transform:translateY(-1px); }
+
+/* URL card on close slide */
+.close-url-card {
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+  border-radius:14px; padding:28px 24px; width:100%;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  gap:6px;
+}
+.close-url-eye {
+  font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+}
+.close-url-ce {
+  font-family:'Fraunces',serif; font-size:44px; font-weight:900;
+  color:#fff; line-height:1; letter-spacing:-1px; margin:4px 0;
+}
+.close-url-ce em { color:var(--red); font-style:normal; }
+.close-url-sub {
+  font-family:'Fraunces',serif; font-size:13px; font-weight:300;
+  font-style:italic; color:rgba(255,255,255,.35);
+}
+.close-url-divider {
+  width:40px; height:2px; background:var(--red); border-radius:1px;
+  margin:10px 0;
+}
+.close-url-lbl {
+  font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+}
+.close-url-addr {
+  font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+  color:rgba(120,190,255,.8); text-decoration:none; line-height:1.6;
+}
+.close-url-addr:hover { color:#90CAFF; }
+.close-url-stats {
+  display:flex; gap:16px; margin-top:14px;
+  padding-top:14px; border-top:1px solid rgba(255,255,255,.08);
+  width:100%; justify-content:center;
+}
+.cus { text-align:center; }
+.cus-v {
+  font-family:'Fraunces',serif; font-size:26px; font-weight:900;
+  color:#fff; line-height:1;
+}
+.cus-l {
+  font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1px; color:rgba(255,255,255,.3); margin-top:2px;
+}
+
 </style>
 </head>
 <body>
-<div class="app">
+<div class="shell">
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tb-brand">
-      <div class="tb-mark">CE</div>
-      <div><div class="tb-name">CapeEye</div><div class="tb-sub2">Demo Deck</div></div>
+    <div class="t-mark">CE</div>
+    <div class="t-name">CapeEye</div>
+    <div class="t-div"></div>
+    <div class="t-sub">System Proposal · Auto Capital</div>
+    <div class="t-mid">
+      <div class="dots" id="dots"></div>
+      <div class="t-count" id="count">01 / 08</div>
     </div>
-    <div class="tb-mid">
-      <span class="slide-ctr" id="ctr">1 / 12</span>
-      <div class="prog-track"><div class="prog-fill" id="prog" style="width:8%"></div></div>
-    </div>
-    <div class="tb-right">
-      <span class="kbd">←</span><span class="kbd">→</span>
-      <button class="tbtn tbtn-ghost" onclick="prevSlide()"><i class="fas fa-chevron-left"></i> Prev</button>
-      <button class="tbtn tbtn-red" onclick="nextSlide()">Next <i class="fas fa-chevron-right"></i></button>
-      <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" class="tbtn tbtn-blue"><i class="fas fa-external-link-alt"></i> Full Screen</a>
+    <div class="t-right">
+      <div class="kbd-hint"><span class="k">←</span><span class="k">→</span></div>
+      <button class="tbtn tbtn-ghost" onclick="prev()"><i class="fas fa-chevron-left"></i> Back</button>
+      <button class="tbtn tbtn-red"   onclick="next()">Next <i class="fas fa-chevron-right"></i></button>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar"></div>
+  <!-- SLIDES -->
+  <div class="slide-area" id="sa">
 
-  <!-- RIGHT COLUMN -->
-  <div class="right-col">
-    <div class="slide-area" id="slideArea"></div>
-    <div class="notes-panel">
-      <div class="kp-hdr">
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;display:inline-block"></span>
-        <span class="kp-lbl">Key Points</span>
-        <span class="kp-slide-name" id="kpSlideName"></span>
+    <!-- ════ SLIDE 1 — COVER ════ -->
+    <div class="slide active" data-title="Introduction" data-url="">
+      <div class="s-cover-hero">
+        <!-- Background image layer -->
+        <div class="cover-bg-img"></div>
+        <!-- Dark overlay -->
+        <div class="cover-overlay"></div>
+        <!-- Content -->
+        <div class="cover-content">
+          <!-- Top: Logo -->
+          <div class="cover-top">
+            <img src="./auto-capital-logo.png" alt="Auto Capital" class="cover-logo" onerror="this.style.display='none'">
+            <div class="cover-logo-fallback">AUTO CAPITAL</div>
+          </div>
+          <!-- Centre: Hero text -->
+          <div class="cover-hero">
+            <div class="cover-pre">System Proposal · 2025</div>
+            <div class="cover-title">Cape<em>Eye</em></div>
+            <div class="cover-subtitle">Command Centre</div>
+            <div class="cover-desc">A complete back-office platform that tracks every vehicle from intake to sale — built specifically for Auto Capital.</div>
+            <div class="cover-badges">
+              <div class="cbadge cbadge-live"><div class="pulse"></div>Live &amp; running today</div>
+              <div class="cbadge">🚗 305 Vehicles</div>
+              <div class="cbadge">🔑 298 Keys</div>
+              <div class="cbadge">🔄 12-Stage Workflow</div>
+              <div class="cbadge">📋 Full Audit Trail</div>
+            </div>
+          </div>
+          <!-- Bottom: URL strip -->
+          <div class="cover-bottom">
+            <div class="cover-url-strip">
+              <span style="opacity:.5;font-size:11px">Live at</span>
+              <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" class="cover-url-link">
+                tripfactory-ajay.github.io/capeyecommandcentre
+              </a>
+            </div>
+            <div class="cover-scroll-hint"><i class="fas fa-chevron-right" style="font-size:10px"></i> Press → to begin</div>
+          </div>
+        </div>
       </div>
-      <div class="kp-body" id="notesBody"></div>
+    </div>
+
+    <!-- ════ SLIDE 2 — THE PROBLEM ════ -->
+    <div class="slide" data-title="The Problem" data-url="">
+      <div class="s-problem">
+        <div class="eyebrow">Why CapeEye Was Built</div>
+        <div class="slide-h">The 6 problems every<br>growing dealership <em>faces</em></div>
+        <div class="slide-sub">These aren't unique — but without the right system they compound as your team and stock levels grow. CapeEye solves all six.</div>
+        <div class="prob-grid">
+          <div class="prob" style="--pc:var(--red)">
+            <div class="p-ico">📱</div>
+            <div class="p-title">WhatsApp Handovers</div>
+            <div class="p-body">Stage completions buried in group chats. No record, no accountability, nothing to refer back to when something goes wrong.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — every handover logged permanently</div>
+          </div>
+          <div class="prob" style="--pc:var(--gold)">
+            <div class="p-ico">📊</div>
+            <div class="p-title">Spreadsheet Chaos</div>
+            <div class="p-body">Multiple versions, always out of date. No one trusts the numbers so everyone makes their own copy and the problem multiplies.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — one live system, always current</div>
+          </div>
+          <div class="prob" style="--pc:var(--navy)">
+            <div class="p-ico">❓</div>
+            <div class="p-title">Where Is That Car?</div>
+            <div class="p-body">No way to know which stage a vehicle is at, who has it, how long it's been there, or what's been done to it so far.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — 12-stage pipeline, live tracking</div>
+          </div>
+          <div class="prob" style="--pc:#D4600A">
+            <div class="p-ico">🔑</div>
+            <div class="p-title">Lost Keys Every Day</div>
+            <div class="p-body">No record of who took a key or when. Staff walk the yard asking before every test drive — wasting time and losing sales.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — 298 keys tracked via eTrack</div>
+          </div>
+          <div class="prob" style="--pc:var(--green)">
+            <div class="p-ico">⏰</div>
+            <div class="p-title">Aged Stock Ignored</div>
+            <div class="p-body">Vehicles sit 90+ days without anyone noticing. By the time it's flagged the margin is gone and remarketing costs more than the profit.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — automatic alerts at 60+ days</div>
+          </div>
+          <div class="prob" style="--pc:#6366F1">
+            <div class="p-ico">🚫</div>
+            <div class="p-title">No Accountability</div>
+            <div class="p-body">Disputes with no paper trail. Can't say who signed off a vehicle, when a stage was done, or what condition it was in.</div>
+            <div class="p-fix"><i class="fas fa-check-circle"></i> Fixed — full audit trail, every action logged</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 3 — THE SYSTEM ════ -->
+    <div class="slide" data-title="The System" data-url="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html">
+      <div class="s-system">
+        <div class="eyebrow">The Solution</div>
+        <div class="slide-h">11 connected pages.<br>One <em>live system.</em></div>
+        <div class="slide-sub">Every page draws from the same data. Import once in the morning — dashboard, workflow, alerts and keys all update instantly across the whole team.</div>
+        <div class="sys-grid">
+          <div class="sys-card">
+            <div class="sys-n">01</div>
+            <div class="sys-ico" style="background:var(--red-t)">📊</div>
+            <div class="sys-title">Dashboard</div>
+            <div class="sys-desc">Total stock, value, locations and live alert strip — the morning health check on one screen.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">02</div>
+            <div class="sys-ico" style="background:var(--navy-t)">🚗</div>
+            <div class="sys-title">Inventory</div>
+            <div class="sys-desc">All 305 vehicles with live search, 4 filters, sort by any column and one-click CSV export.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">03</div>
+            <div class="sys-ico" style="background:#EDE9FE">🔄</div>
+            <div class="sys-title">Workflow</div>
+            <div class="sys-desc">12-stage pipeline. Each stage has its own form, checklist and a permanent handover log.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">04</div>
+            <div class="sys-ico" style="background:var(--red-t)">🔔</div>
+            <div class="sys-title">Smart Alerts</div>
+            <div class="sys-desc">MOT expiry, aged stock, blocked vehicles and unpriced cars — flagged automatically, filtered by type.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">05</div>
+            <div class="sys-ico" style="background:var(--navy-t)">📈</div>
+            <div class="sys-title">Analytics</div>
+            <div class="sys-desc">10 live charts — stock by make, price bands, days in stock, MOT calendar and oldest stock table.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">06</div>
+            <div class="sys-ico" style="background:var(--gold-t)">🔑</div>
+            <div class="sys-title">Keys Tracker</div>
+            <div class="sys-desc">Every key, board position and staff assignment — live from your daily eTrack CSV export.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">07</div>
+            <div class="sys-ico" style="background:var(--green-t)">📥</div>
+            <div class="sys-title">Data Import</div>
+            <div class="sys-desc">Daily ClickDealer stock + eTrack keys CSV. Smart merge preview before applying. Takes 60 seconds.</div>
+          </div>
+          <div class="sys-card">
+            <div class="sys-n">08</div>
+            <div class="sys-ico" style="background:#EDE9FE">📋</div>
+            <div class="sys-title">Audit Trail</div>
+            <div class="sys-desc">Every handover and import logged by person, time and department. Searchable, filterable, exportable.</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat" style="--sc:var(--red)"><div class="stat-v">305</div><div class="stat-l">Vehicles loaded</div></div>
+          <div class="stat" style="--sc:var(--navy)"><div class="stat-v">298</div><div class="stat-l">Keys tracked</div></div>
+          <div class="stat" style="--sc:var(--green)"><div class="stat-v">11</div><div class="stat-l">Connected pages</div></div>
+          <div class="stat" style="--sc:var(--gold)"><div class="stat-v">12</div><div class="stat-l">Workflow stages</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 4 — WORKFLOW ════ -->
+    <div class="slide" data-title="Workflow Pipeline" data-url="https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html">
+      <div class="s-workflow">
+        <div class="eyebrow">Core Feature</div>
+        <div class="slide-h">The 12-stage vehicle <em>pipeline</em></div>
+        <div class="slide-sub">Every vehicle follows the same path. Every stage has a form and checklist. Every handover is logged with a note, recipient and priority — permanently.</div>
+        <div class="pipeline">
+          <div class="ps"><div class="ps-n">01</div><div class="ps-ico">📋</div><div class="ps-nm">Intake</div><div class="ps-dp">Intake</div></div>
+          <div class="ps"><div class="ps-n">02</div><div class="ps-ico">🎨</div><div class="ps-nm">Bodywork</div><div class="ps-dp">Bodyshop</div></div>
+          <div class="ps hl"><div class="ps-n">03</div><div class="ps-ico">🖌️</div><div class="ps-nm">Paint</div><div class="ps-dp">Bodyshop</div></div>
+          <div class="ps"><div class="ps-n">04</div><div class="ps-ico">📄</div><div class="ps-nm">Legal &amp; Docs</div><div class="ps-dp">Management</div></div>
+          <div class="ps hl"><div class="ps-n">05</div><div class="ps-ico">🔧</div><div class="ps-nm">Mechanical</div><div class="ps-dp">Workshop</div></div>
+          <div class="ps"><div class="ps-n">06</div><div class="ps-ico">🔩</div><div class="ps-nm">Ext. Work</div><div class="ps-dp">Workshop</div></div>
+          <div class="ps hl"><div class="ps-n">07</div><div class="ps-ico">🧹</div><div class="ps-nm">Valeting</div><div class="ps-dp">Valeting</div></div>
+          <div class="ps"><div class="ps-n">08</div><div class="ps-ico">🔍</div><div class="ps-nm">Fault Check</div><div class="ps-dp">Workshop</div></div>
+          <div class="ps hl"><div class="ps-n">09</div><div class="ps-ico">📢</div><div class="ps-nm">Advertising</div><div class="ps-dp">Marketing</div></div>
+          <div class="ps"><div class="ps-n">10</div><div class="ps-ico">🚚</div><div class="ps-nm">Delivery</div><div class="ps-dp">Sales</div></div>
+          <div class="ps hl"><div class="ps-n">11</div><div class="ps-ico">💰</div><div class="ps-nm">Accounts</div><div class="ps-dp">Finance</div></div>
+          <div class="ps"><div class="ps-n">12</div><div class="ps-ico">✅</div><div class="ps-nm">Complete</div><div class="ps-dp">Management</div></div>
+        </div>
+        <div class="wf-row">
+          <div class="wf-box" style="--wc:var(--red)">
+            <div class="wf-t">📝 Stage Forms &amp; Checklists</div>
+            <div class="wf-d">Each stage has its own form — condition notes, mechanic assigned, parts replaced, valet checklist, advertising channels. Nothing left to memory or message threads.</div>
+          </div>
+          <div class="wf-box" style="--wc:var(--navy)">
+            <div class="wf-t">🔄 Smart Handover Popup</div>
+            <div class="wf-d">Completing a stage opens a popup showing the full history of previous stages and exactly what the next stage involves — context before every confirmation.</div>
+          </div>
+          <div class="wf-box" style="--wc:var(--green)">
+            <div class="wf-t">🎯 Priority &amp; Accountability</div>
+            <div class="wf-d">Set Normal, Urgent or Critical on every handover. Every action is permanently logged in the Audit Trail with person, department and timestamp.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 5 — WINS ════ -->
+    <div class="slide" data-title="Business Wins" data-url="">
+      <div class="s-wins">
+        <div class="wins-l">
+          <div class="wins-l-tag">Business Impact</div>
+          <div class="wins-l-h">Real <em>wins</em><br>from day one</div>
+          <div class="wins-l-sub">Measurable improvements already visible — not a future promise, happening now.</div>
+          <div class="win-stats">
+            <div class="wst">
+              <div class="wst-v">60s</div>
+              <div class="wst-l">Daily import time to sync all stock &amp; keys data</div>
+            </div>
+            <div class="wst">
+              <div class="wst-v">0</div>
+              <div class="wst-l">Spreadsheets needed to run daily operations</div>
+            </div>
+            <div class="wst">
+              <div class="wst-v">100%</div>
+              <div class="wst-l">Of handovers now logged with note, person &amp; time</div>
+            </div>
+          </div>
+        </div>
+        <div class="wins-r">
+          <div class="win-card">
+            <div class="win-ico" style="background:var(--red-t)">⚡</div>
+            <div>
+              <div class="win-t">Faster vehicle turnaround</div>
+              <div class="win-d">Everyone knows exactly what to do next. No waiting, no asking, no dropped handovers between departments. Cars move faster.</div>
+            </div>
+          </div>
+          <div class="win-card">
+            <div class="win-ico" style="background:var(--navy-t)">💷</div>
+            <div>
+              <div class="win-t">Protect your margins</div>
+              <div class="win-d">Aged stock alerts at 60 days mean you act before a vehicle becomes a write-down. MOT alerts prevent costly compliance failures.</div>
+            </div>
+          </div>
+          <div class="win-card">
+            <div class="win-ico" style="background:var(--green-t)">👥</div>
+            <div>
+              <div class="win-t">Full team accountability</div>
+              <div class="win-d">Every action by every person is permanently logged. Management sees who did what and when — no more disputes with no evidence.</div>
+            </div>
+          </div>
+          <div class="win-card">
+            <div class="win-ico" style="background:var(--gold-t)">🔑</div>
+            <div>
+              <div class="win-t">End the daily key hunt</div>
+              <div class="win-d">Every key tracked to a person and board position. Find any key in 5 seconds — stop losing test drives because no one can find the keys.</div>
+            </div>
+          </div>
+          <div class="win-card">
+            <div class="win-ico" style="background:#EDE9FE">📊</div>
+            <div>
+              <div class="win-t">Smarter buying decisions</div>
+              <div class="win-d">Analytics shows which makes turn fastest, which price bands flow best, and where stock is sitting too long — data to inform every purchase.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 6 — LIVE PAGES ════ -->
+    <div class="slide" data-title="Live Pages — Click to Open" data-url="">
+      <div class="s-pages">
+        <div class="eyebrow">Live Demo</div>
+        <div class="slide-h">Click any card to <em>open it live</em></div>
+        <div class="slide-sub">All 11 pages are running right now at Auto Capital's address. Every card below opens the real working system in a new window.</div>
+        <div class="pages-grid">
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" style="--pc:var(--red)">
+            <div class="pg-n">01</div><div class="pg-ico">📊</div>
+            <div class="pg-nm">Dashboard</div>
+            <div class="pg-d">KPIs, total stock value, alert strip and live charts</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html" target="_blank" style="--pc:var(--navy)">
+            <div class="pg-n">02</div><div class="pg-ico">🚗</div>
+            <div class="pg-nm">Inventory</div>
+            <div class="pg-d">All 305 vehicles — search, filter by status, sort, export</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html" target="_blank" style="--pc:#7C3AED">
+            <div class="pg-n">03</div><div class="pg-ico">🔄</div>
+            <div class="pg-nm">Workflow</div>
+            <div class="pg-d">12-stage pipeline, stage forms, smart handover popup</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html" target="_blank" style="--pc:var(--red)">
+            <div class="pg-n">04</div><div class="pg-ico">🔔</div>
+            <div class="pg-nm">Alerts</div>
+            <div class="pg-d">MOT expiry, blocked, aged stock, no price — live filters</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html" target="_blank" style="--pc:var(--navy)">
+            <div class="pg-n">05</div><div class="pg-ico">📈</div>
+            <div class="pg-nm">Analytics</div>
+            <div class="pg-d">10 charts, oldest stock table, MOT calendar view</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html" target="_blank" style="--pc:var(--gold)">
+            <div class="pg-n">06</div><div class="pg-ico">🔑</div>
+            <div class="pg-nm">Keys Tracker</div>
+            <div class="pg-d">298 keys, board positions, who has what and since when</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/import.html" target="_blank" style="--pc:var(--green)">
+            <div class="pg-n">07</div><div class="pg-ico">📥</div>
+            <div class="pg-nm">Import</div>
+            <div class="pg-d">ClickDealer stock + eTrack keys CSV — smart preview</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+          <a class="pg" href="https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html" target="_blank" style="--pc:#6366F1">
+            <div class="pg-n">08</div><div class="pg-ico">📋</div>
+            <div class="pg-nm">Audit Trail</div>
+            <div class="pg-d">Every action logged — filter by person, dept or date</div>
+            <div class="pg-cta"><i class="fas fa-external-link-alt"></i> Open live</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 7 — NEXT STEPS ════ -->
+    <div class="slide" data-title="Roadmap &amp; Next Steps" data-url="">
+      <div class="s-next">
+        <div class="eyebrow">Roadmap</div>
+        <div class="slide-h">Phase 1 is live. Here's<br>what comes <em>next.</em></div>
+        <div class="slide-sub">CapeEye currently runs on GitHub Pages with browser-local storage. The next phase moves it to a live server with real-time sync across the whole team.</div>
+        <div class="phases">
+          <div class="phase" style="--nc:var(--green)">
+            <div class="ph-badge" style="background:var(--green-t);color:var(--green);border-color:rgba(21,128,61,.2)">
+              <i class="fas fa-check-circle"></i> COMPLETE — LIVE NOW
+            </div>
+            <div class="ph-num" style="color:var(--green)">01</div>
+            <div class="ph-title">Phase 1 — MVP Live</div>
+            <div class="ph-list">
+              <div class="phi">11-page system on GitHub Pages</div>
+              <div class="phi">305 vehicles &amp; 298 keys loaded</div>
+              <div class="phi">12-stage workflow with logged handovers</div>
+              <div class="phi">Daily CSV import — ClickDealer &amp; eTrack</div>
+              <div class="phi">Smart alerts, audit trail, full analytics</div>
+              <div class="phi">All pages verified and working</div>
+            </div>
+          </div>
+          <div class="phase" style="--nc:var(--navy)">
+            <div class="ph-badge" style="background:var(--navy-t);color:var(--navy);border-color:rgba(0,61,165,.2)">
+              <i class="fas fa-arrow-right"></i> AWAITING APPROVAL
+            </div>
+            <div class="ph-num" style="color:var(--navy)">02</div>
+            <div class="ph-title">Phase 2 — Live Server &amp; Team Sync</div>
+            <div class="ph-list">
+              <div class="phi">Move to dedicated production hosting</div>
+              <div class="phi">Firebase Firestore — data syncs across all devices</div>
+              <div class="phi">One import updates every screen in real time</div>
+              <div class="phi">Handovers visible to whole team immediately</div>
+              <div class="phi">Removes browser storage limitation</div>
+              <div class="phi">Foundation for individual logins in Phase 3</div>
+            </div>
+          </div>
+          <div class="phase" style="--nc:var(--gold)">
+            <div class="ph-badge" style="background:var(--gold-t);color:var(--gold);border-color:rgba(161,98,7,.2)">
+              <i class="fas fa-road"></i> FUTURE PHASE
+            </div>
+            <div class="ph-num" style="color:var(--gold)">03</div>
+            <div class="ph-title">Phase 3 — Advanced Features</div>
+            <div class="ph-list">
+              <div class="phi">Individual staff logins &amp; role-based access</div>
+              <div class="phi">Mobile view for yard &amp; workshop staff</div>
+              <div class="phi">ClickDealer auto-pull — no manual CSV needed</div>
+              <div class="phi">Push notifications for urgent handovers</div>
+              <div class="phi">Profit tracking per vehicle</div>
+              <div class="phi">Customer-facing vehicle status portal</div>
+            </div>
+          </div>
+        </div>
+        <div class="cta-strip">
+          <div>
+            <div class="cta-text-h">Ready to approve Phase 2?</div>
+            <div class="cta-text-s">Phase 1 is live and working today. Phase 2 turns CapeEye from a single-user demo into a full production tool your entire team uses, on any device, in real time.</div>
+          </div>
+          <a class="cta-go" href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank">
+            <i class="fas fa-external-link-alt"></i> View live system
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SLIDE 8 — CLOSE ════ -->
+    <div class="slide" data-title="Summary" data-url="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html">
+      <div class="s-close-hero">
+        <div class="close-bg-img"></div>
+        <div class="close-overlay"></div>
+        <div class="close-content">
+          <!-- Logo top left -->
+          <div class="close-top">
+            <img src="./auto-capital-logo.png" alt="Auto Capital" class="cover-logo" onerror="this.style.display='none'">
+          </div>
+          <!-- Row: left + right -->
+          <div class="close-row">
+          <div class="close-left">
+            <div class="close-tag">Summary</div>
+            <div class="close-h">One system.<br><em>Every stage.</em><br>All logged.</div>
+            <div class="close-recap-list">
+              <div class="cr-item"><span class="cr-dot" style="background:var(--red)"></span><div><strong>6 problems solved</strong> — WhatsApp chaos, spreadsheets, lost keys, aged stock, no audit trail</div></div>
+              <div class="cr-item"><span class="cr-dot" style="background:var(--navy)"></span><div><strong>12-stage pipeline</strong> — every handover logged, every stage tracked with notes and priority</div></div>
+              <div class="cr-item"><span class="cr-dot" style="background:#22C55E"></span><div><strong>11 pages live today</strong> — 305 vehicles, 298 keys, audit trail, analytics all running</div></div>
+              <div class="cr-item"><span class="cr-dot" style="background:var(--gold)"></span><div><strong>3-phase roadmap</strong> — Phase 2 moves to live server with full team sync</div></div>
+            </div>
+            <!-- CTA box -->
+            <div class="close-cta-box">
+              <div class="close-cta-t">Next step — Approve Phase 2</div>
+              <div class="close-cta-d">Move CapeEye to a production server with Firebase real-time sync — the whole team, any device, always in sync.</div>
+              <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" class="close-cta-btn">
+                <i class="fas fa-external-link-alt"></i> Open live system
+              </a>
+            </div>
+          </div>
+          <div class="close-right">
+            <div class="close-url-card">
+              <div class="close-url-eye">Scan or click to open</div>
+              <div class="close-url-ce">Cape<em>Eye</em></div>
+              <div class="close-url-sub">Command Centre</div>
+              <div class="close-url-divider"></div>
+              <div class="close-url-lbl">Live at</div>
+              <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" class="close-url-addr">
+                tripfactory-ajay.github.io/<br>capeyecommandcentre
+              </a>
+              <div class="close-url-stats">
+                <div class="cus"><div class="cus-v">305</div><div class="cus-l">Vehicles</div></div>
+                <div class="cus"><div class="cus-v">298</div><div class="cus-l">Keys</div></div>
+                <div class="cus"><div class="cus-v">11</div><div class="cus-l">Pages</div></div>
+              </div>
+            </div>
+          </div>
+          </div><!-- /close-row -->
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slide-area -->
+
+  <!-- BOTTOM BAR -->
+  <div class="botbar">
+    <div class="bot-label" id="botLabel">Introduction</div>
+    <div class="bot-right">
+      <div class="kbd-hint"><span class="k">←</span><span class="k">→</span> navigate</div>
+      <a class="demo-btn hidden" id="demoBtn" href="#" target="_blank">
+        <i class="fas fa-external-link-alt"></i> Open this page live
+      </a>
     </div>
   </div>
 
-</div>
+</div><!-- /shell -->
 
 <script>
-const BASE = './';
+const slides = Array.from(document.querySelectorAll('.slide'));
+const N = slides.length;
+let cur = 0;
 
-const SLIDES = [
-  // ── 0: TITLE ──
-  {
-    type:'title', section:'Introduction', label:'Title', time:'2 min',
-    html:`
-      <div class="slide slide-title">
-        <div class="title-eyebrow">Auto Capital · Back-Office System</div>
-        <div class="title-h1">Cape<span>Eye</span></div>
-        <div class="title-h2">Command Centre</div>
-        <div class="title-body">A complete vehicle operations platform — from intake to sale, every step tracked, every handover logged.</div>
-        <div class="title-pills">
-          <div class="pill"><i class="fas fa-car" style="margin-right:6px;color:var(--red)"></i>Stock Management</div>
-          <div class="pill"><i class="fas fa-tasks" style="margin-right:6px;color:var(--blue)"></i>Workflow & Handovers</div>
-          <div class="pill"><i class="fas fa-key" style="margin-right:6px;color:var(--gold)"></i>Keys Tracking</div>
-          <div class="pill"><i class="fas fa-chart-bar" style="margin-right:6px;color:var(--green)"></i>Analytics & Alerts</div>
-          <div class="pill"><i class="fas fa-clipboard-list" style="margin-right:6px;color:#a78bfa)"></i>Full Audit Trail</div>
-        </div>
-        <div style="margin-top:40px;display:flex;align-items:center;gap:10px">
-          <div class="live-badge"><div class="live-dot"></div>Live Demo Available</div>
-          <span style="color:rgba(255,255,255,.3);font-size:12px">tripfactory-ajay.github.io/capeyecommandcentre</span>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🚗</div><div class="kp-title">One system for everything</div><div class="kp-desc">Every vehicle from arrival to sale — all tracked in one place, by the whole team</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">⚡</div><div class="kp-title">Live right now</div><div class="kp-desc">Already running with your 305 vehicles and 298 keys loaded in</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">👥</div><div class="kp-title">Built for your team</div><div class="kp-desc">Designed around how Auto Capital actually works day to day</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📱</div><div class="kp-title">Works anywhere</div><div class="kp-desc">Open it in any browser — phone, tablet, desktop</div></div>`
-  },
+// build dots
+const dotsEl = document.getElementById('dots');
+dotsEl.innerHTML = slides.map((_,i) =>
+  `<div class="dot${i===0?' active':''}" onclick="goTo(${i})"></div>`
+).join('');
 
-  // ── 1: THE PROBLEM ──
-  {
-    type:'stats', section:'Introduction', label:'Why We Built This', time:'3 min',
-    html:`
-      <div class="slide slide-stats">
-        <div>
-          <div class="slide-eyebrow">The Problem We Solved</div>
-          <div class="slide-h" style="font-size:36px">Before CapeEye</div>
-          <div class="slide-sub">Every dealership runs into the same operational headaches as the team grows</div>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-card" style="--sc:var(--red)">
-            <div class="stat-val">?</div>
-            <div class="stat-lbl">Where's that car?</div>
-            <div class="stat-sub">No single source of truth for vehicle location or stage</div>
-          </div>
-          <div class="stat-card" style="--sc:var(--gold)">
-            <div class="stat-val">📱</div>
-            <div class="stat-lbl">WhatsApp Handovers</div>
-            <div class="stat-sub">Handovers buried in group chats — no record, no accountability</div>
-          </div>
-          <div class="stat-card" style="--sc:var(--blue)">
-            <div class="stat-val">📊</div>
-            <div class="stat-lbl">Spreadsheet Chaos</div>
-            <div class="stat-sub">Multiple spreadsheets, always out of date, different versions</div>
-          </div>
-          <div class="stat-card" style="--sc:var(--orange,#d4600a)">
-            <div class="stat-val">🔑</div>
-            <div class="stat-lbl">Lost Keys</div>
-            <div class="stat-sub">Keys go missing, no log of who took what or when</div>
-          </div>
-          <div class="stat-card" style="--sc:var(--green)">
-            <div class="stat-val">⏰</div>
-            <div class="stat-lbl">Aged Stock</div>
-            <div class="stat-sub">Vehicles sitting 90+ days unnoticed — no automatic alerts</div>
-          </div>
-          <div class="stat-card" style="--sc:#6366f1">
-            <div class="stat-val">🚫</div>
-            <div class="stat-lbl">No Audit Trail</div>
-            <div class="stat-sub">Can't see who did what, when — disputes with no paper trail</div>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">❌</div><div class="kp-title">No more WhatsApp handovers</div><div class="kp-desc">Every stage handover is logged in the system with a note, timestamp and who did it</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">📋</div><div class="kp-title">Replace the spreadsheets</div><div class="kp-desc">One live system replaces multiple spreadsheets that are always out of date</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔑</div><div class="kp-title">Keys always accounted for</div><div class="kp-desc">Every key tracked to a person — no more "who has the keys for that van?"</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">⏰</div><div class="kp-title">Catch aged stock early</div><div class="kp-desc">Automatic alerts before vehicles become a problem — not after</div></div>`
-  },
+function goTo(n) {
+  if (n < 0 || n >= N) return;
+  slides[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
 
-  // ── 2: DASHBOARD OVERVIEW ──
-  {
-    type:'split', section:'Pages', label:'Dashboard', time:'4 min',
-    url: BASE+'index.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 1 of 11</div>
-            <div class="slide-h">Command<br>Dashboard</div>
-            <div class="slide-sub">The first thing you see every morning. All the numbers that matter, at a glance.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-th-large"></i><div class="point-text"><strong>6 live KPIs</strong> — total stock, in stock, in transit, off-site, subject to finance, total value</div></div>
-            <div class="point blue"><i class="fas fa-bell"></i><div class="point-text"><strong>Alert strip</strong> — MOT expiring, no price, blocked vehicles flagged immediately</div></div>
-            <div class="point green"><i class="fas fa-car"></i><div class="point-text"><strong>Stock table</strong> — search and filter all 300+ vehicles instantly by status or keyword</div></div>
-            <div class="point gold"><i class="fas fa-chart-bar"></i><div class="point-text"><strong>Live charts</strong> — top makes, stock by status, price distribution at a glance</div></div>
-          </div>
-          <div class="live-badge"><div class="live-dot"></div>Live on screen right now</div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}index.html" loading="lazy" id="frame-index" name="frame-index"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/index.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-index').src='https://tripfactory-ajay.github.io/capeyecommandcentre/index.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📊</div><div class="kp-title">Total stock value at a glance</div><div class="kp-desc">See how many vehicles you have, what they're worth, and where they are — instantly</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔔</div><div class="kp-title">Alerts on the homepage</div><div class="kp-desc">MOT expiring or vehicle with no price? You see it the moment you open the system</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔍</div><div class="kp-title">Search any vehicle instantly</div><div class="kp-desc">Type a reg or make in the search box — results appear as you type</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📈</div><div class="kp-title">Charts updated live</div><div class="kp-desc">Every chart reflects the current stock — no manual refresh needed</div></div>`
-  },
+  // scroll inner content to top
+  const inner = slides[cur].firstElementChild;
+  if (inner) inner.scrollTop = 0;
 
-  // ── 3: INVENTORY ──
-  {
-    type:'split', section:'Pages', label:'Inventory', time:'3 min',
-    url: BASE+'inventory.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 2 of 11</div>
-            <div class="slide-h">Inventory</div>
-            <div class="slide-sub">The full stock list — every vehicle, every detail, fully searchable and sortable.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-search"></i><div class="point-text"><strong>Smart search</strong> — type any reg, stock no, make or model and results filter instantly</div></div>
-            <div class="point blue"><i class="fas fa-filter"></i><div class="point-text"><strong>4 live filters</strong> — status, make, location, fuel type — all interactive, data updates immediately</div></div>
-            <div class="point green"><i class="fas fa-sort"></i><div class="point-text"><strong>Sort any column</strong> — click any header to sort by stock no, mileage, price, or make</div></div>
-            <div class="point gold"><i class="fas fa-download"></i><div class="point-text"><strong>Export to CSV</strong> — download the filtered view anytime for reporting</div></div>
-          </div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}inventory.html" loading="lazy" id="frame-inventory" name="frame-inventory"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-inventory').src='https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🚘</div><div class="kp-title">Every vehicle, every detail</div><div class="kp-desc">All 305 vehicles in one searchable table — make, model, reg, price, stage, location</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔽</div><div class="kp-title">Filter by anything</div><div class="kp-desc">Status, make, location, fuel type — results update instantly as you change filters</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">↕️</div><div class="kp-title">Sort any column</div><div class="kp-desc">Click any column header to sort — find the cheapest, oldest or most expensive vehicle in one click</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">💾</div><div class="kp-title">Export to CSV</div><div class="kp-desc">Download whatever you're looking at as a spreadsheet for reports or sharing</div></div>`
-  },
-
-  // ── 4: WORKFLOW ──
-  {
-    type:'split', section:'Pages', label:'Workflow', time:'6 min',
-    url: BASE+'workflow.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 3 of 11 — Core Feature</div>
-            <div class="slide-h">Vehicle<br>Workflow</div>
-            <div class="slide-sub">Tracks every vehicle through 12 stages from intake to accounts. Every handover recorded.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-route"></i><div class="point-text"><strong>12 pipeline stages</strong> — Intake → Bodywork → Paint → Workshop → Valeting → Advertising → Delivery → Accounts</div></div>
-            <div class="point blue"><i class="fas fa-clipboard-check"></i><div class="point-text"><strong>Stage forms</strong> — each stage has its own checklist: condition, mechanic assigned, parts replaced, valet checklist, advertising channels</div></div>
-            <div class="point green"><i class="fas fa-exchange-alt"></i><div class="point-text"><strong>Smart handover</strong> — completing a stage opens a popup showing what was done + what happens next, then hands to the right person</div></div>
-            <div class="point gold"><i class="fas fa-lock"></i><div class="point-text"><strong>Blocked vehicles</strong> — flag a vehicle if it's stuck, shows up immediately in alerts</div></div>
-          </div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}workflow.html" loading="lazy" id="frame-workflow" name="frame-workflow"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-workflow').src='https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🔄</div><div class="kp-title">12-stage pipeline</div><div class="kp-desc">Every vehicle follows the same path: Intake → Workshop → Valet → Advertising → Sale</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">📝</div><div class="kp-title">Stage forms</div><div class="kp-desc">Each stage has its own form — condition, mechanic, parts replaced, valet checklist, ad channels</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">✅</div><div class="kp-title">Handover with full context</div><div class="kp-desc">Completing a stage shows what was done before and what happens next — before you confirm</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🔒</div><div class="kp-title">Block a vehicle</div><div class="kp-desc">Flag any vehicle as blocked if it's stuck — it shows up immediately in Alerts</div></div>`
-  },
-
-  // ── 5: HANDOVER MODAL DETAIL ──
-  {
-    type:'stats', section:'Pages', label:'Handover Deep Dive', time:'2 min',
-    html:`
-      <div class="slide slide-stats">
-        <div>
-          <div class="slide-eyebrow">Workflow · Handover Modal</div>
-          <div class="slide-h" style="font-size:36px">The Handover Popup</div>
-          <div class="slide-sub">When you complete a stage, a full-context popup appears before you confirm</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-          <div style="background:rgba(26,127,55,.06);border:1px solid rgba(26,127,55,.2);border-radius:12px;padding:20px">
-            <div style="font-size:24px;margin-bottom:10px">📋</div>
-            <div style="font-weight:800;font-size:15px;color:#1a7f37;margin-bottom:8px">What Happened</div>
-            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Shows a compact timeline of every previous stage — who completed it, their note, when. Plus a summary of what was filled in on the current form (cost, mechanic, parts, condition).</div>
-          </div>
-          <div style="background:rgba(0,61,165,.05);border:1px solid rgba(0,61,165,.15);border-radius:12px;padding:20px">
-            <div style="font-size:24px;margin-bottom:10px">⏭</div>
-            <div style="font-weight:800;font-size:15px;color:#003DA5;margin-bottom:8px">What's Next</div>
-            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Shows the next stage name, which department owns it, who's available in that team, and a plain-English explanation of what that stage involves.</div>
-          </div>
-          <div style="background:rgba(200,16,46,.05);border:1px solid rgba(200,16,46,.15);border-radius:12px;padding:20px">
-            <div style="font-size:24px;margin-bottom:10px">🎯</div>
-            <div style="font-weight:800;font-size:15px;color:#C8102E;margin-bottom:8px">Hand Over + Priority</div>
-            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Pick a person or department. Add a note. Set priority: Normal, Urgent (deal in progress), or Critical (needs immediate attention). All logged permanently.</div>
-          </div>
-        </div>
-        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;color:#3d4d5c;line-height:1.7">
-          <strong style="color:var(--dark)">Why this matters:</strong> The person receiving the handover sees exactly what was done before them and what they need to do next — without needing to ask anyone. Every handover creates a permanent record visible in the Audit Trail.
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Full history in the popup</div><div class="kp-desc">See every completed stage, who did it, their note, and when — all in one popup</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">⏭</div><div class="kp-title">What happens next</div><div class="kp-desc">The popup tells you which department takes over and who's available — no need to ask</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🎯</div><div class="kp-title">Set the priority</div><div class="kp-desc">Normal, Urgent (deal in progress), or Critical — the receiver knows what's needed</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📁</div><div class="kp-title">Permanent record</div><div class="kp-desc">Every handover is saved forever and visible in the Audit Trail</div></div>`
-  },
-
-  // ── 6: ALERTS ──
-  {
-    type:'split', section:'Pages', label:'Alerts', time:'3 min',
-    url: BASE+'alerts.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 4 of 11</div>
-            <div class="slide-h">Vehicle<br>Alerts</div>
-            <div class="slide-sub">Automatic flags for every vehicle that needs attention — nothing slips through.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-calendar-times"></i><div class="point-text"><strong>MOT expiry</strong> — any vehicle with MOT due in 30 days or less, sorted by most urgent</div></div>
-            <div class="point blue"><i class="fas fa-lock"></i><div class="point-text"><strong>Blocked vehicles</strong> — flagged in workflow as stuck, shows dept and how many days</div></div>
-            <div class="point gold"><i class="fas fa-hourglass-end"></i><div class="point-text"><strong>Aged stock</strong> — 60+ days in stock without selling — needs price review or remarketing</div></div>
-            <div class="point green"><i class="fas fa-tag"></i><div class="point-text"><strong>No price / stuck in stage</strong> — vehicles that can't be advertised yet, plus anything 7+ days in one dept</div></div>
-          </div>
-          <div style="font-size:12px;color:var(--muted);background:var(--bg);padding:10px 12px;border-radius:8px;border-left:3px solid var(--blue)">Click any filter tab to instantly show only that category. Click any vehicle to open it directly in Workflow.</div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}alerts.html" loading="lazy" id="frame-alerts" name="frame-alerts"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-alerts').src='https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📅</div><div class="kp-title">MOT expiry warnings</div><div class="kp-desc">Any vehicle with MOT due in 30 days or less — sorted most urgent first</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔒</div><div class="kp-title">Blocked vehicles</div><div class="kp-desc">Anything flagged as stuck in the pipeline with how many days it's been waiting</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">⏳</div><div class="kp-title">Aged stock — 60+ days</div><div class="kp-desc">Vehicles sitting too long without selling — consider price review or remarketing</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🏷️</div><div class="kp-title">Unpriced vehicles</div><div class="kp-desc">Can't advertise without a price — these vehicles are flagged until pricing is added</div></div>`
-  },
-
-  // ── 7: ANALYTICS ──
-  {
-    type:'split', section:'Pages', label:'Analytics', time:'2 min',
-    url: BASE+'analytics.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 5 of 11</div>
-            <div class="slide-h">Analytics</div>
-            <div class="slide-sub">Visual breakdown of the whole stock and pipeline at a glance.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-chart-bar"></i><div class="point-text"><strong>10 live charts</strong> — stock by make, fuel type, price band, days in stock distribution</div></div>
-            <div class="point blue"><i class="fas fa-table"></i><div class="point-text"><strong>Oldest stock table</strong> — top 15 vehicles by days in stock with stage and price</div></div>
-            <div class="point green"><i class="fas fa-calendar-times"></i><div class="point-text"><strong>MOT overview</strong> — all vehicles with upcoming MOTs sorted by urgency</div></div>
-            <div class="point gold"><i class="fas fa-tag"></i><div class="point-text"><strong>Unpriced vehicles</strong> — instant list of everything missing a retail price</div></div>
-          </div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}analytics.html" loading="lazy" id="frame-analytics" name="frame-analytics"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-analytics').src='https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📊</div><div class="kp-title">Stock by make & type</div><div class="kp-desc">See instantly which makes dominate your stock and what fuel types you carry</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">💷</div><div class="kp-title">Price band breakdown</div><div class="kp-desc">Where is your stock sitting price-wise? Useful for buying decisions</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">📆</div><div class="kp-title">Days in stock chart</div><div class="kp-desc">Visualise how long stock is sitting — spot patterns before they become problems</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📋</div><div class="kp-title">MOT & oldest stock tables</div><div class="kp-desc">Scrollable tables for upcoming MOTs and your longest-sitting vehicles</div></div>`
-  },
-
-  // ── 8: KEYS ──
-  {
-    type:'split', section:'Pages', label:'Keys', time:'3 min',
-    url: BASE+'keys.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 7 of 11</div>
-            <div class="slide-h">Keys<br>Tracker</div>
-            <div class="slide-sub">Know where every key is, who has it, and for how long — no more lost keys.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-key"></i><div class="point-text"><strong>298 keys tracked</strong> — every vehicle key in the system with current status (In / Out)</div></div>
-            <div class="point blue"><i class="fas fa-user"></i><div class="point-text"><strong>Staff assignment</strong> — who signed out each key and when, shown on every card</div></div>
-            <div class="point gold"><i class="fas fa-clock"></i><div class="point-text"><strong>Time alerts</strong> — keys out for 24+ hours are highlighted in amber automatically</div></div>
-            <div class="point green"><i class="fas fa-upload"></i><div class="point-text"><strong>eTrack import</strong> — daily CSV upload from eTrack keeps everything current automatically</div></div>
-          </div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}keys.html" loading="lazy" id="frame-keys" name="frame-keys"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-keys').src='https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🔑</div><div class="kp-title">Every key tracked</div><div class="kp-desc">298 keys — which box, which vehicle, who has it and since when</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔴</div><div class="kp-title">Keys out too long</div><div class="kp-desc">Any key out for 24+ hours is highlighted in amber automatically</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔍</div><div class="kp-title">Find a key in seconds</div><div class="kp-desc">Type any reg to find exactly where the key is right now</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📤</div><div class="kp-title">Daily eTrack upload</div><div class="kp-desc">Import the eTrack CSV each morning to keep everything current — takes 30 seconds</div></div>`
-  },
-
-  // ── 9: IMPORT ──
-  {
-    type:'split', section:'Pages', label:'Data Import', time:'3 min',
-    url: BASE+'import.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 8 of 11</div>
-            <div class="slide-h">Daily<br>Data Import</div>
-            <div class="slide-sub">Two uploads keep the whole system current — takes under a minute each morning.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-car"></i><div class="point-text"><strong>ClickDealer stock</strong> — drag & drop the daily CSV export. Smart merge: new vehicles added, existing updated, nothing deleted</div></div>
-            <div class="point blue"><i class="fas fa-key"></i><div class="point-text"><strong>eTrack keys</strong> — upload the eTrack daily export. Auto-detects Keys In/Out, Staff and Audit tabs</div></div>
-            <div class="point green"><i class="fas fa-eye"></i><div class="point-text"><strong>Preview before applying</strong> — see exactly what's new, what's changed, and what's missing before you confirm</div></div>
-            <div class="point gold"><i class="fas fa-history"></i><div class="point-text"><strong>Import history</strong> — every import logged with filename, date, and counts so you can always check what was loaded</div></div>
-          </div>
-          <div style="font-size:12px;color:var(--muted);background:var(--bg);padding:10px 12px;border-radius:8px;border-left:3px solid var(--green)">The <strong>Last Import</strong> badge in the header turns green when data is fresh (under 24h) and orange when it's getting stale.</div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}import.html" loading="lazy" id="frame-import" name="frame-import"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/import.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-import').src='https://tripfactory-ajay.github.io/capeyecommandcentre/import.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📥</div><div class="kp-title">Two uploads, everything synced</div><div class="kp-desc">ClickDealer stock CSV + eTrack keys CSV — that's the daily routine</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">👁️</div><div class="kp-title">Preview before applying</div><div class="kp-desc">See every new, updated and unchanged vehicle before you confirm the import</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔀</div><div class="kp-title">Smart merge</div><div class="kp-desc">New vehicles are added, existing ones updated — nothing is deleted automatically</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📜</div><div class="kp-title">Full import history</div><div class="kp-desc">Every import logged with filename, date and counts so you always know what was loaded</div></div>`
-  },
-
-  // ── 10: AUDIT TRAIL ──
-  {
-    type:'split', section:'Pages', label:'Audit Trail', time:'3 min',
-    url: BASE+'audit.html',
-    html:`
-      <div class="slide slide-split">
-        <div class="split-left">
-          <div>
-            <div class="slide-eyebrow">Page 11 of 11</div>
-            <div class="slide-h">Audit<br>Trail</div>
-            <div class="slide-sub">A permanent, searchable log of every single action in the system — by who, when, and what.</div>
-          </div>
-          <div class="points">
-            <div class="point"><i class="fas fa-exchange-alt"></i><div class="point-text"><strong>Every handover logged</strong> — who passed what to whom, with their note and priority, timestamped to the second</div></div>
-            <div class="point blue"><i class="fas fa-file-upload"></i><div class="point-text"><strong>Imports recorded</strong> — every ClickDealer and eTrack import appears with filename and counts</div></div>
-            <div class="point green"><i class="fas fa-filter"></i><div class="point-text"><strong>Filter by anything</strong> — search by reg, staff name, department, priority, or date range</div></div>
-            <div class="point gold"><i class="fas fa-download"></i><div class="point-text"><strong>Export to CSV</strong> — download a filtered audit log for management reporting or compliance</div></div>
-          </div>
-        </div>
-        <div class="split-right">
-          <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}audit.html" loading="lazy" id="frame-audit" name="frame-audit"></iframe>
-          <div class="url-bar">
-            <div class="url-dot" style="background:#22c55e"></div>
-            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html</span>
-            <button class="url-open" onclick="document.getElementById('frame-audit').src='https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html'"><i class="fas fa-external-link-alt"></i> Load page</button>
-          </div>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Every action logged</div><div class="kp-desc">Who did what, on which vehicle, at what time — a permanent record of everything</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔍</div><div class="kp-title">Filter by person or dept</div><div class="kp-desc">Search by staff name, department or registration to see exactly who did what</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">⚖️</div><div class="kp-title">Resolve disputes instantly</div><div class="kp-desc">Any disagreement about a handover — open the audit trail and see the proof</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">💾</div><div class="kp-title">Export for reporting</div><div class="kp-desc">Download the filtered log as CSV for management reporting or compliance</div></div>`
-  },
-
-  // ── 11: CLOSE / NEXT STEPS ──
-  {
-    type:'title', section:'Close', label:'Next Steps', time:'3 min',
-    html:`
-      <div class="slide slide-title">
-        <div class="title-eyebrow">What comes next</div>
-        <div class="title-h1" style="font-size:56px">Ready to<br><span>Go Live</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:28px auto;text-align:left">
-          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
-            <div style="font-size:18px;margin-bottom:8px">✅</div>
-            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Already done</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">11 pages live · All 305 vehicles imported · 298 keys tracked · Workflow with 12 stages · Audit trail · Import system</div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
-            <div style="font-size:18px;margin-bottom:8px">🔜</div>
-            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Recommended next</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">Firebase sync (team-wide data) · Staff logins per user · Mobile app view · ClickDealer auto-pull</div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
-            <div style="font-size:18px;margin-bottom:8px">📋</div>
-            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Daily routine</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">Upload ClickDealer CSV · Upload eTrack CSV · Check alerts · Use workflow for all handovers</div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
-            <div style="font-size:18px;margin-bottom:8px">🔗</div>
-            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Access now</div>
-            <div style="font-size:12px;color:rgba(0,200,255,.7);line-height:1.6;word-break:break-all">tripfactory-ajay.github.io/<br>capeyecommandcentre</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:12px;justify-content:center;margin-top:8px">
-          <a href="${BASE}index.html" target="_blank" style="padding:12px 24px;background:var(--red);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fas fa-external-link-alt"></i> Open CapeEye Live</a>
-        </div>
-      </div>`,
-    notes:`<div class="kp" style="--kc:var(--green)"><div class="kp-icon">✅</div><div class="kp-title">Live today</div><div class="kp-desc">The system is running right now with your real stock data</div></div><div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Daily routine</div><div class="kp-desc">Upload ClickDealer CSV · Upload eTrack CSV · Check alerts · Use workflow for all handovers</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔜</div><div class="kp-title">Coming next</div><div class="kp-desc">Firebase team sync · Staff logins · Mobile view · Auto ClickDealer pull</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🔗</div><div class="kp-title">Access it now</div><div class="kp-desc">tripfactory-ajay.github.io/capeyecommandcentre</div></div>`
-  },
-];
-let current = 0;
-
-function buildSidebar(){
-  const sb=document.getElementById('sidebar');
-  let html='', sec='';
-  SLIDES.forEach((s,i)=>{
-    if(s.section!==sec){sec=s.section;html+=`<div class="sec-lbl">${sec}</div>`;}
-    const bc=s.type==='title'?'b-intro':s.url?'b-demo':'b-detail';
-    const bl=s.type==='title'?'Intro':s.url?'Live Demo':'Detail';
-    html+=`<div class="sthumb${i===0?' active':''}" id="th-${i}" onclick="goTo(${i})">
-      <div class="sth-num">${String(i+1).padStart(2,'0')}</div>
-      <div><div class="sth-title">${s.label}</div><div class="sth-time">${s.time}</div><span class="sth-badge ${bc}">${bl}</span></div>
-    </div>`;
+  // dots
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
   });
-  sb.innerHTML=html;
+
+  // counter
+  document.getElementById('count').textContent =
+    String(cur+1).padStart(2,'0') + ' / ' + String(N).padStart(2,'0');
+
+  // bottom bar
+  const s = slides[cur];
+  document.getElementById('botLabel').textContent = s.dataset.title || '';
+  const url = s.dataset.url || '';
+  const btn = document.getElementById('demoBtn');
+  if (url) { btn.href = url; btn.classList.remove('hidden'); }
+  else { btn.classList.add('hidden'); }
 }
 
-function buildSlides(){
-  document.getElementById('slideArea').innerHTML=
-    SLIDES.map((s,i)=>`<div class="slide${i===0?' active':''}" id="sl-${i}">${s.html}</div>`).join('');
-}
+function next() { goTo(cur + 1); }
+function prev() { goTo(cur - 1); }
 
-function goTo(n){
-  if(n<0||n>=SLIDES.length)return;
-  document.querySelector('.slide.active')?.classList.remove('active');
-  document.querySelector('.sthumb.active')?.classList.remove('active');
-  document.getElementById('sl-'+n).classList.add('active');
-  document.getElementById('th-'+n).classList.add('active');
-  document.getElementById('th-'+n).scrollIntoView({behavior:'smooth',block:'nearest'});
-  document.getElementById('notesBody').innerHTML=SLIDES[n].notes||'';
-  document.getElementById('kpSlideName').textContent=SLIDES[n].label||'';
-  document.getElementById('ctr').textContent=`${n+1} / ${SLIDES.length}`;
-  document.getElementById('prog').style.width=((n+1)/SLIDES.length*100)+'%';
-  current=n;
-}
-
-function nextSlide(){goTo(current+1);}
-function prevSlide(){goTo(current-1);}
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();}
-  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
 });
 
-buildSidebar();
-buildSlides();
 goTo(0);
 </script>
 </body>
