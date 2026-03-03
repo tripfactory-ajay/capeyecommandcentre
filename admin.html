@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | CapeEye Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{
+  --bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;
+  --border:#e2e6ed;--border2:#c8d0dc;
+  --red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);
+  --blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);
+  --gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);
+  --orange:#d4600a;--purple:#6d28d9;
+  --text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);
+  --card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.logo-area img{height:40px;width:auto}
+.logo-divider{width:1px;height:32px;background:var(--border)}
+
+.nav a.active{color:var(--gold)}
+.user-info{display:flex;align-items:center;gap:10px}
+
+.btn-sm{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--text)}
+.main{max-width:1400px;margin:0 auto;padding:28px}
+.page-title{margin-bottom:28px}
+.page-title h1{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:1px}
+.page-title p{color:var(--muted);font-size:14px;margin-top:4px}
+/* TABS */
+.admin-tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.admin-tab{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:8px}
+.admin-tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.admin-tab:hover:not(.active){color:var(--text)}
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+/* LAYOUT */
+.two-col{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.card-body{padding:20px}
+/* FORM */
+.form-field{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block}
+.form-control{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--blue)}
+.form-control::placeholder{color:var(--muted)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#2563eb}
+.btn-accent{background:var(--gold);color:#000}.btn-accent:hover{opacity:.9}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}.btn-danger:hover{background:rgba(239,68,68,.3)}
+.btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+/* STAFF CARDS */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.staff-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;transition:border-color .2s}
+.staff-card:hover{border-color:rgba(255,255,255,.15)}
+.staff-card-top{padding:20px;display:flex;align-items:center;gap:14px}
+.staff-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--gold);flex-shrink:0;border:2px solid var(--border)}
+.staff-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.staff-name{font-size:15px;font-weight:700}
+.staff-role{font-size:12px;color:var(--muted);margin-top:2px}
+.staff-dept{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:800;margin-top:4px;letter-spacing:.5px}
+.staff-card-actions{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg3)}
+/* DEPT CARDS */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.dept-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);padding:16px;display:flex;align-items:center;gap:14px}
+.dept-icon-big{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+/* LIST EDITOR */
+.list-editor{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:rgba(255,255,255,.02)}
+.del-btn{width:28px;height:28px;border-radius:6px;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;flex-shrink:0}
+.del-btn:hover{background:rgba(239,68,68,.3)}
+.add-row{display:flex;gap:8px;padding:12px}
+.add-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;outline:none}
+.add-input:focus{border-color:var(--blue)}
+.add-btn{padding:9px 16px;border-radius:8px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:'Barlow',sans-serif;white-space:nowrap}
+/* PHOTO UPLOAD */
+.avatar-upload{width:80px;height:80px;border-radius:50%;background:var(--bg3);border:2px dashed var(--border);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;position:relative;overflow:hidden;transition:border-color .2s;margin:0 auto 16px}
+.avatar-upload:hover{border-color:var(--blue)}
+.avatar-upload img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.avatar-upload input{display:none}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;border-radius:10px;z-index:9999;font-size:14px;font-weight:700;padding:13px 22px;display:flex;align-items:center;gap:10px;animation:slideUp .2s ease;max-width:360px}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class=""><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class=""><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class=""><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class=""><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class=""><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class="active"><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-title">
+    <h1><i class="fas fa-cog" style="color:var(--gold);margin-right:10px"></i>Admin Panel</h1>
+    <p>Manage staff, departments, dropdown lists and system configuration</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="admin-tabs">
+    <div class="admin-tab active" onclick="setTab('staff')"><i class="fas fa-users"></i> Staff</div>
+    <div class="admin-tab" onclick="setTab('departments')"><i class="fas fa-building"></i> Departments</div>
+    <div class="admin-tab" onclick="setTab('locations')"><i class="fas fa-map-marker-alt"></i> Locations</div>
+    <div class="admin-tab" onclick="setTab('faults')"><i class="fas fa-exclamation-triangle"></i> Fault Types</div>
+    <div class="admin-tab" onclick="setTab('repairs')"><i class="fas fa-tools"></i> Repair Types</div>
+    <div class="admin-tab" onclick="setTab('parts')"><i class="fas fa-cogs"></i> Parts List</div>
+    <div class="admin-tab" onclick="setTab('workflow')"><i class="fas fa-tasks"></i> Workflow Stages</div>
+    <div class="admin-tab" onclick="setTab('system')"><i class="fas fa-database"></i> System</div>
+  </div>
+
+  <!-- ══ STAFF PANEL ══ -->
+  <div class="panel active" id="panel-staff">
+    <div class="two-col">
+      <!-- Add / Edit form -->
+      <div class="card" style="position:sticky;top:84px">
+        <div class="card-header">
+          <span class="card-title" id="staffFormTitle">Add New Staff Member</span>
+        </div>
+        <div class="card-body">
+          <input type="hidden" id="editStaffId">
+          <div class="avatar-upload" onclick="document.getElementById('avatarFile').click()" id="avatarWrap">
+            <i class="fas fa-camera" style="color:var(--muted);font-size:20px"></i>
+            <span style="font-size:10px;color:var(--muted);margin-top:4px">Photo</span>
+            <input type="file" id="avatarFile" accept="image/*" onchange="previewAvatar(this)">
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">First Name</label>
+              <input class="form-control" id="staffFirst" placeholder="e.g. Keith">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Last Name</label>
+              <input class="form-control" id="staffLast" placeholder="e.g. Hardy">
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Job Role / Title</label>
+            <input class="form-control" id="staffRole" placeholder="e.g. General Manager">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Department</label>
+            <select class="form-control" id="staffDept"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Phone Number</label>
+              <input class="form-control" id="staffPhone" placeholder="07700 000000">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Email Address</label>
+              <input class="form-control" id="staffEmail" placeholder="name@autocapital.co.uk" type="email">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Start Date</label>
+              <input class="form-control" id="staffStart" type="date">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Emergency Contact</label>
+              <input class="form-control" id="staffEmergency" placeholder="Name & number">
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="staffNotes" rows="2" placeholder="Any additional info..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-accent btn-block" onclick="saveStaff()" style="flex:1"><i class="fas fa-save"></i> <span id="staffSaveLbl">Add Staff Member</span></button>
+            <button class="btn btn-ghost" onclick="clearStaffForm()" id="staffCancelBtn" style="display:none"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+      </div>
+      <!-- Staff list -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.5px">Current Staff (<span id="staffCount">0</span>)</div>
+          <input id="staffSearch" placeholder="Search..." style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:200px" oninput="renderStaff()">
+        </div>
+        <div class="staff-grid" id="staffGrid"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DEPARTMENTS PANEL ══ -->
+  <div class="panel" id="panel-departments">
+    <div class="two-col">
+      <div class="card" style="position:sticky;top:84px">
+        <div class="card-header"><span class="card-title" id="deptFormTitle">Add Department</span></div>
+        <div class="card-body">
+          <input type="hidden" id="editDeptId">
+          <div class="form-field">
+            <label class="form-label">Department Name</label>
+            <input class="form-control" id="deptName" placeholder="e.g. Bodyshop">
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Icon (emoji)</label>
+              <input class="form-control" id="deptIcon" placeholder="🎨" maxlength="4" style="font-size:22px;text-align:center">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Colour</label>
+              <input class="form-control" id="deptColor" type="color" value="#3b7ff5" style="height:42px;padding:4px 8px;cursor:pointer">
+            </div>
+          </div>
+          <button class="btn btn-accent btn-block" onclick="saveDept()"><i class="fas fa-save"></i> <span id="deptSaveLbl">Add Department</span></button>
+          <button class="btn btn-ghost btn-block" onclick="clearDeptForm()" id="deptCancelBtn" style="display:none;margin-top:8px"><i class="fas fa-times"></i> Cancel Edit</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.5px;margin-bottom:14px">Departments (<span id="deptCount">0</span>)</div>
+        <div class="dept-grid" id="deptGrid"><div class="loading"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LIST PANELS (Locations, Faults, Repairs, Parts) ══ -->
+  <div class="panel" id="panel-locations"><div id="list-locations"></div></div>
+  <div class="panel" id="panel-faults"><div id="list-faults"></div></div>
+  <div class="panel" id="panel-repairs"><div id="list-repairs"></div></div>
+  <div class="panel" id="panel-parts"><div id="list-parts"></div></div>
+
+  <!-- ══ WORKFLOW STAGES PANEL ══ -->
+  <div class="panel" id="panel-workflow">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Workflow Stage Order</span><span style="font-size:12px;color:var(--muted)">Drag to reorder · Click to edit</span></div>
+      <div id="workflowStageList" style="padding:12px"></div>
+    </div>
+  </div>
+
+  <!-- ══ SYSTEM PANEL ══ -->
+  <div class="panel" id="panel-system">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title">🗄️ Database</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">Seed Firestore with the default vehicle, staff and list data from <code>ac-data.js</code>. Only run this once when setting up a new system.</div>
+          <button class="btn btn-primary" onclick="runSeed()"><i class="fas fa-database"></i> Seed Firestore with Default Data</button>
+          <div style="font-size:12px;color:var(--muted)">⚠ This will not overwrite existing records.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">👤 User Accounts</span></div>
+        <div class="card-body">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">User accounts (logins) are managed in the Firebase Console. To add a new user:</div>
+          <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px">
+            <li>Go to <strong style="color:var(--text)">firebase.google.com</strong></li>
+            <li>Open your project → <strong style="color:var(--text)">Authentication</strong></li>
+            <li>Click <strong style="color:var(--text)">Add User</strong></li>
+            <li>Enter their email and a temporary password</li>
+          </ol>
+          <a href="https://console.firebase.google.com" target="_blank" class="btn btn-ghost" style="margin-top:12px;display:inline-flex"><i class="fas fa-external-link-alt"></i> Open Firebase Console</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">📊 Storage Stats</span></div>
+        <div class="card-body" id="statsPanel"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🔑 Session</span></div>
+        <div class="card-body">
+          <div id="sessionInfo" style="font-size:13px;color:var(--muted);line-height:2"></div>
+          <button class="btn btn-danger" onclick="doLogout()" style="margin-top:14px"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ── ADMIN PAGE ── */
+function load(k,def){try{return JSON.parse(localStorage.getItem('ac_admin_'+k))||def;}catch(e){return def;}}
+function save(k,v){localStorage.setItem('ac_admin_'+k,JSON.stringify(v));}
+
+let staff  = load('staff',  AC_STAFF.map((s,i)=>({...s,id:i+1})));
+let depts  = load('depts',  AC_DEPARTMENTS.map((d,i)=>({...d,id:i+1})));
+let locs   = load('locs',   [...AC_LOCATIONS]);
+let faults = load('faults', [...AC_FAULTS]);
+let repairs= load('repairs',[...AC_REPAIRS]);
+let parts  = load('parts',  [...AC_PARTS]);
+const DEPT_C={Management:'#64748b',Sales:'#003DA5',Workshop:'#ef4444',Valeting:'#10b981',Marketing:'#8b5cf6',Finance:'#a855f7',Bodyshop:'#f97316',Intake:'#6366f1'};
+
+/* TABS */
+function setTab(t){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(event&&event.currentTarget)event.currentTarget.classList.add('active');
+  ({staff:renderStaff,departments:renderDepts,locations:()=>renderList('locations',locs),
+    faults:()=>renderList('faults',faults),repairs:()=>renderList('repairs',repairs),
+    parts:()=>renderList('parts',parts),workflow:renderWorkflow,system:renderSystem})[t]?.();
+}
+
+/* STAFF */
+let editingStaffId=null,avatarData=null;
+function renderStaff(){
+  const q=(document.getElementById('staffSearch').value||'').toLowerCase();
+  const filtered=staff.filter(s=>!q||`${s.name} ${s.role} ${s.dept}`.toLowerCase().includes(q));
+  document.getElementById('staffCount').textContent=filtered.length;
+  // populate dept dropdown
+  const sel=document.getElementById('staffDept');
+  sel.innerHTML=depts.map(d=>`<option value="${d.name}">${d.icon} ${d.name}</option>`).join('');
+  document.getElementById('staffGrid').innerHTML=filtered.map(s=>{
+    const col=DEPT_C[s.dept]||'#003DA5';
+    const init=s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="staff-card">
+      <div class="staff-card-top">
+        <div class="staff-avatar" style="background:${col}22;color:${col}">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-weight:800;font-size:18px">${init}</span>`}</div>
+        <div><div class="staff-name">${s.name}</div><div class="staff-role">${s.role}</div>
+        <span class="staff-dept" style="background:${col}18;color:${col}">${s.dept}</span></div>
+      </div>
+      <div class="staff-card-actions">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="editStaff(${s.id})"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStaff(${s.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('')||'<div class="loading">No staff found</div>';
+}
+function saveStaff(){
+  const first=document.getElementById('staffFirst').value.trim(),last=document.getElementById('staffLast').value.trim();
+  if(!first||!last){toast('Enter first and last name','#C8102E');return;}
+  const s={id:editingStaffId||Date.now(),name:first+' '+last,role:document.getElementById('staffRole').value.trim()||'Staff',
+    dept:document.getElementById('staffDept').value,phone:document.getElementById('staffPhone').value.trim(),
+    email:document.getElementById('staffEmail').value.trim(),startDate:document.getElementById('staffStart').value,
+    emergency:document.getElementById('staffEmergency').value.trim(),notes:document.getElementById('staffNotes').value.trim(),photo:avatarData||null};
+  if(editingStaffId){staff=staff.map(x=>x.id===editingStaffId?s:x);toast('Staff updated','#1a7f37');}
+  else{staff.push(s);toast('Staff member added','#003DA5');}
+  save('staff',staff);clearStaffForm();renderStaff();
+}
+function editStaff(id){
+  const s=staff.find(x=>x.id===id);if(!s)return;
+  editingStaffId=id;
+  const [first,...rest]=s.name.split(' ');
+  document.getElementById('staffFirst').value=first;document.getElementById('staffLast').value=rest.join(' ');
+  document.getElementById('staffRole').value=s.role||'';document.getElementById('staffDept').value=s.dept||'';
+  document.getElementById('staffPhone').value=s.phone||'';document.getElementById('staffEmail').value=s.email||'';
+  document.getElementById('staffStart').value=s.startDate||'';document.getElementById('staffEmergency').value=s.emergency||'';
+  document.getElementById('staffNotes').value=s.notes||'';
+  if(s.photo){avatarData=s.photo;document.getElementById('avatarWrap').innerHTML=`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><input type="file" id="avatarFile" accept="image/*" onchange="previewAvatar(this)">`;}
+  document.getElementById('staffFormTitle').textContent='Edit Staff Member';
+  document.getElementById('staffSaveLbl').textContent='Save Changes';
+  document.getElementById('staffCancelBtn').style.display='flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteStaff(id){if(!confirm('Remove this staff member?'))return;staff=staff.filter(s=>s.id!==id);save('staff',staff);renderStaff();toast('Removed','#C8102E');}
+function clearStaffForm(){
+  editingStaffId=null;avatarData=null;
+  ['staffFirst','staffLast','staffRole','staffPhone','staffEmail','staffStart','staffEmergency','staffNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('avatarWrap').innerHTML='<i class="fas fa-camera" style="color:var(--muted);font-size:20px"></i><span style="font-size:10px;color:var(--muted);margin-top:4px">Photo</span><input type="file" id="avatarFile" accept="image/*" onchange="previewAvatar(this)">';
+  document.getElementById('staffFormTitle').textContent='Add New Staff Member';
+  document.getElementById('staffSaveLbl').textContent='Add Staff Member';
+  document.getElementById('staffCancelBtn').style.display='none';
+}
+function previewAvatar(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{avatarData=e.target.result;document.getElementById('avatarWrap').innerHTML=`<img src="${avatarData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><input type="file" id="avatarFile" accept="image/*" onchange="previewAvatar(this)">`;};r.readAsDataURL(file);}
+
+/* DEPARTMENTS */
+let editingDeptId=null;
+function renderDepts(){
+  document.getElementById('deptCount').textContent=depts.length;
+  document.getElementById('deptGrid').innerHTML=depts.map(d=>`
+    <div class="dept-card">
+      <div class="dept-icon-big" style="background:${d.color}22"><span style="font-size:22px">${d.icon}</span></div>
+      <div style="flex:1"><div style="font-weight:700">${d.name}</div><div style="font-size:12px;color:var(--muted)">${staff.filter(s=>s.dept===d.name).length} staff</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="editDept(${d.id})"><i class="fas fa-edit"></i></button>
+        <button class="del-btn" onclick="deleteDept(${d.id})"><i class="fas fa-times"></i></button>
+      </div>
+    </div>`).join('');
+}
+function saveDept(){const name=document.getElementById('deptName').value.trim();if(!name){toast('Enter name','#C8102E');return;}const d={id:editingDeptId||Date.now(),name,icon:document.getElementById('deptIcon').value||'🏢',color:document.getElementById('deptColor').value};if(editingDeptId){depts=depts.map(x=>x.id===editingDeptId?d:x);toast('Updated','#1a7f37');}else{depts.push(d);toast('Added','#003DA5');}save('depts',depts);clearDeptForm();renderDepts();}
+function editDept(id){const d=depts.find(x=>x.id===id);if(!d)return;editingDeptId=id;document.getElementById('deptName').value=d.name;document.getElementById('deptIcon').value=d.icon;document.getElementById('deptColor').value=d.color;document.getElementById('deptFormTitle').textContent='Edit Department';document.getElementById('deptSaveLbl').textContent='Save Changes';document.getElementById('deptCancelBtn').style.display='block';}
+function deleteDept(id){if(!confirm('Remove?'))return;depts=depts.filter(d=>d.id!==id);save('depts',depts);renderDepts();toast('Removed','#C8102E');}
+function clearDeptForm(){editingDeptId=null;document.getElementById('deptName').value='';document.getElementById('deptIcon').value='';document.getElementById('deptColor').value='#003DA5';document.getElementById('deptFormTitle').textContent='Add Department';document.getElementById('deptSaveLbl').textContent='Add Department';document.getElementById('deptCancelBtn').style.display='none';}
+
+/* LIST EDITOR */
+function renderList(key,arr){
+  const titles={locations:'Locations',faults:'Fault Types',repairs:'Repair Types',parts:'Parts List'};
+  const icons={locations:'fa-map-marker-alt',faults:'fa-exclamation-triangle',repairs:'fa-tools',parts:'fa-cogs'};
+  document.getElementById('list-'+key).innerHTML=`<div style="max-width:600px">
+    <div style="font-size:20px;font-weight:800;margin-bottom:14px"><i class="fas ${icons[key]||'fa-list'}" style="color:var(--blue);margin-right:8px"></i>${titles[key]||key} (${arr.length})</div>
+    <div class="list-editor">
+      ${arr.map((item,i)=>`<div class="list-item"><span>${item}</span><button class="del-btn" onclick="removeItem('${key}',${i})"><i class="fas fa-times"></i></button></div>`).join('')}
+      <div class="add-row"><input class="add-input" id="add_${key}" placeholder="Add new..." onkeydown="if(event.key==='Enter')addItem('${key}')"><button class="add-btn" onclick="addItem('${key}')"><i class="fas fa-plus"></i> Add</button></div>
+    </div></div>`;
+}
+function addItem(key){const input=document.getElementById('add_'+key);const val=input.value.trim();if(!val)return;const map={locations:locs,faults,repairs,parts};map[key].push(val);save(key,map[key]);input.value='';renderList(key,map[key]);toast('Added','#003DA5');}
+function removeItem(key,idx){const map={locations:locs,faults,repairs,parts};map[key].splice(idx,1);save(key,map[key]);renderList(key,map[key]);toast('Removed','#C8102E');}
+
+/* WORKFLOW */
+function renderWorkflow(){
+  document.getElementById('workflowStageList').innerHTML=AC_WORKFLOW_STAGES.map(s=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-bottom:1px solid var(--border)">
+      <div style="width:28px;height:28px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;flex-shrink:0">${s.id}</div>
+      <div style="flex:1"><div style="font-weight:700">${s.name}</div><div style="font-size:12px;color:var(--muted)">${s.dept} → ${s.handoverTo||'Complete'}</div></div>
+      <span style="font-size:11px;background:${s.color}22;color:${s.color};padding:3px 10px;border-radius:6px;font-weight:700">${s.dept}</span>
+    </div>`).join('');
+}
+
+/* SYSTEM */
+function renderSystem(){
+  const keys=Object.keys(localStorage).filter(k=>k.startsWith('ac_'));
+  const bytes=keys.reduce((s,k)=>s+(localStorage.getItem(k)||'').length,0);
+  document.getElementById('statsPanel').innerHTML=`<div style="display:grid;gap:10px">
+    <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px"><span>localStorage keys</span><strong>${keys.length}</strong></div>
+    <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px"><span>Data size</span><strong>${(bytes/1024).toFixed(1)} KB</strong></div>
+    <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px"><span>Staff records</span><strong>${staff.length}</strong></div>
+    <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px"><span>Departments</span><strong>${depts.length}</strong></div>
+    <button class="btn btn-danger" style="margin-top:8px" onclick="if(confirm('Clear ALL local data?')){localStorage.clear();location.reload();}"><i class="fas fa-trash"></i> Clear All Local Data</button>
+  </div>`;
+  document.getElementById('sessionInfo').innerHTML=`<div style="padding:10px;background:var(--bg3);border-radius:8px;font-size:13px"><strong>Mode:</strong> Review (No Auth)<br><strong>Data:</strong> localStorage<br><strong>Version:</strong> CapeEye v5</div>`;
+}
+function runSeed(){toast('Data loaded from ac-data.js — no Firestore in review mode','#7a8fa6');}
+
+function toast(msg,bg){document.querySelectorAll('.admin-toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast admin-toast';t.style.cssText=`background:${bg};color:#fff`;t.innerHTML=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+/* INIT */
+renderStaff();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

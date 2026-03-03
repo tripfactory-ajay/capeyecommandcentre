@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Trail | Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{--bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;--border:#e2e6ed;--border2:#c8d0dc;--red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);--blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);--gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);--orange:#d4600a;--text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;--shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);--card-radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+.nav a.active{background:var(--red);color:#fff;font-weight:700}
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{color:var(--red);border-color:var(--red)}
+
+.main{max-width:1500px;margin:0 auto;padding:24px}
+.page-hdr{margin-bottom:20px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-hdr h1{font-size:24px;font-weight:800}.r{color:var(--red)}
+.page-hdr p{color:var(--muted);font-size:13px;margin-top:3px}
+
+/* STATS STRIP */
+.stats-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 16px;border-top:3px solid var(--sc,var(--blue));box-shadow:var(--shadow)}
+.stat-val{font-size:28px;font-weight:800;color:var(--sc,var(--blue));line-height:1}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+/* FILTERS */
+.filter-bar{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow)}
+.fi{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
+.fi:focus{border-color:var(--blue)}
+.fi-search{flex:1;min-width:180px;padding:7px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--text)}
+.fi-search:focus{border-color:var(--blue)}
+.fi-search::placeholder{color:var(--muted)}
+.btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--text)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid rgba(200,16,46,.2)}.btn-danger:hover{background:rgba(200,16,46,.15)}
+
+/* TIMELINE */
+.timeline{position:relative}
+.tl-date-group{margin-bottom:8px}
+.tl-date-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:8px 0 6px;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.tl-date-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.tl-row{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:#fff;border:1px solid var(--border);border-radius:9px;margin-bottom:6px;transition:all .15s;cursor:pointer}
+.tl-row:hover{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-light)}
+.tl-row.type-handover{border-left:3px solid var(--green)}
+.tl-row.type-draft{border-left:3px solid var(--blue)}
+.tl-row.type-import{border-left:3px solid var(--gold)}
+.tl-row.type-alert{border-left:3px solid var(--red)}
+.tl-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.tl-body{flex:1;min-width:0}
+.tl-title{font-size:13px;font-weight:700;line-height:1.3}
+.tl-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+.tl-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.tl-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px}
+.tl-right{text-align:right;flex-shrink:0;min-width:80px}
+.tl-time{font-size:11px;font-weight:600;color:var(--text2)}
+.tl-date-sm{font-size:10px;color:var(--muted);margin-top:2px}
+.rp{font-family:'DM Mono',monospace;font-size:10px;background:#fff9db;color:#7a5c00;padding:2px 6px;border-radius:4px;border:1px solid #e6d080;letter-spacing:1px}
+.empty{text-align:center;padding:48px;color:var(--muted);font-size:14px}
+.empty i{font-size:32px;display:block;margin-bottom:12px;opacity:.2}
+.pager{display:flex;align-items:center;gap:8px;margin-top:14px;justify-content:center}
+.pager-btn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--muted);font-family:'DM Sans',sans-serif}
+.pager-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+.pager-btn:disabled{opacity:.4;cursor:default}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="./inventory.html"><i class="fas fa-car"></i> Inventory</a>
+      <a href="./workflow.html"><i class="fas fa-tasks"></i> Workflow</a>
+      <a href="./alerts.html"><i class="fas fa-bell"></i> Alerts</a>
+      <a href="./analytics.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <a href="./marketing.html"><i class="fas fa-chart-line"></i> Marketing</a>
+      <a href="./keys.html"><i class="fas fa-key"></i> Keys</a>
+      <a href="./import.html"><i class="fas fa-upload"></i> Import</a>
+      <a href="./team.html"><i class="fas fa-users"></i> Team</a>
+      <a href="./admin.html"><i class="fas fa-cog"></i> Admin</a>
+      <a href="./audit.html" class="active"><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-hdr">
+    <div>
+      <h1>Audit <span class="r">Trail</span></h1>
+      <p id="auditSub">Complete activity log — every handover, stage completion, import and alert</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="buildAudit()"><i class="fas fa-sync-alt"></i> Refresh</button>
+      <button class="btn btn-ghost" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+      <button class="btn btn-danger" onclick="clearLog()" title="Clear all audit entries"><i class="fas fa-trash-alt"></i> Clear Log</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-box" style="--sc:var(--blue)"><div class="stat-val" id="st-total">0</div><div class="stat-lbl">Total Events</div></div>
+    <div class="stat-box" style="--sc:var(--green)"><div class="stat-val" id="st-handovers">0</div><div class="stat-lbl">Handovers</div></div>
+    <div class="stat-box" style="--sc:var(--gold)"><div class="stat-val" id="st-imports">0</div><div class="stat-lbl">Data Imports</div></div>
+    <div class="stat-box" style="--sc:var(--orange)"><div class="stat-val" id="st-drafts">0</div><div class="stat-lbl">Drafts Saved</div></div>
+    <div class="stat-box" style="--sc:var(--red)"><div class="stat-val" id="st-people">0</div><div class="stat-lbl">People Active</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <input class="fi-search" id="auditSearch" placeholder="🔍 Search reg, staff name, stage, note..." oninput="applyFilters()">
+    <select class="fi" id="filterType" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option value="handover">Handovers</option>
+      <option value="draft">Drafts Saved</option>
+      <option value="import">Data Imports</option>
+      <option value="alert">Alerts</option>
+    </select>
+    <select class="fi" id="filterDept" onchange="applyFilters()">
+      <option value="">All Departments</option>
+      <option>Intake</option>
+      <option>Workshop</option>
+      <option>Bodyshop</option>
+      <option>Valeting</option>
+      <option>Marketing</option>
+      <option>Sales</option>
+      <option>Finance</option>
+      <option>Management</option>
+    </select>
+    <select class="fi" id="filterStaff" onchange="applyFilters()">
+      <option value="">All Staff</option>
+    </select>
+    <select class="fi" id="filterPri" onchange="applyFilters()">
+      <option value="">All Priorities</option>
+      <option value="critical">🔴 Critical</option>
+      <option value="urgent">🟡 Urgent</option>
+      <option value="normal">🟢 Normal</option>
+    </select>
+    <select class="fi" id="filterDays" onchange="applyFilters()">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="0">All time</option>
+    </select>
+    <button class="btn btn-ghost" onclick="clearFilters()"><i class="fas fa-times"></i> Clear</button>
+  </div>
+
+  <!-- TIMELINE -->
+  <div id="auditTimeline"></div>
+
+  <!-- PAGER -->
+  <div class="pager" id="pager" style="display:none">
+    <button class="pager-btn" id="prevBtn" onclick="changePage(-1)">← Prev</button>
+    <span id="pagerInfo" style="font-size:12px;color:var(--muted)"></span>
+    <button class="pager-btn" id="nextBtn" onclick="changePage(1)">Next →</button>
+  </div>
+</main>
+
+<script>
+const DEPT_C = {Intake:'#6366f1',Workshop:'#7c3aed',Bodyshop:'#f97316',Valeting:'#10b981',Marketing:'#3b82f6',Sales:'#22c55e',Finance:'#a855f7',Management:'#64748b'};
+const TYPE_CFG = {
+  handover: {icon:'fa-exchange-alt', bg:'rgba(26,127,55,.12)', col:'#1a7f37', label:'Handover'},
+  draft:    {icon:'fa-save',          bg:'rgba(0,61,165,.1)',   col:'#003DA5', label:'Draft Saved'},
+  import:   {icon:'fa-file-upload',   bg:'rgba(212,152,10,.12)',col:'#d4980a', label:'Import'},
+  alert:    {icon:'fa-bell',          bg:'rgba(200,16,46,.08)', col:'#C8102E', label:'Alert'},
+};
+
+let allEvents = [];
+let filtered  = [];
+let page = 0;
+const PAGE = 50;
+
+/* ── COLLECT ALL EVENTS ── */
+function collectEvents() {
+  const events = [];
+
+  // 1. Handovers — scan all ac_ho_* keys
+  Object.keys(localStorage).filter(k=>k.startsWith('ac_ho_')).forEach(k => {
+    try {
+      const ho = JSON.parse(localStorage.getItem(k));
+      if (!ho || !ho.ts) return;
+      // key format: ac_ho_STOCKNO_STAGEID
+      const parts = k.replace('ac_ho_','').split('_');
+      const stageId = parseInt(parts[parts.length-1]);
+      const stockNo = parts.slice(0,-1).join('_');
+      const stage = AC_WORKFLOW_STAGES.find(s=>s.id===stageId)||{name:'Stage '+stageId,dept:'Unknown'};
+      const v = getVehicles().find(x=>x.stockNo===stockNo)||{registration:stockNo,make:'',model:''};
+      events.push({
+        type:'handover', ts:ho.ts,
+        title:`Stage ${stageId}: ${stage.name} completed → ${ho.toName}`,
+        desc:`${v.registration||stockNo} ${v.make} ${v.model} · Note: ${ho.note||'No note'}`,
+        staff: ho.toName||'Unknown',
+        dept: stage.dept,
+        reg: v.registration||stockNo,
+        stockNo, stageId,
+        priority: ho.priority||'normal',
+        fromStage: ho.fromStage||stage.name,
+        note: ho.note||'',
+      });
+    } catch(e){}
+  });
+
+  // 2. Tasks — per staff member
+  Object.keys(localStorage).filter(k=>k.startsWith('ac_tasks_')).forEach(k => {
+    try {
+      const tasks = JSON.parse(localStorage.getItem(k)||'[]');
+      tasks.forEach(t => {
+        if (!t.assignedAt) return;
+        const stage = AC_WORKFLOW_STAGES.find(s=>s.id===t.stageId)||{dept:'Unknown'};
+        events.push({
+          type:'draft', ts:t.assignedAt,
+          title:`Task assigned: ${t.stageName||'Stage'} → ${k.replace('ac_tasks_','').replace(/_/g,' ')}`,
+          desc:`${t.vehicle?.registration||t.stockNo||'—'} ${t.vehicle?.make||''} ${t.vehicle?.model||''} · ${t.note||'No note'}`,
+          staff: k.replace('ac_tasks_','').replace(/_/g,' '),
+          dept: stage.dept,
+          reg: t.vehicle?.registration||t.stockNo||'',
+          stockNo: t.stockNo,
+          priority: t.priority||'normal',
+          note: t.note||'',
+        });
+      });
+    } catch(e){}
+  });
+
+  // 3. Stock imports
+  try {
+    const hist = JSON.parse(localStorage.getItem('ac_import_stock_history')||'[]');
+    hist.forEach(h => {
+      events.push({
+        type:'import', ts: new Date(h.ts).toISOString(),
+        title:`ClickDealer stock import — ${h.total} vehicles`,
+        desc:`${h.newCount} new · ${h.updateCount} updated · File: ${h.filename||'CSV'}`,
+        staff:'System', dept:'Management', reg:'', priority:'normal',
+      });
+    });
+  } catch(e){}
+
+  // 4. eTrack imports
+  try {
+    const hist = JSON.parse(localStorage.getItem('ac_import_etrack_history')||'[]');
+    hist.forEach(h => {
+      events.push({
+        type:'import', ts: new Date(h.ts).toISOString(),
+        title:`eTrack keys import — ${h.total} records`,
+        desc:`${h.out} keys out · File: ${h.filename||'CSV'}`,
+        staff:'System', dept:'Management', reg:'', priority:'normal',
+      });
+    });
+  } catch(e){}
+
+  // 5. System alerts feed
+  try {
+    const alerts = getAlerts().filter(a=>a.type||a.level);
+    alerts.forEach(a => {
+      events.push({
+        type:'alert', ts:a.ts||new Date().toISOString(),
+        title:a.title||'System alert',
+        desc:a.body||'',
+        staff:'System', dept:'Management',
+        reg:a.stockNo||'', priority:a.level==='critical'?'critical':a.level==='warning'?'urgent':'normal',
+      });
+    });
+  } catch(e){}
+
+  // Sort newest first
+  events.sort((a,b) => new Date(b.ts)-new Date(a.ts));
+  return events;
+}
+
+function applyFilters() {
+  const q    = (document.getElementById('auditSearch').value||'').toLowerCase();
+  const type = document.getElementById('filterType').value;
+  const dept = document.getElementById('filterDept').value;
+  const staff= document.getElementById('filterStaff').value;
+  const pri  = document.getElementById('filterPri').value;
+  const days = parseInt(document.getElementById('filterDays').value)||0;
+  const cutoff = days>0 ? Date.now()-days*86400000 : 0;
+
+  filtered = allEvents.filter(e => {
+    if(type && e.type!==type) return false;
+    if(dept && e.dept!==dept) return false;
+    if(staff && e.staff!==staff) return false;
+    if(pri && e.priority!==pri) return false;
+    if(cutoff && new Date(e.ts).getTime()<cutoff) return false;
+    if(q && ![e.title,e.desc,e.staff,e.reg,e.dept].some(f=>(f||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  page=0;
+  render();
+}
+
+function render() {
+  const start = page*PAGE;
+  const pageEvts = filtered.slice(start, start+PAGE);
+
+  if (!filtered.length) {
+    document.getElementById('auditTimeline').innerHTML = '<div class="empty"><i class="fas fa-clipboard-list"></i>No activity found matching your filters</div>';
+    document.getElementById('pager').style.display='none';
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  pageEvts.forEach(e => {
+    const d = new Date(e.ts).toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+    if(!groups[d]) groups[d]=[];
+    groups[d].push(e);
+  });
+
+  const priCol={normal:'var(--green)',urgent:'var(--gold)',critical:'var(--red)'};
+  const priIcon={normal:'🟢',urgent:'🟡',critical:'🔴'};
+
+  document.getElementById('auditTimeline').innerHTML = Object.entries(groups).map(([date,evts])=>`
+    <div class="tl-date-group">
+      <div class="tl-date-label">${date}</div>
+      ${evts.map(e=>{
+        const cfg = TYPE_CFG[e.type]||TYPE_CFG.draft;
+        const dc = DEPT_C[e.dept]||'var(--blue)';
+        const t = new Date(e.ts);
+        const timeStr = t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        return `<div class="tl-row type-${e.type}" onclick="${e.stockNo?`window.location='./workflow.html?stock=${e.stockNo}'`:'void(0)'}">
+          <div class="tl-icon" style="background:${cfg.bg};color:${cfg.col}"><i class="fas ${cfg.icon}"></i></div>
+          <div class="tl-body">
+            <div class="tl-title">${e.reg?`<span class="rp">${e.reg}</span> `:''}${e.title}</div>
+            <div class="tl-desc">${e.desc}</div>
+            <div class="tl-tags">
+              <span class="tl-tag" style="background:${cfg.bg};color:${cfg.col}">${cfg.label}</span>
+              ${e.dept&&e.dept!=='Management'||e.type!=='import'?`<span class="tl-tag" style="background:${dc}18;color:${dc}">${e.dept}</span>`:''}
+              ${e.staff&&e.staff!=='System'?`<span class="tl-tag" style="background:var(--bg3);color:var(--text2)"><i class="fas fa-user" style="font-size:9px;margin-right:3px"></i>${e.staff}</span>`:''}
+              ${e.priority&&e.priority!=='normal'?`<span class="tl-tag" style="background:${priCol[e.priority]}18;color:${priCol[e.priority]}">${priIcon[e.priority]} ${e.priority.toUpperCase()}</span>`:''}
+              ${e.note?`<span class="tl-tag" style="background:var(--bg3);color:var(--muted);font-style:italic;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"${e.note.slice(0,50)}${e.note.length>50?'…':''}"</span>`:''}
+            </div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-time">${timeStr}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  // Pager
+  const totalPages = Math.ceil(filtered.length/PAGE);
+  document.getElementById('pager').style.display = totalPages>1?'flex':'none';
+  document.getElementById('pagerInfo').textContent = `Page ${page+1} of ${totalPages} · ${filtered.length} events`;
+  document.getElementById('prevBtn').disabled = page===0;
+  document.getElementById('nextBtn').disabled = page>=totalPages-1;
+}
+
+function changePage(dir){ page+=dir; render(); window.scrollTo({top:200,behavior:'smooth'}); }
+
+function clearFilters(){
+  document.getElementById('auditSearch').value='';
+  document.getElementById('filterType').value='';
+  document.getElementById('filterDept').value='';
+  document.getElementById('filterStaff').value='';
+  document.getElementById('filterPri').value='';
+  document.getElementById('filterDays').value='30';
+  applyFilters();
+}
+
+function buildAudit(){
+  allEvents = collectEvents();
+  
+  // Stats
+  const handovers = allEvents.filter(e=>e.type==='handover');
+  const imports   = allEvents.filter(e=>e.type==='import');
+  const drafts    = allEvents.filter(e=>e.type==='draft');
+  const people    = new Set(allEvents.filter(e=>e.staff&&e.staff!=='System').map(e=>e.staff)).size;
+  document.getElementById('st-total').textContent     = allEvents.length;
+  document.getElementById('st-handovers').textContent = handovers.length;
+  document.getElementById('st-imports').textContent   = imports.length;
+  document.getElementById('st-drafts').textContent    = drafts.length;
+  document.getElementById('st-people').textContent    = people;
+
+  // Populate staff dropdown
+  const staffSet = [...new Set(allEvents.filter(e=>e.staff&&e.staff!=='System').map(e=>e.staff))].sort();
+  const sel = document.getElementById('filterStaff');
+  sel.innerHTML = '<option value="">All Staff</option>' + staffSet.map(s=>`<option value="${s}">${s}</option>`).join('');
+
+  // Page subtitle
+  document.getElementById('auditSub').textContent = `${allEvents.length} events · ${handovers.length} handovers · ${people} people active`;
+
+  applyFilters();
+}
+
+function exportCSV(){
+  const rows = [['Time','Type','Reg','Staff','Department','Stage/Title','Description','Priority']];
+  filtered.forEach(e=>{
+    rows.push([
+      new Date(e.ts).toLocaleString('en-GB'),
+      e.type, e.reg||'', e.staff||'',
+      e.dept||'', e.title, e.desc||'', e.priority||'normal'
+    ]);
+  });
+  const csv = rows.map(r=>r.map(c=>'"'+(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'audit_trail_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+function clearLog(){
+  if(!confirm('Clear all audit log entries? This cannot be undone.\n\nNOTE: This only clears the audit log. Vehicle and workflow data is not affected.')) return;
+  Object.keys(localStorage).filter(k=>k.startsWith('ac_ho_')||k.startsWith('ac_tasks_')||k==='ac_alerts').forEach(k=>localStorage.removeItem(k));
+  buildAudit();
+}
+
+buildAudit();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+<script>
+(function(){try{var cd=localStorage.getItem('ac_import_clickdealer_ts');var et=localStorage.getItem('ac_import_etrack_ts');var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];var badge=document.getElementById('lastImportBadge');var span=document.getElementById('lastImportTime');if(!ts||!badge||!span)return;var age=(Date.now()-ts)/3600000;var d=new Date(ts);var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});span.textContent=label;badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');}catch(e){}})();
+</script>
+</body>
+</html>

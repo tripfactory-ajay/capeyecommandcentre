@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team | CapeEye Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{
+  --bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;
+  --border:#e2e6ed;--border2:#c8d0dc;
+  --red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);
+  --blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);
+  --gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);
+  --orange:#d4600a;--purple:#6d28d9;
+  --text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);
+  --card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.logo-area img{height:40px;width:auto}
+.logo-divider{width:1px;height:32px;background:var(--border)}
+
+.nav a.active{color:var(--gold)}
+.user-info{display:flex;align-items:center;gap:10px}
+
+.btn-sm{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Barlow',sans-serif}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--text)}
+.main{max-width:1400px;margin:0 auto;padding:28px}
+.page-title{margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-title h1{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:1px}
+.filters-row{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.search-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:240px}
+.search-box::placeholder{color:var(--muted)}
+.filter-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--muted);transition:all .2s}
+.filter-btn.active{color:var(--text);background:var(--bg3);border-color:rgba(255,255,255,.2)}
+/* STAFF GRID */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.team-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .25s;cursor:pointer}
+.team-card:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.3)}
+.card-banner{height:80px;position:relative}
+.card-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--bg2);position:absolute;bottom:-36px;left:20px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.card-avatar img{width:100%;height:100%;object-fit:cover}
+.card-body{padding:48px 20px 20px}
+.card-name{font-size:18px;font-weight:800;margin-bottom:3px}
+.card-role{font-size:13px;color:var(--muted);margin-bottom:10px}
+.dept-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;margin-bottom:14px}
+.contact-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:6px}
+.contact-row i{width:14px;text-align:center;flex-shrink:0}
+.contact-row a{color:var(--muted);text-decoration:none}.contact-row a:hover{color:var(--text)}
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.stat-box{text-align:center}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800}
+.stat-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
+/* PROFILE MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(6px)}
+.modal{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:680px;animation:popIn .25s ease}
+@keyframes popIn{from{transform:scale(.94) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-banner{height:120px;position:relative;border-radius:20px 20px 0 0;overflow:hidden}
+.modal-avatar{width:96px;height:96px;border-radius:50%;border:4px solid var(--bg2);position:absolute;bottom:-48px;left:28px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.modal-avatar img{width:100%;height:100%;object-fit:cover}
+.modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:64px 28px 28px}
+.modal-name{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:.5px}
+.modal-role{font-size:14px;color:var(--muted);margin-top:4px;margin-bottom:14px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.info-field{background:var(--bg3);border-radius:10px;padding:12px 14px}
+.info-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.info-val{font-size:14px;font-weight:600}
+.task-list-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.task-list-item:last-child{border-bottom:none}
+.task-done{color:var(--green)}.task-pending{color:var(--orange)}
+.loading{text-align:center;padding:60px;color:var(--muted)}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class=""><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class=""><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class=""><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class=""><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class="active"><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class=""><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-title">
+    <div>
+      <h1><i class="fas fa-users" style="color:var(--gold);margin-right:10px"></i>Our Team</h1>
+      <p style="color:var(--muted);font-size:14px;margin-top:4px">Staff directory — click any card for full profile</p>
+    </div>
+    <a href="./admin.html" style="padding:9px 18px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px"><i class="fas fa-user-plus"></i> Manage Staff</a>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-row">
+    <input class="search-box" id="teamSearch" placeholder="🔍 Search staff..." oninput="renderTeam()">
+    <div id="deptFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
+
+  <!-- TEAM GRID -->
+  <div class="team-grid" id="teamGrid">
+    <div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px"></i><div style="margin-top:12px">Loading team...</div></div>
+  </div>
+</main>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal" style="display:none" onclick="if(event.target===this)closeProfile()">
+  <div class="modal" id="profileContent"></div>
+</div>
+
+<script>
+/* ── TEAM PAGE ── */
+const DEPT_COLORS={Management:'#64748b',Sales:'#003DA5',Workshop:'#ef4444',Valeting:'#10b981',Marketing:'#8b5cf6',Finance:'#a855f7',Bodyshop:'#f97316',Intake:'#6366f1'};
+let activeDept='all';
+
+function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function avatarColor(n){let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffffffff;const cols=['#003DA5','#C8102E','#1a7f37','#d4980a','#7c3aed','#0891b2','#be185d','#d4600a'];return cols[Math.abs(h)%cols.length];}
+
+function renderTeam(){
+  const q=(document.getElementById('teamSearch').value||'').toLowerCase();
+  const list=AC_STAFF.filter(s=>{
+    if(activeDept!=='all'&&s.dept!==activeDept)return false;
+    if(q&&!`${s.name} ${s.role} ${s.dept}`.toLowerCase().includes(q))return false;
+    return true;
+  });
+  const grid=document.getElementById('teamGrid');
+  if(!list.length){grid.innerHTML='<div style="text-align:center;padding:60px;color:var(--muted)"><i class="fas fa-users" style="font-size:32px;opacity:.2;display:block;margin-bottom:12px"></i>No staff found</div>';return;}
+  grid.innerHTML=list.map(s=>{
+    const col=DEPT_COLORS[s.dept]||'#003DA5';
+    const deptData=AC_DEPARTMENTS.find(d=>d.name===s.dept)||{icon:'👤'};
+    const tasks=typeof getTasksForStaff==='function'?getTasksForStaff(s.name):[];
+    const pending=tasks.filter(t=>!t.done).length;
+    return `<div class="team-card" onclick="openProfile('${s.name.replace(/'/g,"\'")}')">
+      <div class="card-banner" style="background:linear-gradient(135deg,${col}22,${col}44)">
+        <div class="card-avatar" style="background:${col}"><span style="color:#fff;font-size:22px;font-weight:800">${initials(s.name)}</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${s.name}</div>
+        <div class="card-role">${s.role}</div>
+        <div class="dept-badge" style="background:${col}18;color:${col};margin-bottom:12px;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700">${deptData.icon} ${s.dept}</div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:${col}">${pending}</div><div class="stat-label">Tasks</div></div>
+          <div class="stat-box"><div class="stat-val" style="font-size:13px">${s.dept}</div><div class="stat-label">Dept</div></div>
+          <div class="stat-box"><div class="stat-val" style="font-size:12px;padding-top:3px">${s.role.split(' ').slice(0,2).join(' ')}</div><div class="stat-label">Title</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openProfile(name){
+  const s=AC_STAFF.find(x=>x.name===name);if(!s)return;
+  const col=DEPT_COLORS[s.dept]||'#003DA5';
+  const deptData=AC_DEPARTMENTS.find(d=>d.name===s.dept)||{icon:'👤'};
+  const tasks=typeof getTasksForStaff==='function'?getTasksForStaff(s.name):[];
+  document.getElementById('profileContent').innerHTML=`
+    <div class="modal-banner" style="background:linear-gradient(135deg,${col}33,${col}66)">
+      <div class="modal-avatar" style="background:${col}"><span style="color:#fff;font-size:34px;font-weight:800">${initials(s.name)}</span></div>
+      <button class="modal-close" onclick="closeProfile()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-name">${s.name}</div>
+      <div class="modal-role" style="color:var(--muted);margin-bottom:10px">${s.role}</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:${col}18;color:${col};margin-bottom:16px">${deptData.icon} ${s.dept}</div>
+      <div class="info-grid">
+        <div class="info-field"><div class="info-label">Department</div><div class="info-val">${s.dept}</div></div>
+        <div class="info-field"><div class="info-label">Role</div><div class="info-val">${s.role}</div></div>
+        <div class="info-field"><div class="info-label">Phone</div><div class="info-val">${s.phone||'Not set'}</div></div>
+        <div class="info-field"><div class="info-label">Email</div><div class="info-val">${s.email||'Not set'}</div></div>
+        <div class="info-field"><div class="info-label">Start Date</div><div class="info-val">${s.startDate||'Not set'}</div></div>
+        <div class="info-field"><div class="info-label">Emergency Contact</div><div class="info-val">${s.emergency||'Not set'}</div></div>
+      </div>
+      ${tasks.length?`<div style="margin-top:20px"><div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Tasks (${tasks.filter(t=>!t.done).length} pending)</div>
+      ${tasks.slice(0,8).map(t=>`<div class="task-list-item"><i class="fas ${t.done?'fa-check-circle task-done':'fa-clock task-pending'}"></i><span>${t.stageName||'Task'}${t.stockNo?' — '+t.stockNo:''}</span><span style="margin-left:auto;font-size:11px">${t.priority==='critical'?'🔴':t.priority==='urgent'?'🟡':''}</span></div>`).join('')}</div>`:
+      `<div style="margin-top:20px;padding:16px;background:var(--bg3);border-radius:10px;text-align:center;color:var(--muted);font-size:13px"><i class="fas fa-check-circle" style="color:var(--green);margin-right:8px"></i>No active tasks</div>`}
+    </div>`;
+  document.getElementById('profileModal').style.display='flex';
+}
+function closeProfile(){document.getElementById('profileModal').style.display='none';}
+
+function buildDeptFilters(){
+  const depts=[...new Set(AC_STAFF.map(s=>s.dept))];
+  document.getElementById('deptFilters').innerHTML=
+    ['all',...depts].map(d=>`<button class="filter-btn${d===activeDept?' active':''}" onclick="setDept('${d}')">${d==='all'?'All Staff':d} <span style="font-size:10px">${d==='all'?AC_STAFF.length:AC_STAFF.filter(s=>s.dept===d).length}</span></button>`).join('');
+}
+function setDept(d){activeDept=d;buildDeptFilters();renderTeam();}
+
+buildDeptFilters();
+renderTeam();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

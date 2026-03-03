@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics | Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{--bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--border:#e2e6ed;--border2:#c8d0dc;--red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);--blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);--gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);--orange:#d4600a;--text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;--shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);--card-radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+
+.logo-img{height:40px;width:auto;object-fit:contain}
+
+.main{max-width:1560px;margin:0 auto;padding:28px}
+.page-hdr{margin-bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.page-hdr h1{font-size:26px;font-weight:800;letter-spacing:-.3px}
+.page-hdr h1 .r{color:var(--red)}
+.page-hdr p{color:var(--muted);font-size:13px;margin-top:3px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--kc,var(--blue));border-radius:var(--card-radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-size:30px;font-weight:800;line-height:1;color:var(--kc,var(--text))}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.kpi i.bi{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.06}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px}
+.card-hdr{padding:13px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.card-title{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--blue)}
+.card-body{padding:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.ch-sm{height:180px;position:relative}
+.ch-md{height:240px;position:relative}
+.ch-lg{height:300px;position:relative}
+.ac-table{width:100%;border-collapse:collapse;font-size:13px}
+.ac-table th{padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border);background:var(--bg3)}
+.ac-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.ac-table tr:last-child td{border-bottom:none}
+.ac-table tbody tr:hover td{background:var(--blue-light)}
+.rp{font-family:"DM Mono",monospace;font-size:11px;background:#fff9db;color:#7a5c00;padding:2px 7px;border-radius:4px;border:1px solid #e6d080;letter-spacing:1.5px}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700}
+.b-red{background:var(--red-light);color:var(--red)}
+.b-blue{background:var(--blue-light);color:var(--blue)}
+.b-green{background:var(--green-light);color:var(--green)}
+.b-orange{background:rgba(212,96,10,.08);color:var(--orange)}
+.b-grey{background:var(--bg3);color:var(--muted)}
+.sec{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:24px 0 14px;display:flex;align-items:center;gap:10px}
+.sec::after{content:"";flex:1;height:1px;background:var(--border)}
+.btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{color:var(--text)}
+/* DWELL BARS */
+.dwell-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.dwell-row:last-child{border-bottom:none}
+.dwell-label{font-size:13px;font-weight:600;width:130px;flex-shrink:0}
+.dwell-bar-wrap{flex:1;height:24px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative}
+.dwell-bar{height:100%;border-radius:6px;transition:width .8s ease;display:flex;align-items:center;padding-left:10px}
+.dwell-bar span{font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
+.dwell-count{font-size:12px;color:var(--muted);width:50px;text-align:right;flex-shrink:0}
+@media(max-width:1200px){.kpi-row{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.g2,.g3{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr 1fr}}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class=""><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class=""><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class="active"><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class=""><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class=""><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class=""><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-hdr">
+    <div>
+      <h1>Stock <span class="r">Analytics</span></h1>
+      <p id="dataLine">Loading...</p>
+    </div>
+    <button class="btn btn-ghost" onclick="buildAll()"><i class="fas fa-sync-alt"></i> Refresh</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi" style="--kc:var(--blue)"><i class="fas fa-car bi"></i><div class="kpi-label">Total Stock</div><div class="kpi-val" id="kTotal">—</div><div class="kpi-sub" id="kTotalSub">—</div></div>
+    <div class="kpi" style="--kc:var(--green)"><i class="fas fa-check-circle bi"></i><div class="kpi-label">In Stock</div><div class="kpi-val" id="kIn">—</div><div class="kpi-sub">Ready to sell</div></div>
+    <div class="kpi" style="--kc:var(--red)"><i class="fas fa-pound-sign bi"></i><div class="kpi-label">Total Value</div><div class="kpi-val" id="kVal">—</div><div class="kpi-sub" id="kAvgSub">Avg per vehicle</div></div>
+    <div class="kpi" style="--kc:var(--orange)"><i class="fas fa-hourglass-half bi"></i><div class="kpi-label">Avg Days Stock</div><div class="kpi-val" id="kAvgDays">—</div><div class="kpi-sub" id="kMaxDays">Max —</div></div>
+    <div class="kpi" style="--kc:var(--gold)"><i class="fas fa-calendar bi"></i><div class="kpi-label">MOT Alerts</div><div class="kpi-val" id="kMot">—</div><div class="kpi-sub">Expiring 60 days</div></div>
+  </div>
+
+  <!-- STOCK AGE ANALYSIS -->
+  <div class="sec"><i class="fas fa-hourglass-half" style="color:var(--blue)"></i> How Long Has Stock Been With Us</div>
+  <div class="g2">
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-chart-bar"></i> Days in Stock — Distribution</span></div>
+      <div class="card-body"><div class="ch-md"><canvas id="cAge"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-list-ol"></i> Oldest Stock — Vehicles by Days In</span></div>
+      <div style="overflow-x:auto;max-height:280px;overflow-y:auto">
+        <table class="ac-table"><thead><tr><th>Reg</th><th>Make / Model</th><th>Days In</th><th>Stage</th><th>Price</th></tr></thead>
+        <tbody id="oldestBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPT DWELL TIME -->
+  <div class="sec"><i class="fas fa-sitemap" style="color:var(--blue)"></i> How Long Is Stock Sitting in Each Department</div>
+  <div class="g2">
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-chart-bar"></i> Avg Days per Department</span></div>
+      <div class="card-body"><div class="ch-md"><canvas id="cDept"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-bars"></i> Current Dwell — Vehicles per Dept</span></div>
+      <div class="card-body" id="dwellBars"></div>
+    </div>
+  </div>
+
+  <!-- STOCK BREAKDOWN -->
+  <div class="sec"><i class="fas fa-chart-pie" style="color:var(--blue)"></i> Stock Breakdown</div>
+  <div class="g4">
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-circle-notch"></i> Status</span></div><div class="card-body"><div class="ch-sm"><canvas id="cStatus"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Location</span></div><div class="card-body"><div class="ch-sm"><canvas id="cLoc"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-gas-pump"></i> Fuel Type</span></div><div class="card-body"><div class="ch-sm"><canvas id="cFuel"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-cog"></i> Gearbox</span></div><div class="card-body"><div class="ch-sm"><canvas id="cGear"></canvas></div></div></div>
+  </div>
+
+  <!-- MAKES -->
+  <div class="sec"><i class="fas fa-car" style="color:var(--blue)"></i> Make Analysis</div>
+  <div class="g2">
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-chart-bar"></i> Top Makes by Volume</span></div><div class="card-body"><div class="ch-md"><canvas id="cMakes"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-pound-sign"></i> Top Makes by Total Value</span></div><div class="card-body"><div class="ch-md"><canvas id="cMakeVal"></canvas></div></div></div>
+  </div>
+
+  <!-- PRICE + MILEAGE -->
+  <div class="sec"><i class="fas fa-filter" style="color:var(--blue)"></i> Price & Mileage Distribution</div>
+  <div class="g2">
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-chart-area"></i> Stock by Price Band</span></div><div class="card-body"><div class="ch-md"><canvas id="cPrice"></canvas></div></div></div>
+    <div class="card"><div class="card-hdr"><span class="card-title"><i class="fas fa-tachometer-alt"></i> Stock by Mileage Band</span></div><div class="card-body"><div class="ch-md"><canvas id="cMile"></canvas></div></div></div>
+  </div>
+
+  <!-- MOT TABLE -->
+  <div class="sec"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i> MOT Expiry — Next 60 Days</div>
+  <div class="card">
+    <table class="ac-table"><thead><tr><th>Reg</th><th>Make / Model</th><th>MOT Date</th><th>Days Left</th><th>Location</th><th>Stage</th><th>Price</th></tr></thead>
+    <tbody id="motBody"></tbody></table>
+  </div>
+
+  <!-- NO PRICE -->
+  <div class="sec"><i class="fas fa-tag" style="color:var(--orange)"></i> Vehicles Without a Price</div>
+  <div class="card">
+    <table class="ac-table"><thead><tr><th>Reg</th><th>Make / Model</th><th>Status</th><th>Stage</th><th>Days In Stock</th><th>Location</th><th>Fuel</th></tr></thead>
+    <tbody id="noPriceBody"></tbody></table>
+  </div>
+</main>
+
+<script>
+const V=getVehicles();
+const CH={};
+const BLUE="#003DA5",RED="#C8102E",GOLD="#d4980a",GREEN="#1a7f37",ORANGE="#d4600a";
+const PAL=[BLUE,"#1a56db","#3b82f6","#60a5fa",RED,"#dc2626","#f87171",GOLD,GREEN,ORANGE,"#7c3aed","#0891b2"];
+const DEPT_C={Intake:"#0891b2",Workshop:"#7c3aed",Bodyshop:"#be185d",Valeting:"#0369a1",Marketing:BLUE,Sales:GREEN,Finance:ORANGE,Management:RED};
+
+function fmt(n){return new Intl.NumberFormat("en-GB").format(n||0);}
+function fgbp(n){return n?"£"+new Intl.NumberFormat("en-GB",{maximumFractionDigits:0}).format(n):"—";}
+function motDays(s){if(!s)return null;const p=s.split("/");if(p.length!==3)return null;return Math.ceil((new Date(+p[2],+p[1]-1,+p[0]).getTime()-Date.now())/86400000);}
+function dc(d){return d>=14?"var(--red)":d>=7?"var(--orange)":d>=4?"var(--gold)":"var(--green)";}
+
+function mkChart(id,type,labels,datasets,opts){
+  if(CH[id])CH[id].destroy();
+  const ctx=document.getElementById(id);if(!ctx)return;
+  CH[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},...(opts||{})}});
+}
+function donut(id,labels,data,colors){
+  mkChart(id,"doughnut",labels,[{data,backgroundColor:colors,borderWidth:2,borderColor:"#fff"}],{cutout:"62%",plugins:{legend:{display:true,position:"bottom",labels:{color:"#3d4d5c",font:{size:10},padding:8,boxWidth:10}}}});
+}
+function bar(id,labels,data,color,extra){
+  mkChart(id,"bar",labels,[{data,backgroundColor:color,borderRadius:5,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#7a8fa6",font:{size:11}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:"#7a8fa6"},grid:{color:"rgba(0,61,165,.05)"}}},...(extra||{})});
+}
+
+function buildAll(){
+  const priced=V.filter(x=>x.price>0);
+  const inStock=V.filter(x=>(x.status||"").includes("In Stock"));
+  const tv=priced.reduce((s,x)=>s+(x.price||0),0);
+  const avgDays=Math.round(V.reduce((s,x)=>s+(x.daysInStock||0),0)/V.length);
+  const maxDays=Math.max(...V.map(x=>x.daysInStock||0));
+  const motSoon=V.filter(x=>{const d=motDays(x.mot);return d!==null&&d<=60;});
+  const noPrice=V.filter(x=>(!x.price||x.price===0)&&x.status!=="Sold");
+
+  document.getElementById("kTotal").textContent=V.length;
+  document.getElementById("kTotalSub").textContent=priced.length+" priced";
+  document.getElementById("kIn").textContent=inStock.length;
+  document.getElementById("kVal").textContent="£"+Math.round(tv/1000)+"k";
+  document.getElementById("kAvgSub").textContent=priced.length?"Avg "+fgbp(tv/priced.length):"—";
+  document.getElementById("kAvgDays").textContent=avgDays+"d";
+  document.getElementById("kMaxDays").textContent="Oldest: "+maxDays+"d";
+  document.getElementById("kMot").textContent=motSoon.length;
+  document.getElementById("dataLine").textContent=V.length+" vehicles · £"+Math.round(tv/1000)+"k total value · Avg "+avgDays+" days in stock";
+
+  // STOCK AGE distribution
+  const ageBands=["0–14d","15–30d","31–60d","61–90d","90d+"];
+  const ageCounts=[0,0,0,0,0];
+  V.forEach(x=>{const d=x.daysInStock||0;if(d<=14)ageCounts[0]++;else if(d<=30)ageCounts[1]++;else if(d<=60)ageCounts[2]++;else if(d<=90)ageCounts[3]++;else ageCounts[4]++;});
+  bar("cAge",ageBands,ageCounts,[GREEN,GREEN,GOLD,ORANGE,RED]);
+
+  // OLDEST stock table
+  const oldest=V.filter(x=>x.daysInStock>0).sort((a,b)=>b.daysInStock-a.daysInStock).slice(0,15);
+  document.getElementById("oldestBody").innerHTML=oldest.map(x=>`<tr><td><span class=rp>${x.registration}</span></td><td><strong>${x.make}</strong> ${x.model}</td><td><strong style="color:${dc(x.daysInStock)}">${x.daysInStock}d</strong></td><td><span class="badge b-blue" style="font-size:10px">${x.workflowStage}</span></td><td>${fgbp(x.price)}</td></tr>`).join("");
+
+  // DEPT dwell time
+  const deptMap={};V.forEach(x=>{const d=x.workflowDept||"Unknown";if(!deptMap[d])deptMap[d]=[];deptMap[d].push(x.daysInStage||0);});
+  const deptEntries=Object.entries(deptMap).sort((a,b)=>{const avgA=a[1].reduce((s,v)=>s+v,0)/a[1].length;const avgB=b[1].reduce((s,v)=>s+v,0)/b[1].length;return avgB-avgA;});
+  const deptLabels=deptEntries.map(d=>d[0]);
+  const deptAvgs=deptEntries.map(d=>(d[1].reduce((s,v)=>s+v,0)/d[1].length).toFixed(1));
+  const deptColors=deptLabels.map(d=>DEPT_C[d]||BLUE);
+  bar("cDept",deptLabels,deptAvgs,deptColors,{scales:{x:{ticks:{color:"#7a8fa6",font:{size:11}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:"#7a8fa6",callback:v=>v+"d"},grid:{color:"rgba(0,61,165,.05)"}}}});
+
+  // DWELL BARS
+  const maxAvg=Math.max(...deptAvgs.map(Number));
+  document.getElementById("dwellBars").innerHTML=deptEntries.map(([dept,times])=>{
+    const avg=(times.reduce((s,v)=>s+v,0)/times.length).toFixed(1);
+    const max=Math.max(...times);
+    const pct=Math.round((avg/maxAvg)*100);
+    const col=DEPT_C[dept]||BLUE;
+    return `<div class=dwell-row>
+      <div class=dwell-label>${dept}</div>
+      <div class=dwell-bar-wrap>
+        <div class=dwell-bar style="width:${pct}%;background:${col}"><span>${avg}d avg</span></div>
+      </div>
+      <div class=dwell-count>${times.length}v / max ${max}d</div>
+    </div>`;
+  }).join("");
+
+  // STATUS
+  const sc={};V.forEach(x=>{sc[x.status||"Unknown"]=(sc[x.status||"Unknown"]||0)+1;});
+  const sCols={"In Stock":GREEN,"In Transit":ORANGE,"Off-site R":RED,"Subject to":GOLD,"Unknown":"#94a3b8"};
+  donut("cStatus",Object.keys(sc),Object.values(sc),Object.keys(sc).map(k=>sCols[k]||"#94a3b8"));
+
+  // LOCATION
+  const lc={};V.forEach(x=>{lc[x.location||"Unknown"]=(lc[x.location||"Unknown"]||0)+1;});
+  donut("cLoc",Object.keys(lc),Object.values(lc),PAL);
+
+  // FUEL
+  const fc={};V.forEach(x=>{fc[x.fuel||"Unknown"]=(fc[x.fuel||"Unknown"]||0)+1;});
+  const fCols={Diesel:BLUE,Petrol:RED,Electric:GREEN,"Elec D":GOLD};
+  donut("cFuel",Object.keys(fc),Object.values(fc),Object.keys(fc).map(k=>fCols[k]||"#94a3b8"));
+
+  // GEAR
+  const gc={};V.forEach(x=>{gc[x.gearbox||"Unknown"]=(gc[x.gearbox||"Unknown"]||0)+1;});
+  donut("cGear",Object.keys(gc),Object.values(gc),[BLUE,RED,GOLD,GREEN]);
+
+  // MAKES
+  const mc={};V.forEach(x=>{if(x.make)mc[x.make]=(mc[x.make]||0)+1;});
+  const tm=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  bar("cMakes",tm.map(m=>m[0]),tm.map(m=>m[1]),BLUE);
+
+  const mv={};V.forEach(x=>{if(x.make&&x.price>0)mv[x.make]=(mv[x.make]||0)+x.price;});
+  const tv2=Object.entries(mv).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  bar("cMakeVal",tv2.map(m=>m[0]),tv2.map(m=>m[1]),RED,{scales:{x:{ticks:{color:"#7a8fa6",font:{size:11}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:"#7a8fa6",callback:v=>"£"+Math.round(v/1000)+"k"},grid:{color:"rgba(200,16,46,.05)"}}}});
+
+  // PRICE BANDS
+  const pb=["<£5k","£5-10k","£10-15k","£15-20k","£20-25k","£25k+"];
+  const pbc=[0,0,0,0,0,0];
+  V.filter(x=>x.price>0).forEach(x=>{const p=x.price;if(p<5000)pbc[0]++;else if(p<10000)pbc[1]++;else if(p<15000)pbc[2]++;else if(p<20000)pbc[3]++;else if(p<25000)pbc[4]++;else pbc[5]++;});
+  bar("cPrice",pb,pbc,[GREEN,GREEN,GOLD,GOLD,ORANGE,RED]);
+
+  // MILEAGE
+  const mb=["0-10k","10-30k","30-50k","50-75k","75-100k","100k+"];
+  const mbc=[0,0,0,0,0,0];
+  V.forEach(x=>{const m=parseInt(x.mileage)||0;if(m<10000)mbc[0]++;else if(m<30000)mbc[1]++;else if(m<50000)mbc[2]++;else if(m<75000)mbc[3]++;else if(m<100000)mbc[4]++;else mbc[5]++;});
+  bar("cMile",mb,mbc,[GREEN,GREEN,GOLD,ORANGE,RED,RED]);
+
+  // MOT TABLE
+  const ml=V.filter(x=>{const d=motDays(x.mot);return d!==null&&d<=60;}).map(x=>({...x,days:motDays(x.mot)})).sort((a,b)=>a.days-b.days);
+  document.getElementById("motBody").innerHTML=ml.map(x=>{
+    const [col,lbl]=x.days<0?[RED,"EXPIRED"]:x.days<30?[ORANGE,x.days+"d"]:[GOLD,x.days+"d"];
+    return `<tr><td><span class=rp>${x.registration||"—"}</span></td><td><strong>${x.make||""}</strong> ${x.model||""}</td><td>${x.mot||"—"}</td><td><strong style="color:${col}">${lbl}</strong></td><td>${x.location||"—"}</td><td><span class="badge b-blue" style="font-size:10px">${x.workflowStage||"—"}</span></td><td>${fgbp(x.price)}</td></tr>`;
+  }).join("")||"<tr><td colspan=7 style='text-align:center;padding:24px;color:var(--muted)'>No MOT alerts in next 60 days</td></tr>";
+
+  // NO PRICE TABLE
+  document.getElementById("noPriceBody").innerHTML=noPrice.slice(0,30).map(x=>
+    `<tr><td><span class=rp>${x.registration||"—"}</span></td><td><strong>${x.make||""}</strong> ${x.model||""}</td><td><span class="badge b-blue" style="font-size:10px">${x.status||"—"}</span></td><td><span class="badge b-grey" style="font-size:10px">${x.workflowStage||"—"}</span></td><td style="color:${dc(x.daysInStock)};font-weight:600">${x.daysInStock||"—"}d</td><td>${x.location||"—"}</td><td>${x.fuel||"—"}</td></tr>`
+  ).join("")||"<tr><td colspan=7 style='text-align:center;padding:24px;color:var(--muted)'>All vehicles priced</td></tr>";
+}
+buildAll();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

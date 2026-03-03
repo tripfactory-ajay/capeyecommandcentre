@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key Dashboard | Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;
+  --border:#e2e6ed;--border2:#c8d0dc;
+  --red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);
+  --blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);
+  --gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.08);
+  --orange:#d4600a;
+  --text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);
+  --card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+
+/* MAIN */
+.main{max-width:1540px;margin:0 auto;padding:32px}
+.page-hdr{margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.page-hdr h1{font-size:28px;font-weight:800;letter-spacing:-.3px}
+.page-hdr h1 .r{color:var(--red)}
+.page-hdr p{color:var(--muted);font-size:13px;margin-top:4px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--kc,var(--blue));border-radius:var(--card-radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-size:32px;font-weight:800;line-height:1;color:var(--kc,var(--text))}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.kpi i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.06}
+
+/* ALERT BANNER */
+.alert-banner{background:rgba(200,16,46,.06);border:1px solid rgba(200,16,46,.2);border-left:4px solid var(--red);border-radius:var(--card-radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.alert-banner i{color:var(--red);font-size:18px;flex-shrink:0}
+.alert-banner-text{font-size:13px;color:var(--text2)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s;display:flex;align-items:center;gap:7px;border-radius:8px 8px 0 0}
+.tab:hover{color:var(--text);background:var(--bg3)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--bg2)}
+.tab .cnt{font-size:11px;font-weight:800;padding:2px 7px;border-radius:10px;background:var(--bg3);color:var(--text2)}
+.tab.active .cnt{background:var(--blue-light);color:var(--blue)}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.search-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;width:260px;transition:all .2s}
+.search-box:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,61,165,.08)}
+.search-box::placeholder{color:var(--muted)}
+.filter-btn{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .2s}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.filter-btn.red.active{background:var(--red);border-color:var(--red)}
+.filter-btn.orange.active{background:var(--orange);border-color:var(--orange)}
+
+/* KEY CARDS */
+.keys-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:28px}
+.key-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;transition:all .2s;box-shadow:var(--shadow)}
+.key-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.key-card.out{border-left:4px solid var(--red)}
+.key-card.in{border-left:4px solid var(--green)}
+.key-card.warn{border-left:4px solid var(--orange)}
+.key-card.crit{border-left:4px solid var(--red);background:rgba(200,16,46,.02)}
+.kc-top{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.reg{font-family:'DM Mono',monospace;font-size:13px;background:#fff9db;color:#7a5c00;padding:4px 9px;border-radius:5px;border:1px solid #e6d080;letter-spacing:1.5px}
+.key-card.out .reg{background:rgba(200,16,46,.07);color:var(--red);border-color:rgba(200,16,46,.2)}
+.key-card.in  .reg{background:var(--green-light);color:var(--green);border-color:rgba(26,127,55,.2)}
+.pill{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.5px;flex-shrink:0}
+.pill.out{background:var(--red-light);color:var(--red)}
+.pill.in{background:var(--green-light);color:var(--green)}
+.pill.warn{background:rgba(212,96,10,.1);color:var(--orange)}
+.kc-body{padding:10px 14px}
+.kc-pos{font-size:11px;color:var(--muted);margin-bottom:5px}
+.kc-desc{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;min-height:18px}
+.kc-time{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.kc-time.warn{color:var(--orange);font-weight:600}
+.kc-time.crit{color:var(--red);font-weight:700}
+
+/* STAFF */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:28px}
+.staff-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:all .2s}
+.staff-card:hover{box-shadow:var(--shadow-md)}
+.s-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+.s-name{font-size:13px;font-weight:700;line-height:1.3}
+.s-company{font-size:11px;color:var(--muted)}
+.s-count{font-size:28px;font-weight:800;margin-left:auto;flex-shrink:0}
+
+/* AUDIT */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;box-shadow:var(--shadow)}
+.card-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.card-title{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--blue)}
+.ac-table{width:100%;border-collapse:collapse;font-size:13px}
+.ac-table th{padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border);background:var(--bg3)}
+.ac-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.ac-table tr:last-child td{border-bottom:none}
+.ac-table tbody tr:hover td{background:var(--blue-light)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700}
+.b-green{background:var(--green-light);color:var(--green)}
+.b-red{background:var(--red-light);color:var(--red)}
+.b-blue{background:var(--blue-light);color:var(--blue)}
+.b-grey{background:var(--bg3);color:var(--muted)}
+
+/* IMPORT */
+.import-zone{border:2px dashed var(--border2);border-radius:var(--card-radius);padding:28px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg2);margin-bottom:20px}
+.import-zone:hover,.import-zone.drag-over{border-color:var(--blue);background:var(--blue-light)}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue2)}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--text)}
+
+/* SEC TITLE */
+.sec{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:8px 0 14px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.empty i{font-size:28px;display:block;margin-bottom:8px;opacity:.3}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--blue);color:#fff;border-radius:10px;z-index:9999;font-size:13px;font-weight:600;padding:12px 20px;display:flex;align-items:center;gap:10px;animation:slideUp .2s ease;box-shadow:var(--shadow-md)}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* IMPORT ZONE UPDATE INDICATOR */
+.data-source{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--green);background:var(--green-light);padding:4px 10px;border-radius:20px;font-weight:600}
+
+@media(max-width:1200px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}.keys-grid{grid-template-columns:1fr}}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class=""><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class=""><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class=""><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class="active"><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class=""><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class=""><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-hdr">
+    <div>
+      <h1>Key <span class="r">Dashboard</span></h1>
+      <p>
+        <span class="data-source"><i class="fas fa-check-circle"></i> Live e-Track data embedded</span>
+        &nbsp;·&nbsp; Upload fresh CSV to update &nbsp;·&nbsp;
+        <span id="lastUpdate"></span>
+      </p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="document.getElementById('importZone').scrollIntoView({behavior:'smooth'})"><i class="fas fa-upload"></i> Update Data</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi" style="--kc:var(--red)"><i class="fas fa-key"></i><div class="kpi-label">Keys Out</div><div class="kpi-val" id="kOut">0</div><div class="kpi-sub">Currently removed</div></div>
+    <div class="kpi" style="--kc:var(--green)"><i class="fas fa-box"></i><div class="kpi-label">Keys In</div><div class="kpi-val" id="kIn">0</div><div class="kpi-sub">In key room</div></div>
+    <div class="kpi" style="--kc:var(--orange)"><i class="fas fa-clock"></i><div class="kpi-label">Out 24h+</div><div class="kpi-val" id="kLong">0</div><div class="kpi-sub">Attention needed</div></div>
+    <div class="kpi" style="--kc:var(--red)"><i class="fas fa-exclamation-triangle"></i><div class="kpi-label">Out 48h+</div><div class="kpi-val" id="kCrit">0</div><div class="kpi-sub">Critical — chase up</div></div>
+    <div class="kpi" style="--kc:var(--gold)"><i class="fas fa-users"></i><div class="kpi-label">Staff w/ Keys</div><div class="kpi-val" id="kStaff">0</div><div class="kpi-sub">People holding keys</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><i class="fas fa-database"></i><div class="kpi-label">Total Keys</div><div class="kpi-val" id="kTotal">0</div><div class="kpi-sub">Registered</div></div>
+  </div>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alertBanner" style="display:none">
+    <i class="fas fa-exclamation-triangle"></i>
+    <div class="alert-banner-text" id="alertText"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" id="tab-out" onclick="setTab('out')"><i class="fas fa-key" style="color:var(--red)"></i> Keys Out <span class="cnt" id="tc-out">0</span></div>
+    <div class="tab" id="tab-in" onclick="setTab('in')"><i class="fas fa-box" style="color:var(--green)"></i> Keys In <span class="cnt" id="tc-in">0</span></div>
+    <div class="tab" id="tab-all" onclick="setTab('all')"><i class="fas fa-list"></i> All Keys <span class="cnt" id="tc-all">0</span></div>
+    <div class="tab" id="tab-staff" onclick="setTab('staff')"><i class="fas fa-users" style="color:var(--gold)"></i> By Staff <span class="cnt" id="tc-staff">0</span></div>
+    <div class="tab" id="tab-audit" onclick="setTab('audit')"><i class="fas fa-history" style="color:var(--blue)"></i> Audit Log <span class="cnt" id="tc-audit">0</span></div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar" id="toolbar">
+    <input class="search-box" id="searchInput" placeholder="Search registration, description, position..." oninput="render()">
+    <div id="filterBtns"></div>
+  </div>
+
+  <!-- KEYS GRID -->
+  <div class="keys-grid" id="keysGrid"></div>
+
+  <!-- STAFF -->
+  <div id="staffSection" style="display:none">
+    <div class="sec"><i class="fas fa-users" style="color:var(--blue)"></i> Staff Holding Keys</div>
+    <div class="staff-grid" id="staffGrid"></div>
+  </div>
+
+  <!-- AUDIT -->
+  <div id="auditSection" style="display:none">
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title"><i class="fas fa-history"></i> Audit Log</span>
+        <span id="auditCount" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div style="overflow-x:auto;max-height:600px;overflow-y:auto">
+        <table class="ac-table">
+          <thead><tr><th>Date / Time</th><th>Event</th><th>User</th><th>Details</th></tr></thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT (update data section) -->
+  <div style="margin-top:40px">
+    <div class="sec"><i class="fas fa-upload" style="color:var(--blue)"></i> Update Key Data</div>
+    <div class="import-zone" id="importZone"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('csvInput').click()">
+      <div style="font-size:32px;color:var(--muted);margin-bottom:10px"><i class="fas fa-cloud-upload-alt"></i></div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Drop fresh e-Track CSV exports here</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Accepts: Key Status, Positions, Who Has Keys, Audit Log — auto-detected</div>
+      <button class="btn btn-primary" onclick="event.stopPropagation();document.getElementById('csvInput').click()"><i class="fas fa-folder-open"></i> Choose Files</button>
+      <input type="file" id="csvInput" accept=".csv" multiple style="display:none" onchange="handleFiles(this)">
+    </div>
+  </div>
+
+</main>
+
+<script>
+
+// ── EMBEDDED DATA (from e-Track exports) ─────────────────────────
+const KEYS_DATA  = [{"position":"306","reg":"KS21JZN","desc":"","status":"Out","date":"27/01/2026 09:37"},{"position":"304","reg":"ND21WVU","desc":"","status":"In","date":"07/01/2026 10:52"},{"position":"303","reg":"NK71YFP","desc":"","status":"In","date":"07/01/2026 08:03"},{"position":"301","reg":"YC72VUO","desc":"","status":"In","date":"29/10/2025 12:10"},{"position":"290","reg":"RO75HGD","desc":"","status":"In","date":"15/12/2025 12:06"},{"position":"289","reg":"RO75HDU","desc":"","status":"In","date":"06/01/2026 11:59"},{"position":"281","reg":"CN21LRL","desc":"","status":"Out","date":"01/07/2025 13:18"},{"position":"280","reg":"RO75HDN","desc":"","status":"In","date":"06/01/2026 11:58"},{"position":"279","reg":"RO75HDH","desc":"","status":"In","date":"11/12/2025 14:01"},{"position":"278","reg":"RO75HDK","desc":"","status":"In","date":"19/12/2025 09:53"},{"position":"277","reg":"RO73HDE","desc":"","status":"In","date":"11/12/2025 13:36"},{"position":"276","reg":"RO75HDJ","desc":"","status":"In","date":"10/12/2025 09:28"},{"position":"275","reg":"AE74VYX","desc":"","status":"In","date":"12/12/2025 14:15"},{"position":"274","reg":"RO75HDV","desc":"","status":"In","date":"10/12/2025 11:00"},{"position":"273","reg":"ROHFH","desc":"","status":"In","date":"10/12/2025 10:58"},{"position":"272","reg":"RO75HDX","desc":"","status":"In","date":"11/12/2025 12:19"},{"position":"271","reg":"RO75HDL","desc":"","status":"In","date":"10/12/2025 09:22"},{"position":"253","reg":"RF66UBC","desc":"Audi","status":"In","date":"23/10/2025 14:05"},{"position":"252","reg":"LX61YBW","desc":"Chevrolet","status":"In","date":"15/10/2024 09:25"},{"position":"251","reg":"HN16NNL","desc":"Renault","status":"In","date":"26/06/2025 15:55"},{"position":"234","reg":"WP72UYJ","desc":"TRANSIT","status":"Out","date":"23/01/2024 13:34"},{"position":"232","reg":"CA22ZDG","desc":"","status":"Out","date":"13/01/2026 17:58"},{"position":"223","reg":"WO74DPV","desc":"Ford","status":"In","date":"23/01/2026 10:29"},{"position":"220","reg":"HN74OSG","desc":"","status":"In","date":"27/01/2026 16:45"},{"position":"219","reg":"DS72PXC","desc":"","status":"In","date":"16/02/2026 09:14"},{"position":"218","reg":"HK73KPN","desc":"CUSTOM","status":"In","date":"28/05/2025 13:06"},{"position":"217","reg":"HK73KKV","desc":"","status":"In","date":"10/02/2025 16:58"},{"position":"216","reg":"HK73KNY","desc":"CUSTOM","status":"In","date":"29/01/2025 10:58"},{"position":"215","reg":"HK73KPY","desc":"CUSTOM","status":"In","date":"29/01/2025 16:45"},{"position":"214","reg":"WO73NMK","desc":"CUSTOM","status":"In","date":"13/03/2025 08:56"},{"position":"213","reg":"MT71TPY","desc":"","status":"In","date":"14/11/2025 07:57"},{"position":"212","reg":"WO73MXX","desc":"CUSTOM","status":"In","date":"26/02/2025 15:42"},{"position":"211","reg":"HK73KOB","desc":"CUSTOM","status":"In","date":"29/01/2025 16:47"},{"position":"209","reg":"HK73KNS","desc":"","status":"In","date":"31/01/2025 14:07"},{"position":"208","reg":"WO73MZD","desc":"CUSTOM","status":"In","date":"26/02/2025 13:24"},{"position":"206","reg":"WN74RSY","desc":"Transit","status":"In","date":"20/08/2025 15:48"},{"position":"205","reg":"MT71TUU","desc":"","status":"In","date":"17/01/2026 13:22"},{"position":"204","reg":"WR74YAF","desc":"","status":"In","date":"15/10/2025 09:23"},{"position":"203","reg":"HN74OSL","desc":"","status":"In","date":"29/09/2025 14:46"},{"position":"202","reg":"HK73KKY","desc":"CUSTOM","status":"In","date":"23/01/2025 14:59"},{"position":"140","reg":"SL22NZT","desc":"","status":"In","date":"21/01/2026 13:19"},{"position":"139","reg":"MF22RBX","desc":"Maxus","status":"In","date":"29/01/2026 07:29"},{"position":"137","reg":"NX21XDT","desc":"","status":"In","date":"17/12/2025 15:12"},{"position":"136","reg":"NV21TJO","desc":"Maxus","status":"In","date":"21/11/2025 12:16"},{"position":"134","reg":"LL71VKZ","desc":"Maxus","status":"In","date":"21/01/2026 11:23"},{"position":"133","reg":"GY71OYW","desc":"Maxus","status":"In","date":"14/11/2025 13:48"},{"position":"132","reg":"LR22KFY","desc":"Maxus","status":"In","date":"16/01/2026 15:27"},{"position":"131","reg":"WN71BDX","desc":"","status":"In","date":"13/01/2026 08:01"},{"position":"110","reg":"WR23RGO","desc":"","status":"Out","date":"27/11/2025 10:51"},{"position":"109","reg":"ML71GKK","desc":"","status":"In","date":"12/02/2026 13:47"},{"position":"108","reg":"SY71VKV","desc":"","status":"In","date":"13/02/2026 10:43"},{"position":"107","reg":"CA71BKN","desc":"","status":"In","date":"05/02/2026 11:47"},{"position":"105","reg":"BP72VKT","desc":"","status":"In","date":"28/01/2026 13:24"},{"position":"100","reg":"FL55XZK","desc":"TIPPER","status":"In","date":"01/09/2020 11:16"},{"position":"99","reg":"MA71VSZ","desc":"","status":"In","date":"03/02/2026 10:23"},{"position":"98","reg":"LO71JKJ","desc":"","status":"In","date":"11/02/2026 09:09"},{"position":"97","reg":"LO71JHU","desc":"","status":"In","date":"10/02/2026 15:33"},{"position":"96","reg":"SL71LHN","desc":"","status":"In","date":"30/01/2026 12:03"},{"position":"96","reg":"HJ71WDS","desc":"","status":"In","date":"23/02/2026 07:58"},{"position":"95","reg":"BN70WRX","desc":"","status":"In","date":"17/02/2026 12:00"},{"position":"94","reg":"MD71ZWV","desc":"Peugeot","status":"Out","date":"06/02/2026 14:10"},{"position":"93","reg":"DL22DLU","desc":"","status":"Out","date":"23/02/2026 10:23"},{"position":"92","reg":"CK72AVD","desc":"","status":"In","date":"09/02/2026 08:13"},{"position":"91","reg":"MA71WTD","desc":"","status":"In","date":"16/02/2026 09:41"},{"position":"90","reg":"MD22EEO","desc":"","status":"In","date":"08/01/2026 13:31"},{"position":"90","reg":"MA71VRF","desc":"","status":"Out","date":"03/02/2026 11:04"},{"position":"89","reg":"NU64OHS","desc":"RELAY","status":"In","date":"18/10/2022 10:02"},{"position":"89","reg":"ML71GGV","desc":"","status":"In","date":"23/02/2026 14:15"},{"position":"88","reg":"DV71JCJ","desc":"","status":"In","date":"07/01/2026 13:22"},{"position":"88","reg":"KP72ELH","desc":"Ford","status":"In","date":"23/02/2026 14:23"},{"position":"87","reg":"MD71ZXB","desc":"","status":"In","date":"16/02/2026 10:12"},{"position":"87","reg":"EN72GOP","desc":"","status":"Out","date":"23/02/2026 10:00"},{"position":"86","reg":"MW22GSU","desc":"","status":"In","date":"22/01/2026 09:13"},{"position":"86","reg":"YH70LVT","desc":"","status":"In","date":"26/01/2026 12:35"},{"position":"85","reg":"MM22DJX","desc":"","status":"In","date":"10/01/2026 09:06"},{"position":"85","reg":"MT71TTK","desc":"Ford Ranger","status":"In","date":"09/02/2026 12:25"},{"position":"84","reg":"MT22KFP","desc":"","status":"In","date":"29/01/2026 10:15"},{"position":"84","reg":"CV22GUO","desc":"Toyota","status":"In","date":"04/02/2026 07:31"},{"position":"83","reg":"SK70SNU","desc":"","status":"In","date":"06/02/2026 08:09"},{"position":"82","reg":"MD22FEG","desc":"","status":"In","date":"16/02/2026 10:39"},{"position":"81","reg":"MA71XNK","desc":"","status":"In","date":"03/02/2026 08:39"},{"position":"80","reg":"ML22GPE","desc":"Ford","status":"In","date":"26/01/2026 08:34"},{"position":"80","reg":"FT21USM","desc":"","status":"In","date":"23/02/2026 10:09"},{"position":"79","reg":"MA71WNH","desc":"","status":"In","date":"09/02/2026 15:06"},{"position":"79","reg":"LO71JHK","desc":"","status":"In","date":"13/02/2026 13:37"},{"position":"78","reg":"ML22GRF","desc":"","status":"In","date":"29/01/2026 10:20"},{"position":"78","reg":"BW21APZ","desc":"","status":"In","date":"05/02/2026 12:35"},{"position":"77","reg":"WN73CYJ","desc":"","status":"In","date":"18/12/2025 09:24"},{"position":"77","reg":"SY71VZJ","desc":"","status":"In","date":"03/02/2026 09:59"},{"position":"76","reg":"WV73ZVK","desc":"","status":"In","date":"20/10/2025 10:28"},{"position":"76","reg":"EJ72XAV","desc":"","status":"Out","date":"23/02/2026 08:38"},{"position":"75","reg":"MA71VSJ","desc":"","status":"In","date":"17/01/2026 12:46"},{"position":"75","reg":"EN72GDF","desc":"","status":"In","date":"23/02/2026 10:31"},{"position":"74","reg":"BK21HLM","desc":"","status":"In","date":"26/01/2026 08:25"},{"position":"74","reg":"DL22DKO","desc":"","status":"Out","date":"23/02/2026 10:24"},{"position":"73","reg":"CV22HWU","desc":"","status":"In","date":"26/01/2026 08:31"},{"position":"73","reg":"ML71DAU","desc":"","status":"In","date":"29/01/2026 09:45"},{"position":"72","reg":"HX24SVK","desc":"","status":"In","date":"16/10/2025 08:32"},{"position":"72","reg":"CK72AVF","desc":"Maxus","status":"In","date":"12/02/2026 16:20"},{"position":"71","reg":"BK21DFD","desc":"","status":"In","date":"07/01/2026 09:16"},{"position":"71","reg":"SY71VPU","desc":"","status":"In","date":"23/02/2026 16:53"},{"position":"70","reg":"MA71VSX","desc":"","status":"In","date":"07/01/2026 08:45"},{"position":"70","reg":"EJ71CAA","desc":"","status":"In","date":"23/02/2026 16:47"},{"position":"69","reg":"SL22NZN","desc":"Maxus","status":"Out","date":"14/01/2026 16:51"},{"position":"69","reg":"MA71WNV","desc":"","status":"In","date":"09/02/2026 08:35"},{"position":"68","reg":"YR22GXT","desc":"","status":"In","date":"22/01/2026 16:23"},{"position":"68","reg":"MT71TNJ","desc":"Ford","status":"In","date":"13/02/2026 13:36"},{"position":"67","reg":"WN23VCO","desc":"","status":"In","date":"05/12/2025 11:22"},{"position":"67","reg":"LO71JJU","desc":"","status":"In","date":"11/02/2026 13:01"},{"position":"66","reg":"BL70DWW","desc":"","status":"In","date":"26/01/2026 12:10"},{"position":"66","reg":"FE72ZJK","desc":"","status":"In","date":"26/01/2026 14:07"},{"position":"65","reg":"WN73EWE","desc":"","status":"In","date":"21/10/2025 14:09"},{"position":"65","reg":"ML22GOK","desc":"","status":"In","date":"21/01/2026 13:15"},{"position":"64","reg":"WV73YSW","desc":"","status":"In","date":"09/12/2025 15:31"},{"position":"64","reg":"MF71XFG","desc":"","status":"In","date":"17/01/2026 13:17"},{"position":"63","reg":"WN23VBX","desc":"","status":"In","date":"17/11/2025 14:03"},{"position":"63","reg":"EK18OGV","desc":"","status":"In","date":"06/02/2026 08:31"},{"position":"62","reg":"ND21VTZ","desc":"","status":"In","date":"07/01/2026 08:24"},{"position":"62","reg":"KP72ELX","desc":"","status":"In","date":"15/01/2026 13:05"},{"position":"61","reg":"MA71WRT","desc":"","status":"In","date":"03/02/2026 11:36"},{"position":"61","reg":"FY68VVL","desc":"Ford","status":"In","date":"06/02/2026 14:08"},{"position":"60","reg":"ND71ASU","desc":"","status":"In","date":"13/01/2026 18:03"},{"position":"60","reg":"BL71HZH","desc":"","status":"Out","date":"16/02/2026 09:18"},{"position":"59","reg":"WV73YVJ","desc":"Ford","status":"In","date":"03/11/2025 10:55"},{"position":"58","reg":"WR23GFA","desc":"Ford","status":"In","date":"28/11/2025 16:13"},{"position":"58","reg":"CV22ODG","desc":"Toyota","status":"Out","date":"03/02/2026 11:04"},{"position":"57","reg":"ML22GOP","desc":"","status":"In","date":"13/02/2026 13:12"},{"position":"56","reg":"WV73YWA","desc":"Ford","status":"In","date":"06/11/2025 13:37"},{"position":"55","reg":"CV22OGJ","desc":"","status":"In","date":"24/01/2026 11:05"},{"position":"55","reg":"WV73ZHL","desc":"","status":"In","date":"27/01/2026 16:24"},{"position":"54","reg":"WV73ZJK","desc":"Ford","status":"In","date":"14/11/2025 08:53"},{"position":"53","reg":"WN73EXA","desc":"","status":"In","date":"19/12/2025 12:52"},{"position":"52","reg":"EO22KYP","desc":"Ford","status":"In","date":"13/11/2025 12:53"},{"position":"51","reg":"FL19NMA","desc":"Ford","status":"Out","date":"24/11/2025 15:33"},{"position":"51","reg":"MA71VUF","desc":"","status":"In","date":"07/02/2026 09:17"},{"position":"50","reg":"LJ23GTK","desc":"","status":"In","date":"23/01/2026 09:36"},{"position":"49","reg":"EX71YHE","desc":"Ford","status":"In","date":"04/02/2026 07:13"},{"position":"48","reg":"YT70YWC","desc":"Ford","status":"In","date":"05/02/2026 10:50"},{"position":"47","reg":"WV73YPJ","desc":"","status":"Out","date":"29/01/2026 15:17"},{"position":"47","reg":"ML22GPX","desc":"","status":"In","date":"02/02/2026 12:35"},{"position":"46","reg":"MA71VPJ","desc":"","status":"In","date":"06/02/2026 08:03"},{"position":"46","reg":"KS71NZA","desc":"Vito","status":"Out","date":"18/02/2026 16:03"},{"position":"45","reg":"MA71WTG","desc":"","status":"In","date":"03/02/2026 09:22"},{"position":"44","reg":"MA71VSP","desc":"","status":"In","date":"07/02/2026 09:25"},{"position":"43","reg":"BD23FVM","desc":"","status":"In","date":"10/02/2026 16:21"},{"position":"43","reg":"CV22LVJ","desc":"","status":"Out","date":"18/02/2026 11:40"},{"position":"42","reg":"WN73DDZ","desc":"","status":"In","date":"24/11/2025 11:36"},{"position":"41","reg":"MA71XPT","desc":"","status":"In","date":"03/02/2026 18:36"},{"position":"41","reg":"MM21YGA","desc":"Ford","status":"Out","date":"17/02/2026 17:23"},{"position":"40","reg":"BT73NLX","desc":"","status":"In","date":"28/10/2025 15:25"},{"position":"39","reg":"BT73NNB","desc":"","status":"Out","date":"28/10/2025 15:26"},{"position":"38","reg":"ND70MTF","desc":"","status":"In","date":"13/01/2026 08:54"},{"position":"37","reg":"BL71WNZ","desc":"","status":"In","date":"07/01/2026 15:27"},{"position":"36","reg":"GY71OYB","desc":"Maxus","status":"In","date":"08/12/2025 15:58"},{"position":"35","reg":"GU20RZN","desc":"Ford","status":"In","date":"21/01/2026 09:06"},{"position":"34","reg":"FE72ZJX","desc":"","status":"In","date":"22/01/2026 08:53"},{"position":"34","reg":"DL22DTK","desc":"","status":"In","date":"23/02/2026 07:19"},{"position":"33","reg":"FN72ONJ","desc":"","status":"In","date":"30/01/2026 08:33"},{"position":"33","reg":"MA71VRM","desc":"","status":"Out","date":"09/02/2026 08:54"},{"position":"32","reg":"FL72AZG","desc":"","status":"In","date":"30/01/2026 08:53"},{"position":"32","reg":"WR23PZS","desc":"Ford","status":"Out","date":"24/02/2026 06:47"},{"position":"31","reg":"LL71AHJ","desc":"Mercedes","status":"In","date":"20/01/2026 17:10"},{"position":"30","reg":"FE72ZJU","desc":"","status":"In","date":"13/02/2026 08:18"},{"position":"30","reg":"DL22DOU","desc":"","status":"In","date":"23/02/2026 09:40"},{"position":"29","reg":"LX72BVO","desc":"VW","status":"In","date":"26/01/2026 15:56"},{"position":"29","reg":"MA71WRR","desc":"","status":"Out","date":"09/02/2026 07:53"},{"position":"28","reg":"FN72OXP","desc":"VW","status":"In","date":"12/01/2026 10:57"},{"position":"27","reg":"DK72ZWM","desc":"","status":"In","date":"11/12/2025 12:28"},{"position":"27","reg":"LF22ZRE","desc":"","status":"Out","date":"12/02/2026 10:54"},{"position":"26","reg":"DK72ZWY","desc":"Man","status":"In","date":"23/01/2026 11:20"},{"position":"26","reg":"BX69LLV","desc":"Ford","status":"Out","date":"20/02/2026 13:57"},{"position":"25","reg":"LX72BVK","desc":"","status":"In","date":"27/11/2025 11:55"},{"position":"25","reg":"NG21CZR","desc":"","status":"In","date":"07/01/2026 10:45"},{"position":"24","reg":"DK72ZWV","desc":"","status":"In","date":"25/11/2025 14:54"},{"position":"24","reg":"ND21VOV","desc":"","status":"Out","date":"08/01/2026 13:45"},{"position":"23","reg":"LX22CFE","desc":"","status":"In","date":"11/12/2025 12:44"},{"position":"23","reg":"YT70USD","desc":"Ford","status":"In","date":"14/01/2026 14:31"},{"position":"22","reg":"FE72ZKD","desc":"","status":"In","date":"24/01/2026 10:59"},{"position":"22","reg":"HV74CYB","desc":"","status":"In","date":"28/01/2026 13:29"},{"position":"21","reg":"GY73NDN","desc":"","status":"In","date":"11/11/2025 10:41"},{"position":"21","reg":"CV22OWA","desc":"","status":"In","date":"09/02/2026 08:50"},{"position":"20","reg":"DK72ZWJ","desc":"Man","status":"In","date":"20/01/2026 14:48"},{"position":"19","reg":"LX23CKC","desc":"","status":"In","date":"25/11/2025 14:20"},{"position":"19","reg":"NK70XLP","desc":"Mercedes","status":"In","date":"05/02/2026 10:16"},{"position":"18","reg":"MA71WMU","desc":"","status":"In","date":"17/01/2026 13:40"},{"position":"17","reg":"WV72TFE","desc":"","status":"In","date":"13/02/2026 07:52"},{"position":"16","reg":"LO71JHL","desc":"MAXUS","status":"In","date":"05/02/2026 10:14"},{"position":"15","reg":"RX69KPT","desc":"Ford","status":"In","date":"24/12/2025 07:33"},{"position":"14","reg":"FP22YDB","desc":"VW","status":"In","date":"30/01/2026 15:14"},{"position":"13","reg":"DK72ZWN","desc":"Man","status":"In","date":"12/01/2026 12:01"},{"position":"12","reg":"BA68WSL","desc":"Ford","status":"In","date":"19/01/2026 14:22"},{"position":"11","reg":"DN23WBK","desc":"","status":"In","date":"17/02/2026 09:33"},{"position":"10","reg":"SK70SMO","desc":"","status":"In","date":"28/01/2026 09:30"},{"position":"10","reg":"WT19PUY","desc":"Ford","status":"In","date":"12/02/2026 17:26"},{"position":"9","reg":"GY71OZN","desc":"Maxus","status":"In","date":"14/11/2025 13:47"},{"position":"9","reg":"WM72XTK","desc":"","status":"In","date":"22/12/2025 13:48"},{"position":"8","reg":"KN72PUK","desc":"","status":"In","date":"10/04/2025 13:49"},{"position":"8","reg":"BW19UNS","desc":"Ford","status":"In","date":"19/01/2026 14:20"},{"position":"7","reg":"NL71WCJ","desc":"","status":"In","date":"27/01/2026 16:20"},{"position":"7","reg":"CV22GUA","desc":"Toyota","status":"In","date":"06/02/2026 14:06"},{"position":"6","reg":"YR17NWZ","desc":"CUSTOM","status":"In","date":"17/09/2020 09:22"},{"position":"6","reg":"CX70GZF","desc":"Ford","status":"In","date":"10/02/2026 15:42"},{"position":"5","reg":"DY21JZD","desc":"Vauxhall","status":"In","date":"12/01/2026 13:59"},{"position":"5","reg":"LA23DNJ","desc":"Ford","status":"In","date":"09/02/2026 17:32"},{"position":"4","reg":"ND21DVK","desc":"","status":"In","date":"10/01/2026 09:20"},{"position":"4","reg":"EO72HTA","desc":"","status":"In","date":"19/02/2026 11:47"},{"position":"3","reg":"MA71VPW","desc":"","status":"In","date":"19/01/2026 12:04"},{"position":"3","reg":"RO75HFE","desc":"","status":"In","date":"21/01/2026 10:44"},{"position":"2","reg":"LL71VKU","desc":"","status":"In","date":"21/01/2026 10:09"},{"position":"1","reg":"LR71KYP","desc":"Maxus","status":"In","date":"28/01/2026 07:20"},{"position":"0","reg":"BT17SZR","desc":"CUSTOM LOAN VAN","status":"Out","date":"03/11/2020 14:46"},{"position":"0","reg":"WV67SSJ","desc":"LOAN VAN","status":"Out","date":"01/09/2020 11:11"},{"position":"0","reg":"KX71OSG","desc":"SPRINTER","status":"Out","date":"23/03/2023 13:10"},{"position":"0","reg":"08BE617C","desc":"","status":"Out","date":"18/07/2023 08:39"},{"position":"0","reg":"BK20XHT","desc":"BK20XHT","status":"Out","date":"18/07/2023 17:26"},{"position":"0","reg":"WM70UNJ","desc":"","status":"Out","date":"21/10/2023 11:23"},{"position":"0","reg":"VE21XBU","desc":"VIVARO","status":"Out","date":"31/07/2024 11:32"},{"position":"0","reg":"KN71YLY","desc":"041A1C6C75","status":"Out","date":"05/08/2024 16:13"},{"position":"0","reg":"HV22VPF","desc":"","status":"Out","date":"04/09/2024 07:11"},{"position":"0","reg":"WO23MXA","desc":"","status":"Out","date":"11/11/2024 12:32"},{"position":"0","reg":"GJ71ZCT","desc":"PEUGEOT","status":"Out","date":"15/11/2024 11:18"},{"position":"0","reg":"HK73KLV","desc":"CUSTOM","status":"Out","date":"22/01/2025 11:07"},{"position":"0","reg":"GY69WNR","desc":"Merc","status":"Out","date":"13/03/2025 16:34"},{"position":"0","reg":"LR22KGV","desc":"","status":"Out","date":"14/03/2025 12:01"},{"position":"0","reg":"GV73PDO","desc":"CRAFTER","status":"Out","date":"29/04/2025 08:50"},{"position":"0","reg":"HV22FMY","desc":"TRANSIT","status":"Out","date":"06/05/2025 08:10"},{"position":"0","reg":"FX70KXZ","desc":"","status":"Out","date":"07/05/2025 15:22"},{"position":"0","reg":"CR67KTP","desc":"Boxer","status":"Out","date":"19/05/2025 08:52"},{"position":"0","reg":"LS71CXH","desc":"","status":"Out","date":"27/05/2025 07:31"},{"position":"0","reg":"SK20YVS","desc":"Transit","status":"Out","date":"29/05/2025 12:53"},{"position":"0","reg":"HV21YFK","desc":"Transit","status":"Out","date":"06/06/2025 12:22"},{"position":"0","reg":"SL22NYF","desc":"Maxus","status":"Out","date":"24/06/2025 07:53"},{"position":"0","reg":"LR22KGJ","desc":"","status":"Out","date":"03/07/2025 15:08"},{"position":"0","reg":"LN20PKF","desc":"","status":"Out","date":"05/07/2025 15:43"},{"position":"0","reg":"LR71KYU","desc":"","status":"Out","date":"11/07/2025 05:07"},{"position":"0","reg":"YE21NYZ","desc":"","status":"Out","date":"21/07/2025 12:17"},{"position":"0","reg":"CV22LFB","desc":"","status":"Out","date":"13/08/2025 14:19"},{"position":"0","reg":"CV68BYT","desc":"Ford","status":"Out","date":"14/08/2025 09:58"},{"position":"0","reg":"NU69FBD","desc":"Peugeot","status":"Out","date":"26/08/2025 10:27"},{"position":"0","reg":"DY21KBK","desc":"Vauxhall","status":"Out","date":"26/09/2025 10:09"},{"position":"0","reg":"WV73YSU","desc":"Ford","status":"Out","date":"12/11/2025 13:38"},{"position":"0","reg":"DK72ZWU","desc":"","status":"Out","date":"19/11/2025 13:33"},{"position":"0","reg":"LV10CVL","desc":"Saab","status":"Out","date":"24/11/2025 09:01"},{"position":"0","reg":"DK72ZXB","desc":"Man","status":"Out","date":"03/12/2025 15:00"},{"position":"0","reg":"AE13VFY","desc":"Toyota","status":"Out","date":"30/12/2025 14:23"},{"position":"0","reg":"MA71VUN","desc":"","status":"Out","date":"08/01/2026 15:34"},{"position":"0","reg":"DN71CGV","desc":"","status":"Out","date":"10/01/2026 12:04"},{"position":"0","reg":"AF72CYP","desc":"","status":"Out","date":"13/01/2026 07:53"},{"position":"0","reg":"CF71SYY","desc":"","status":"Out","date":"13/01/2026 13:30"},{"position":"0","reg":"LL71YMZ","desc":"","status":"Out","date":"14/01/2026 15:24"},{"position":"0","reg":"LO71JHE","desc":"","status":"Out","date":"15/01/2026 13:03"},{"position":"0","reg":"CA22ZNE","desc":"","status":"Out","date":"15/01/2026 13:20"},{"position":"0","reg":"CK72AVE","desc":"","status":"Out","date":"15/01/2026 13:44"},{"position":"0","reg":"YH73VXM","desc":"","status":"Out","date":"15/01/2026 14:09"},{"position":"0","reg":"WV73YSA","desc":"","status":"Out","date":"16/01/2026 11:18"},{"position":"0","reg":"FE72ZJN","desc":"","status":"Out","date":"21/01/2026 13:17"},{"position":"0","reg":"AF72CXG","desc":"","status":"Out","date":"26/01/2026 09:26"},{"position":"0","reg":"WT21LZN","desc":"","status":"Out","date":"28/01/2026 13:28"},{"position":"0","reg":"LR71KYS","desc":"","status":"Out","date":"29/01/2026 16:34"},{"position":"0","reg":"FE72ZJZ","desc":"","status":"Out","date":"30/01/2026 13:59"},{"position":"0","reg":"WV73YVL","desc":"","status":"Out","date":"30/01/2026 14:13"},{"position":"0","reg":"LL71DZH","desc":"","status":"Out","date":"02/02/2026 13:53"},{"position":"0","reg":"LO71JJE","desc":"Maxus","status":"Out","date":"02/02/2026 16:42"},{"position":"0","reg":"HV22WHK","desc":"","status":"Out","date":"04/02/2026 19:15"},{"position":"0","reg":"MA71VUT","desc":"","status":"Out","date":"05/02/2026 14:08"},{"position":"0","reg":"BL70DNY","desc":"","status":"Out","date":"06/02/2026 08:43"},{"position":"0","reg":"FE72ZJU","desc":"VW","status":"Out","date":"06/02/2026 12:30"},{"position":"0","reg":"ML22GRK","desc":"","status":"Out","date":"07/02/2026 09:55"},{"position":"0","reg":"BK71OGM","desc":"","status":"Out","date":"09/02/2026 10:03"},{"position":"0","reg":"WD74DWV","desc":"","status":"Out","date":"10/02/2026 12:14"},{"position":"0","reg":"WV73ZWA","desc":"","status":"Out","date":"11/02/2026 13:24"},{"position":"0","reg":"WN73CZE","desc":"","status":"Out","date":"11/02/2026 13:33"},{"position":"0","reg":"KJ24ZSO","desc":"Citroen","status":"Out","date":"11/02/2026 16:42"},{"position":"0","reg":"LO71JJL","desc":"","status":"Out","date":"12/02/2026 14:00"},{"position":"0","reg":"WR23PZP","desc":"","status":"Out","date":"13/02/2026 08:51"},{"position":"0","reg":"WR23PXV","desc":"","status":"Out","date":"13/02/2026 13:57"},{"position":"0","reg":"WN73EXV","desc":"","status":"Out","date":"13/02/2026 16:15"},{"position":"0","reg":"BL21RTV","desc":"","status":"Out","date":"16/02/2026 09:50"},{"position":"0","reg":"LO71JHX","desc":"","status":"Out","date":"16/02/2026 13:14"},{"position":"0","reg":"WN23VBV","desc":"","status":"Out","date":"16/02/2026 14:36"},{"position":"0","reg":"WN23AWY","desc":"Ford","status":"Out","date":"16/02/2026 15:04"},{"position":"0","reg":"LA16GSO","desc":"","status":"Out","date":"17/02/2026 08:17"},{"position":"0","reg":"BL71NKT","desc":"","status":"Out","date":"17/02/2026 09:46"},{"position":"0","reg":"EN73YTC","desc":"","status":"Out","date":"17/02/2026 10:00"},{"position":"0","reg":"MD71ZXE","desc":"","status":"Out","date":"17/02/2026 13:11"},{"position":"0","reg":"LR22JZW","desc":"Maxus","status":"Out","date":"17/02/2026 15:08"},{"position":"0","reg":"WV73YVS","desc":"","status":"Out","date":"18/02/2026 15:59"},{"position":"0","reg":"MJ22YMD","desc":"","status":"Out","date":"18/02/2026 16:34"},{"position":"0","reg":"LL71JVD","desc":"Mercedes","status":"Out","date":"19/02/2026 14:32"},{"position":"0","reg":"NV21LOH","desc":"Maxus","status":"Out","date":"20/02/2026 13:05"},{"position":"0","reg":"DL22DKY","desc":"","status":"Out","date":"23/02/2026 09:47"},{"position":"0","reg":"EK72WPR","desc":"","status":"Out","date":"23/02/2026 10:36"},{"position":"0","reg":"LN71UEP","desc":"Mercedes","status":"Out","date":"23/02/2026 14:41"},{"position":"0","reg":"EK21MOA","desc":"","status":"Out","date":"24/02/2026 07:15"},{"position":"0","reg":"SL22NYK","desc":"","status":"Out","date":"24/02/2026 10:21"},{"position":"0","reg":"LR21ZDY","desc":"Maxus","status":"Out","date":"24/02/2026 12:57"},{"position":"0","reg":"MD71ZWW","desc":"","status":"Out","date":"24/02/2026 15:18"},{"position":"0","reg":"WR23PKZ","desc":"","status":"Out","date":"24/02/2026 15:40"}];
+const STAFF_DATA = [{"name":"Ali Soleimani","company":"Auto Capital","keys":4},{"name":"David Lupu","company":"Autocapital","keys":3},{"name":"Georgino Barnes","company":"Auto Capital","keys":12},{"name":"Germaine Dua","company":"Auto Capital","keys":2},{"name":"ISAAC ADOMAH","company":"BRIGHT VALET","keys":19},{"name":"Keith Hardy","company":"Auto Capital","keys":3},{"name":"Marcin Kiljan","company":"Auto Capital","keys":1},{"name":"Moamel Al Ameri","company":"Auto Capital","keys":3},{"name":"Morteza Rahamian","company":"","keys":7},{"name":"Musafa Naaama","company":"Auto Capital","keys":11},{"name":"Stanislaw Marzec","company":"Auto Capital","keys":7}];
+const AUDIT_DATA = [{"dt":"24/02/2026 15:57","event":"User Login (Web)","user":"Keith Hardy (keith@autocapital.co.uk)","comments":"User: Keith Hardy (keith@autocapital.co.uk) | Logged In (Web)"},{"dt":"24/02/2026 15:44","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 15:44","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - LL71ZPM"},{"dt":"24/02/2026 15:44","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - SL22NZU"},{"dt":"24/02/2026 15:43","event":"User Login (Web)","user":"Faiz Roumi (AbuAmar)","comments":"User: Faiz Roumi (AbuAmar) | Logged In (Web)"},{"dt":"24/02/2026 15:40","event":"Fob Added","user":"Stash","comments":"Key: WR23PKZ | Added by: Stash"},{"dt":"24/02/2026 15:37","event":"User Logout","user":"Georgino Barnes","comments":"User Logout"},{"dt":"24/02/2026 15:20","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 15:18","event":"Fob Added","user":"Stash","comments":"Key: MD71ZWW | Added by: Stash"},{"dt":"24/02/2026 15:18","event":"User Login (Web)","user":"Stanislaw Marzec (Stash)","comments":"User: Stanislaw Marzec (Stash) | Logged In (Web)"},{"dt":"24/02/2026 15:13","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 15:10","event":"User Logout","user":"Georgino Barnes","comments":"User Logout"},{"dt":"24/02/2026 15:05","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 15:04","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 15:01","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 15:00","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 14:58","event":"User Login (Web)","user":"Keith Hardy (keith@autocapital.co.uk)","comments":"User: Keith Hardy (keith@autocapital.co.uk) | Logged In (Web)"},{"dt":"24/02/2026 14:57","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 14:55","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 14:52","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - DX72ZXC"},{"dt":"24/02/2026 14:52","event":"User Login (Web)","user":"Faiz Roumi (AbuAmar)","comments":"User: Faiz Roumi (AbuAmar) | Logged In (Web)"},{"dt":"24/02/2026 14:44","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 14:37","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 14:32","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 14:27","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 14:19","event":"User Logout","user":"Marcin Kiljan","comments":"User Logout"},{"dt":"24/02/2026 14:18","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 14:18","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 14:13","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 14:03","event":"User Logout","user":"Hayder ahmed","comments":"User Logout"},{"dt":"24/02/2026 13:54","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 13:30","event":"User Login (Web)","user":"Keith Hardy (keith@autocapital.co.uk)","comments":"User: Keith Hardy (keith@autocapital.co.uk) | Logged In (Web)"},{"dt":"24/02/2026 13:11","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - DK22CWJ"},{"dt":"24/02/2026 13:11","event":"User Login (Web)","user":"Faiz Roumi (AbuAmar)","comments":"User: Faiz Roumi (AbuAmar) | Logged In (Web)"},{"dt":"24/02/2026 13:01","event":"User Logout","user":"Hayder ahmed","comments":"User Logout"},{"dt":"24/02/2026 12:58","event":"User Logout","user":"Hayder ahmed","comments":"User Logout"},{"dt":"24/02/2026 12:57","event":"Fob Added","user":"AbuAmar","comments":"Key: LR21ZDY | Added by: AbuAmar"},{"dt":"24/02/2026 12:57","event":"User Login (Web)","user":"Faiz Roumi (AbuAmar)","comments":"User: Faiz Roumi (AbuAmar) | Logged In (Web)"},{"dt":"24/02/2026 12:51","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 12:29","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 12:26","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 12:26","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 12:25","event":"User Logout","user":"Germaine Dua","comments":"User Logout"},{"dt":"24/02/2026 12:21","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 12:16","event":"User Logout","user":"Germaine Dua","comments":"User Logout"},{"dt":"24/02/2026 12:12","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 11:54","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 11:48","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 11:36","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 11:34","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 11:33","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 11:24","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 11:20","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 11:18","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 11:18","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 11:18","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 11:10","event":"User Logout","user":"Georgino Barnes","comments":"User Logout"},{"dt":"24/02/2026 11:06","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 11:01","event":"User Logout","user":"Germaine Dua","comments":"User Logout"},{"dt":"24/02/2026 11:00","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 10:51","event":"User Logout","user":"Georgino Barnes","comments":"User Logout"},{"dt":"24/02/2026 10:40","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 10:39","event":"User Logout","user":"Keith Hardy","comments":"User Logout"},{"dt":"24/02/2026 10:26","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 10:21","event":"Fob Added","user":"Stash","comments":"Key: SL22NYK | Added by: Stash"},{"dt":"24/02/2026 10:19","event":"User Login (Web)","user":"Stanislaw Marzec (Stash)","comments":"User: Stanislaw Marzec (Stash) | Logged In (Web)"},{"dt":"24/02/2026 10:19","event":"User Login (Web)","user":"Stanislaw Marzec (Stash)","comments":"User: Stanislaw Marzec (Stash) | Logged In (Web)"},{"dt":"24/02/2026 09:52","event":"User Logout","user":"Stanislaw Marzec","comments":"User Logout"},{"dt":"24/02/2026 09:37","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 09:20","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 09:16","event":"User Logout","user":"Musafa Naaama","comments":"User Logout"},{"dt":"24/02/2026 09:02","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 08:56","event":"User Logout","user":"David Lupu","comments":"User Logout"},{"dt":"24/02/2026 08:43","event":"User Group Edited","user":"Stash","comments":"User Group: All Access | Edited by: Stash"},{"dt":"24/02/2026 08:43","event":"User Group Edited","user":"Stash","comments":"User Group: All Access | Edited by: Stash"},{"dt":"24/02/2026 08:42","event":"User Login (Web)","user":"Stanislaw Marzec (Stash)","comments":"User: Stanislaw Marzec (Stash) | Logged In (Web)"},{"dt":"24/02/2026 08:39","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 08:22","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 08:20","event":"User Logout","user":"ISAAC ADOMAH","comments":"User Logout"},{"dt":"24/02/2026 08:09","event":"User Logout","user":"Morteza Rahamian","comments":"User Logout"},{"dt":"24/02/2026 08:08","event":"User Login (Web)","user":"Keith Hardy (keith@autocapital.co.uk)","comments":"User: Keith Hardy (keith@autocapital.co.uk) | Logged In (Web)"},{"dt":"24/02/2026 07:16","event":"User Login (Web)","user":"Stanislaw Marzec (Stash)","comments":"User: Stanislaw Marzec (Stash) | Logged In (Web)"},{"dt":"24/02/2026 07:15","event":"Fob Added","user":"","comments":"Key:  | Added by:"},{"dt":"24/02/2026 06:47","event":"Fob Added","user":"AbuAmar","comments":"Key: WR23PZS | Added by: AbuAmar"},{"dt":"24/02/2026 06:36","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - YE21KNA"},{"dt":"24/02/2026 06:36","event":"Fob Deleted","user":"AbuAmar","comments":"Key Deleted - MA71XLZ"},{"dt":"24/02/2026 06:35","event":"User Login (Web)","user":"Faiz Roumi (AbuAmar)","comments":"User: Faiz Roumi (AbuAmar) | Logged In (Web)"}];
+const DATA_DATE  = "25/02/2026";
+
+// ── STATE ────────────────────────────────────────────────────────
+let keys  = [...KEYS_DATA];
+let staff = [...STAFF_DATA];
+let audit = [...AUDIT_DATA];
+let activeTab = 'out';
+let activeFilter = 'all';
+
+// ── COLOURS ──────────────────────────────────────────────────────
+const PALETTE = ['#003DA5','#C8102E','#d4980a','#1a7f37','#d4600a','#7c3aed','#0891b2','#be185d','#0369a1','#065f46','#92400e'];
+function staffColor(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))&0xffffffff;return PALETTE[Math.abs(h)%PALETTE.length];}
+function initials(n){return n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();}
+
+// ── TIME ─────────────────────────────────────────────────────────
+function toMs(str){
+  if(!str)return 0;
+  const m=str.match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+  if(!m)return 0;
+  return new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0)).getTime();
+}
+function hoursAgo(str){const ms=toMs(str);if(!ms)return 0;return Math.floor((Date.now()-ms)/3600000);}
+function fmtDur(h){if(h<1)return'Just now';if(h<24)return h+'h';const d=Math.floor(h/24),r=h%24;return d+'d'+(r?' '+r+'h':'');}
+
+// ── INIT ─────────────────────────────────────────────────────────
+document.getElementById('lastUpdate').textContent = 'Data from '+DATA_DATE;
+document.addEventListener("DOMContentLoaded", function(){ buildKPIs(); buildTabs(); buildAlertBanner(); render(); });
+
+function buildKPIs(){
+  const out=keys.filter(k=>k.status==='Out');
+  const inBox=keys.filter(k=>k.status==='In');
+  const long=out.filter(k=>hoursAgo(k.date)>=24);
+  const crit=out.filter(k=>hoursAgo(k.date)>=48);
+  document.getElementById('kOut').textContent  =out.length;
+  document.getElementById('kIn').textContent   =inBox.length;
+  document.getElementById('kLong').textContent =long.length;
+  document.getElementById('kCrit').textContent =crit.length;
+  document.getElementById('kStaff').textContent=staff.length;
+  document.getElementById('kTotal').textContent=keys.length;
+}
+
+function buildTabs(){
+  document.getElementById('tc-out').textContent  =keys.filter(k=>k.status==='Out').length;
+  document.getElementById('tc-in').textContent   =keys.filter(k=>k.status==='In').length;
+  document.getElementById('tc-all').textContent  =keys.length;
+  document.getElementById('tc-staff').textContent=staff.length;
+  document.getElementById('tc-audit').textContent=audit.length;
+}
+
+function buildAlertBanner(){
+  const crit=keys.filter(k=>k.status==='Out'&&hoursAgo(k.date)>=48);
+  const banner=document.getElementById('alertBanner');
+  if(crit.length){
+    document.getElementById('alertText').innerHTML=`<strong>${crit.length} key${crit.length>1?'s':''} out for 48+ hours</strong> — ${crit.slice(0,8).map(k=>`<span style="font-family:'DM Mono',monospace;background:rgba(200,16,46,.1);color:var(--red);padding:1px 6px;border-radius:4px;font-size:11px;margin:0 2px">${k.reg}</span>`).join('')}${crit.length>8?' and '+(crit.length-8)+' more':''}`;
+    banner.style.display='flex';
+  } else {banner.style.display='none';}
+}
+
+window.setTab = function(tab){
+  activeTab=tab; activeFilter='all';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  render();
+};
+
+window.setFilter = function(f){
+  activeFilter=f; render();
+};
+
+window.render = function(){
+  const search=(document.getElementById('searchInput').value||'').toLowerCase();
+  document.getElementById('keysGrid').style.display    ='none';
+  document.getElementById('staffSection').style.display='none';
+  document.getElementById('auditSection').style.display='none';
+  document.getElementById('filterBtns').innerHTML='';
+
+  if(activeTab==='staff'){renderStaff(search);return;}
+  if(activeTab==='audit'){renderAudit(search);return;}
+
+  let list=[...keys];
+  if(activeTab==='out') list=list.filter(k=>k.status==='Out');
+  if(activeTab==='in')  list=list.filter(k=>k.status==='In');
+
+  if(activeTab==='out'){
+    document.getElementById('filterBtns').innerHTML=`
+      <button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">All Out (${keys.filter(k=>k.status==='Out').length})</button>
+      <button class="filter-btn red ${activeFilter==='crit'?'active':''}" onclick="setFilter('crit')" style="${activeFilter!=='crit'?'color:var(--red)':''}">48h+ Critical (${keys.filter(k=>k.status==='Out'&&hoursAgo(k.date)>=48).length})</button>
+      <button class="filter-btn orange ${activeFilter==='warn'?'active':''}" onclick="setFilter('warn')" style="${activeFilter!=='warn'?'color:var(--orange)':''}">24–48h Warning (${keys.filter(k=>k.status==='Out'&&hoursAgo(k.date)>=24&&hoursAgo(k.date)<48).length})</button>
+      <button class="filter-btn ${activeFilter==='recent'?'active':''}" onclick="setFilter('recent')">Under 24h (${keys.filter(k=>k.status==='Out'&&hoursAgo(k.date)<24).length})</button>
+      <button class="filter-btn ${activeFilter==='box'?'active':''}" onclick="setFilter('box')">In Boxes (${keys.filter(k=>k.status==='Out'&&k.position!=='0').length})</button>`;
+    if(activeFilter==='crit') list=list.filter(k=>hoursAgo(k.date)>=48);
+    else if(activeFilter==='warn') list=list.filter(k=>{const h=hoursAgo(k.date);return h>=24&&h<48;});
+    else if(activeFilter==='recent') list=list.filter(k=>hoursAgo(k.date)<24);
+    else if(activeFilter==='box') list=list.filter(k=>k.position!=='0');
+    list.sort((a,b)=>toMs(a.date)-toMs(b.date));
+  }
+
+  if(search) list=list.filter(k=>k.reg.toLowerCase().includes(search)||k.desc.toLowerCase().includes(search)||k.position.includes(search));
+
+  document.getElementById('keysGrid').style.display='grid';
+  renderCards(list);
+};
+
+function renderCards(list){
+  if(!list.length){
+    document.getElementById('keysGrid').innerHTML=`<div class="empty" style="grid-column:1/-1"><i class="fas fa-key"></i>No keys match this filter</div>`;
+    return;
+  }
+  document.getElementById('keysGrid').innerHTML=list.map(k=>{
+    const h=hoursAgo(k.date);
+    const isOut=k.status==='Out';
+    const isCrit=isOut&&h>=48, isWarn=isOut&&h>=24&&h<48;
+    const cardClass=isOut?(isCrit||isWarn?'out':'out'):'in';
+    const pillClass=isCrit||isWarn?'warn':isOut?'out':'in';
+    const pillLabel=isCrit?'⚠ CRITICAL':isWarn?'⚠ WARNING':isOut?'OUT':'IN';
+    const timeClass=isCrit?'crit':isWarn?'warn':'';
+    const hasBox=k.position!=='0';
+    return `<div class="key-card ${cardClass}${isCrit?' crit':''}">
+      <div class="kc-top">
+        <span class="reg">${k.reg}</span>
+        <span class="pill ${pillClass}">${pillLabel}</span>
+      </div>
+      <div class="kc-body">
+        <div class="kc-pos"><i class="fas fa-box" style="font-size:9px;margin-right:4px"></i>${hasBox?'Box Position <strong>#'+k.position+'</strong>':'No box position'}</div>
+        <div class="kc-desc">${k.desc||'—'}</div>
+        <div class="kc-time ${timeClass}"><i class="fas fa-clock" style="font-size:9px"></i>${isOut?(h>0?'Out for <strong>'+fmtDur(h)+'</strong>':'Just removed'):'Added '+k.date}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderStaff(search){
+  document.getElementById('staffSection').style.display='block';
+  let list=[...staff].sort((a,b)=>b.keys-a.keys);
+  if(search) list=list.filter(s=>s.name.toLowerCase().includes(search));
+  document.getElementById('staffGrid').innerHTML=list.map(s=>{
+    const col=staffColor(s.name);
+    const countColor=s.keys>15?'var(--red)':s.keys>8?'var(--orange)':'var(--green)';
+    return `<div class="staff-card">
+      <div class="s-avatar" style="background:${col}18;color:${col}">${initials(s.name)}</div>
+      <div style="min-width:0;flex:1">
+        <div class="s-name">${s.name}</div>
+        <div class="s-company">${s.company||'—'}</div>
+      </div>
+      <div class="s-count" style="color:${countColor}">${s.keys}</div>
+    </div>`;
+  }).join('')||'<div class="empty" style="grid-column:1/-1"><i class="fas fa-users"></i>No staff data</div>';
+}
+
+function renderAudit(search){
+  document.getElementById('auditSection').style.display='block';
+  let list=[...audit];
+  if(search) list=list.filter(a=>a.user.toLowerCase().includes(search)||a.event.toLowerCase().includes(search)||a.comments.toLowerCase().includes(search));
+  document.getElementById('auditCount').textContent=list.length+' events';
+  const eStyle={
+    'Fob Added':      'b-green','Fob Deleted':  'b-red',
+    'User Login (Web)':'b-blue','User Logout':  'b-grey','User Group Edited':'b-grey'
+  };
+  function extractReg(c){const m=c.match(/Key[:\s]+([A-Z0-9]{5,10})/i)||c.match(/-\s*([A-Z0-9]{5,10})$/i);return m?m[1].toUpperCase():null;}
+  document.getElementById('auditBody').innerHTML=list.map(a=>{
+    const col=staffColor(a.user);
+    const cls=eStyle[a.event]||'b-grey';
+    const reg=extractReg(a.comments);
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap">${a.dt}</td>
+      <td><span class="badge ${cls}">${a.event}</span></td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:26px;height:26px;border-radius:50%;background:${col}18;color:${col};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0">${initials(a.user)}</div>
+        <span style="font-weight:600;font-size:12px">${a.user.split(' (')[0]}</span>
+      </div></td>
+      <td style="font-size:12px;color:var(--text2)">
+        ${reg?`<span style="font-family:'DM Mono',monospace;font-size:11px;background:#fff9db;color:#7a5c00;padding:2px 6px;border-radius:4px;border:1px solid #e6d080;margin-right:6px">${reg}</span>`:''}
+        ${a.comments.split('|')[0].trim()}
+      </td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--muted)">No events found</td></tr>`;
+}
+
+// ── CSV IMPORT (update data) ──────────────────────────────────────
+window.handleDrop=function(e){e.preventDefault();document.getElementById('importZone').classList.remove('drag-over');processFiles(Array.from(e.dataTransfer.files));};
+window.handleFiles=function(inp){if(inp.files)processFiles(Array.from(inp.files));};
+
+function processFiles(files){
+  let done=0;
+  files.forEach(file=>{
+    if(!file.name.endsWith('.csv'))return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      importCSV(e.target.result,file.name);
+      done++;
+      if(done===files.length){buildKPIs();buildTabs();buildAlertBanner();render();showToast('✓ Data updated from '+done+' file'+(done>1?'s':''));}
+    };reader.readAsText(file);
+  });
+}
+
+function parseCSV(text){
+  const lines=text.trim().split(String.fromCharCode(10));if(lines.length<2)return[];
+  function pl(line){const cols=[];let cur='',inQ=false;for(const c of line){if(c==='"')inQ=!inQ;else if(c===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=c;}cols.push(cur.trim());return cols.map(v=>v.replace(/^"|"$/g,'').trim());}
+  const headers=pl(lines[0]);
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{const vals=pl(line);const obj={};headers.forEach((h,i)=>{obj[h]=vals[i]||'';});return obj;});
+}
+
+function importCSV(text,filename){
+  const rows=parseCSV(text);if(!rows.length)return;
+  const h=Object.keys(rows[0]).join(',').toLowerCase();
+  if(h.includes('key position')&&h.includes('status')){
+    keys=rows.map(r=>({position:r['Key Position']||'0',reg:r['Key Name']||'',desc:r['Description']||'',status:(r['Status']||'').trim(),date:r['Date Added']||''})).filter(k=>k.reg&&!['test','test fob'].includes(k.reg.toLowerCase()));
+  } else if(h.includes('no. of keys')||h.includes('no of keys')){
+    staff=rows.map(r=>({name:r['Name']||'',company:r['Company']||'',keys:parseInt(r['No. of Keys']||r['No of Keys']||0)||0})).filter(s=>s.name);
+  } else if(h.includes('date/time')&&h.includes('event')){
+    const newA=rows.map(r=>{const m=(r['Date/Time']||'').match(/(\d{2}\/\d{2}\/\d{4} \d{2}:\d{2})/);return{dt:m?m[1]:r['Date/Time'],event:r['Event']||'',user:r['User']||'',comments:r['Comments']||''};}).filter(a=>a.dt);
+    const ex=new Set(audit.map(a=>a.dt+a.event+a.user));
+    newA.forEach(a=>{if(!ex.has(a.dt+a.event+a.user))audit.push(a);});
+    audit.sort((a,b)=>toMs(b.dt)-toMs(a.dt));
+  }
+}
+
+function showToast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');t.className='toast';t.innerHTML=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

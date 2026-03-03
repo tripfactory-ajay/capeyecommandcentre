@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CapeEye Staff">
+<meta name="theme-color" content="#0b0e15">
+<title>CapeEye Staff App</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./ac-data.js"></script>
+<style>
+:root{
+  --bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;
+  --border:#e2e6ed;--border2:#c8d0dc;
+  --red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);
+  --blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);
+  --gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);
+  --orange:#d4600a;--purple:#6d28d9;
+  --text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);
+  --card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.logo-img{height:40px;width:auto;object-fit:contain;flex-shrink:0}
+.logo-divider{width:1px;height:34px;background:var(--border);flex-shrink:0}
+.logo-area{display:flex;align-items:center;gap:16px}
+.logo-area img{height:42px;filter:none}
+.logo-divider{width:1px;height:34px;background:var(--border);flex-shrink:0}
+.system-name{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:2px}
+.nav a{padding:8px 11px;border-radius:7px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .18s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.nav a i{font-size:12px}
+.nav a:hover{background:var(--bg3);color:var(--text)}
+.nav a.active{background:var(--red);color:#fff;font-weight:700}
+.header-right{display:flex;align-items:center;gap:12px}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:11px;padding:5px 12px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 10px;border-radius:7px;cursor:pointer;font-size:12px;font-family:"DM Sans",sans-serif}
+.btn-logout:hover{color:var(--red);border-color:var(--red)}
+
+
+
+html,
+/* APP SHELL */
+.app-shell{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;position:relative}
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-logo{display:flex;align-items:center;gap:10px}
+.topbar-logo .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:2px;color:var(--gold)}
+.topbar-logo .logo-sub{font-size:12px;color:var(--muted);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.staff-pill{background:rgba(59,127,245,.15);color:var(--blue);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px}
+.notif-btn{width:36px;height:36px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;color:var(--muted)}
+.notif-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg2)}
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + var(--safe-bottom))}
+/* BOTTOM NAV */
+.bottom-nav{background:var(--bg2);border-top:1px solid var(--border);height:calc(72px + var(--safe-bottom));padding-bottom:var(--safe-bottom);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;position:relative;z-index:10}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 16px;cursor:pointer;color:var(--muted);transition:all .2s;border-radius:10px;position:relative}
+.nav-item.active{color:var(--gold)}
+.nav-item i{font-size:20px}
+.nav-item span{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.nav-badge{position:absolute;top:4px;right:10px;background:var(--red);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+/* LOGIN SCREEN */
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:24px;gap:20px}
+.login-logo{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;letter-spacing:4px;color:var(--gold);margin-bottom:8px}
+.login-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.login-label{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.login-select{width:100%;max-width:340px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-size:16px;font-family:'Barlow',sans-serif;outline:none;-webkit-appearance:none}
+/* CARDS */
+.section-pad{padding:16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.card-header-sm{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title-sm{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+/* TASK CARD */
+.task-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:all .2s}
+.task-card.priority-urgent{border-left:3px solid var(--orange)}
+.task-card.priority-critical{border-left:3px solid var(--red)}
+.task-card-inner{padding:14px 16px}
+.task-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.task-reg{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;background:#f5c518;color:#000;padding:3px 10px;border-radius:6px;white-space:nowrap}
+.task-vehicle{font-size:14px;font-weight:700;flex:1}
+.task-stage{font-size:12px;color:var(--muted);margin-bottom:4px}
+.task-note{font-size:12px;color:var(--gold);font-style:italic;margin-bottom:8px}
+.task-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.task-time{font-size:11px;color:var(--muted)}
+.pri-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px}
+.pri-normal{background:rgba(34,197,94,.15);color:var(--green)}
+.pri-urgent{background:rgba(249,115,22,.15);color:var(--orange)}
+.pri-critical{background:rgba(239,68,68,.15);color:var(--red)}
+.task-actions{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg3)}
+.t-btn{flex:1;padding:9px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s;text-align:center}
+.t-btn-start{background:rgba(59,127,245,.15);color:var(--blue)}
+.t-btn-start:hover{background:rgba(59,127,245,.3)}
+.t-btn-done{background:rgba(34,197,94,.15);color:var(--green)}
+.t-btn-done:hover{background:rgba(34,197,94,.3)}
+/* INSPECTION FORM */
+.insp-form{padding:16px;display:flex;flex-direction:column;gap:14px}
+.insp-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.insp-section-header{padding:12px 14px;background:var(--bg3);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.insp-section-body{padding:14px}
+.insp-field{margin-bottom:12px}
+.insp-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.insp-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;font-family:'Barlow',sans-serif;outline:none;-webkit-appearance:none}
+.insp-input:focus{border-color:var(--blue)}
+.insp-input::placeholder{color:var(--muted)}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item{display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg3);border-radius:10px;cursor:pointer}
+.check-item input{width:18px;height:18px;accent-color:var(--blue);flex-shrink:0}
+.check-item label{font-size:13px;cursor:pointer;line-height:1.3}
+/* PHOTO UPLOAD */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-slot{aspect-ratio:1;background:var(--bg3);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.photo-slot:hover,.photo-slot:active{border-color:var(--blue)}
+.photo-slot i{font-size:24px;color:var(--muted)}
+.photo-slot span{font-size:10px;color:var(--muted);margin-top:4px;font-weight:600}
+.photo-slot img{width:100%;height:100%;object-fit:cover}
+.photo-slot .del-btn{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(239,68,68,.9);color:#fff;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.photo-input{display:none}
+/* DAMAGE MAP */
+.damage-map-wrap{position:relative;width:100%;max-width:320px;margin:0 auto}
+.damage-map-wrap img{width:100%;border-radius:10px;opacity:.7}
+.damage-pin{position:absolute;width:24px;height:24px;border-radius:50%;border:3px solid #fff;transform:translate(-50%,-50%);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+/* RATING BUTTONS */
+.rating-row{display:flex;gap:6px}
+.rating-btn{flex:1;padding:10px 4px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;border:2px solid var(--border);background:var(--bg3);color:var(--muted);transition:all .2s;text-align:center}
+.rating-btn.sel-1{border-color:#ef4444;background:rgba(239,68,68,.15);color:#ef4444}
+.rating-btn.sel-2{border-color:#f97316;background:rgba(249,115,22,.15);color:#f97316}
+.rating-btn.sel-3{border-color:#e8b84b;background:rgba(232,184,75,.15);color:#e8b84b}
+.rating-btn.sel-4{border-color:#22c55e;background:rgba(34,197,94,.15);color:#22c55e}
+.rating-btn.sel-5{border-color:#3b7ff5;background:rgba(59,127,245,.15);color:#3b7ff5}
+/* SIGNOFF */
+.signoff-pad{background:var(--bg3);border:1px solid var(--border);border-radius:12px;width:100%;height:160px;cursor:crosshair;touch-action:none;display:block}
+.big-btn{width:100%;padding:16px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.big-btn-green{background:var(--green);color:#000}
+.big-btn-blue{background:var(--blue);color:#fff}
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700}
+/* HERO STATS */
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.hero-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.hero-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;line-height:1}
+.hero-stat-label{font-size:11px;color:var(--muted);font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#22c55e;color:#000;font-weight:800;font-size:14px;padding:12px 24px;border-radius:30px;z-index:9999;white-space:nowrap;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty i{font-size:36px;display:block;margin-bottom:10px;opacity:.3}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="background:var(--bg);min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;flex-direction:column;gap:16px">
+  <div style="text-align:center;margin-bottom:8px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:800;letter-spacing:4px;color:var(--gold)">CAPEYE</div>
+    <div style="font-size:14px;color:var(--muted);margin-top:4px">Auto Capital Staff Portal</div>
+  </div>
+  <div style="width:100%;max-width:340px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Who are you?</div>
+    <select id="loginSelect" style="width:100%;background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:16px;color:var(--text);font-size:16px;font-family:'Barlow',sans-serif;outline:none;-webkit-appearance:none">
+      <option value="">— Select your name —</option>
+    </select>
+  </div>
+  <button onclick="doLogin()" style="width:100%;max-width:340px;padding:18px;border-radius:14px;background:var(--gold);color:#000;font-size:18px;font-weight:800;border:none;cursor:pointer;font-family:'Barlow',sans-serif;letter-spacing:1px">
+    <i class="fas fa-sign-in-alt"></i> Log In
+  </button>
+  <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">
+    <i class="fas fa-mobile-alt"></i> Add to Home Screen for the full app experience
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-shell" id="appShell" style="display:none">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div>
+        <div class="logo-text">CAPEYE</div>
+        <div class="logo-sub">Staff App</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="staff-pill" id="staffPill">—</div>
+      <div class="notif-btn" onclick="showScreen('tasks')">
+        <i class="fas fa-bell"></i>
+        <div class="notif-dot" id="notifDot" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area" id="scrollArea">
+    <!-- DASHBOARD SCREEN -->
+    <div class="screen active" id="screenDash">
+      <div class="section-pad">
+        <div id="dashGreeting" style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;margin-bottom:4px;letter-spacing:.5px"></div>
+        <div id="dashDate" style="font-size:13px;color:var(--muted);margin-bottom:16px"></div>
+
+        <div class="hero-stats" id="dashStats"></div>
+
+        <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Your Tasks</div>
+        <div id="dashTasks"></div>
+
+        <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px">Quick Inspect</div>
+        <div class="card" style="padding:14px;display:flex;flex-direction:column;gap:10px">
+          <select class="insp-input" id="quickVehicle" style="font-size:14px">
+            <option value="">— Select vehicle to inspect —</option>
+          </select>
+          <button onclick="startInspection()" class="big-btn big-btn-blue" style="padding:13px;font-size:14px">
+            <i class="fas fa-clipboard-check"></i> Start Inspection
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS SCREEN -->
+    <div class="screen" id="screenTasks">
+      <div class="section-pad">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.5px">My Tasks</div>
+          <div style="display:flex;gap:6px">
+            <button onclick="setTaskFilter('pending')" id="tfPending" class="t-btn t-btn-start" style="font-size:11px;padding:5px 12px;border-radius:8px;background:rgba(59,127,245,.2)">Pending</button>
+            <button onclick="setTaskFilter('done')" id="tfDone" class="t-btn" style="font-size:11px;padding:5px 12px;border-radius:8px;background:var(--bg3)">Done</button>
+          </div>
+        </div>
+        <div id="taskList"></div>
+      </div>
+    </div>
+
+    <!-- INSPECTION SCREEN -->
+    <div class="screen" id="screenInspect">
+      <div style="padding:16px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:12px">
+        <button onclick="showScreen('dash')" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--muted);font-size:12px;cursor:pointer;font-weight:700">← Back</button>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800" id="inspTitle">Vehicle Inspection</div>
+          <div style="font-size:12px;color:var(--muted)" id="inspSub">Full pre-sale check</div>
+        </div>
+      </div>
+      <div class="insp-form" id="inspFormBody"></div>
+    </div>
+
+    <!-- SIGN OFF SCREEN -->
+    <div class="screen" id="screenSignoff">
+      <div style="padding:16px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:12px">
+        <button onclick="showScreen('tasks')" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--muted);font-size:12px;cursor:pointer;font-weight:700">← Back</button>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800" id="signoffTitle">Sign Off Task</div>
+          <div style="font-size:12px;color:var(--muted)" id="signoffSub"></div>
+        </div>
+      </div>
+      <div class="section-pad">
+        <div class="card" style="padding:16px;margin-bottom:14px">
+          <div id="signoffVehicleInfo"></div>
+        </div>
+        <div class="insp-section" style="margin-bottom:14px">
+          <div class="insp-section-header">Completion Notes</div>
+          <div class="insp-section-body">
+            <textarea class="insp-input" id="signoffNote" rows="4" placeholder="Describe work completed, any issues found, recommendations for next stage..."></textarea>
+          </div>
+        </div>
+        <div class="insp-section" style="margin-bottom:14px">
+          <div class="insp-section-header">Digital Signature</div>
+          <div class="insp-section-body">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Draw your signature below</p>
+            <canvas class="signoff-pad" id="sigCanvas" width="600" height="160"></canvas>
+            <button onclick="clearSig()" style="margin-top:8px;font-size:12px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer">Clear</button>
+          </div>
+        </div>
+        <button class="big-btn big-btn-green" onclick="submitSignoff()" style="margin-bottom:12px">
+          <i class="fas fa-check-circle"></i> Sign Off &amp; Mark Complete
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end scroll-area -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-dash" onclick="showScreen('dash')">
+      <i class="fas fa-home"></i><span>Home</span>
+    </div>
+    <div class="nav-item" id="nav-tasks" onclick="showScreen('tasks')">
+      <i class="fas fa-tasks"></i><span>Tasks</span>
+      <div class="nav-badge" id="taskBadge" style="display:none">0</div>
+    </div>
+    <div class="nav-item" id="nav-inspect" onclick="startInspection()">
+      <i class="fas fa-clipboard-check"></i><span>Inspect</span>
+    </div>
+    <div class="nav-item" id="nav-signoff" onclick="showScreen('signoff')">
+      <i class="fas fa-pen"></i><span>Sign Off</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const vehicles = getVehicles();
+let currentStaff = null;
+let taskFilter = 'pending';
+let inspVehicle = null;
+let signoffTaskId = null;
+let photos = {};
+let sigDrawing = false;
+let sigCtx = null;
+let sigLastX, sigLastY;
+let damagePins = [];
+
+/* ── POP LOGIN SELECT ── */
+(function() {
+  const sel = document.getElementById('loginSelect');
+  const qv  = document.getElementById('quickVehicle');
+  AC_STAFF.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.name; o.textContent = `${s.name} — ${s.role} (${s.dept})`;
+    sel.appendChild(o);
+  });
+  vehicles.slice(0,50).forEach(v => {
+    const o = document.createElement('option');
+    o.value = v.stockNo;
+    o.textContent = `${v.registration} — ${v.make} ${v.model} (${v.stockNo})`;
+    qv.appendChild(o);
+  });
+  // Check saved session
+  const saved = localStorage.getItem('ac_staff_session');
+  if (saved && AC_STAFF.find(s=>s.name===saved)) {
+    currentStaff = saved; launchApp();
+  }
+})();
+
+/* ── LOGIN ── */
+function doLogin() {
+  const name = document.getElementById('loginSelect').value;
+  if (!name) { alert('Please select your name'); return; }
+  currentStaff = name;
+  localStorage.setItem('ac_staff_session', name);
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'flex';
+  document.getElementById('staffPill').textContent = currentStaff.split(' ')[0];
+  buildDash(); buildTasks();
+  initSigCanvas();
+  // Push notification permission
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+/* ── SCREENS ── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const screenMap = {dash:'screenDash',tasks:'screenTasks',inspect:'screenInspect',signoff:'screenSignoff'};
+  const navMap = {dash:'nav-dash',tasks:'nav-tasks',inspect:'nav-inspect',signoff:'nav-signoff'};
+  const el = document.getElementById(screenMap[name]);
+  if(el) el.classList.add('active');
+  const nav = document.getElementById(navMap[name]);
+  if(nav) nav.classList.add('active');
+  document.getElementById('scrollArea').scrollTop = 0;
+}
+
+/* ── DASHBOARD ── */
+function buildDash() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greet = hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+  const name = currentStaff.split(' ')[0];
+  document.getElementById('dashGreeting').textContent = `${hour<12?'Good morning, ':hour<17?'Good afternoon, ':'Good evening, '}${name} 👋`;
+  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+
+  const myTasks = getMyTasks(currentStaff);
+  const pending = myTasks.filter(t=>t.status==='pending');
+  const done = myTasks.filter(t=>t.status==='done');
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="hero-stat">
+      <div class="hero-stat-val" style="color:${pending.length>0?'var(--orange)':'var(--green)'}">${pending.length}</div>
+      <div class="hero-stat-label">Tasks Pending</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" style="color:var(--muted)">${done.length}</div>
+      <div class="hero-stat-label">Completed</div>
+    </div>`;
+
+  // Show up to 3 pending tasks on dash
+  document.getElementById('dashTasks').innerHTML = pending.slice(0,3).map(t=>renderTaskCard(t,true)).join('')
+    || `<div class="empty"><i class="fas fa-check-circle" style="color:var(--green)"></i><p>No pending tasks — you're all caught up!</p></div>`;
+
+  // Badge
+  const badge = document.getElementById('taskBadge');
+  const notifDot = document.getElementById('notifDot');
+  if(pending.length>0){badge.style.display='flex';badge.textContent=pending.length;notifDot.style.display='block';}
+  else{badge.style.display='none';notifDot.style.display='none';}
+}
+
+/* ── TASKS ── */
+function buildTasks() {
+  const myTasks = getMyTasks(currentStaff);
+  const filtered = myTasks.filter(t=>t.status===taskFilter);
+  document.getElementById('taskList').innerHTML = filtered.map(t=>renderTaskCard(t,false)).join('')
+    || `<div class="empty"><i class="fas fa-${taskFilter==='pending'?'tasks':'check-double'}"></i><p>${taskFilter==='pending'?'No pending tasks! 🎉':'No completed tasks yet.'}</p></div>`;
+}
+
+function setTaskFilter(f) {
+  taskFilter = f;
+  document.getElementById('tfPending').style.background = f==='pending'?'rgba(59,127,245,.2)':'var(--bg3)';
+  document.getElementById('tfDone').style.background = f==='done'?'rgba(34,197,94,.15)':'var(--bg3)';
+  buildTasks();
+}
+
+function renderTaskCard(task, compact) {
+  const v = vehicles.find(x=>x.stockNo===task.stockNo)||{};
+  const priClass = task.priority==='critical'?'priority-critical':task.priority==='urgent'?'priority-urgent':'';
+  const priBadge = task.priority==='critical'?'pri-critical':task.priority==='urgent'?'pri-urgent':'pri-normal';
+  const priLabel = task.priority==='critical'?'🔴 CRITICAL':task.priority==='urgent'?'🟡 URGENT':'🟢 Normal';
+  const ago = timeAgo(new Date(task.assignedAt));
+  return `<div class="task-card ${priClass}">
+    <div class="task-card-inner">
+      <div class="task-top">
+        <div>
+          <span class="task-reg" style="margin-right:8px;margin-bottom:4px;display:inline-block">${v.registration||task.stockNo}</span>
+          <div class="task-vehicle">${v.make||''} ${v.model||''}</div>
+        </div>
+        <span class="pri-badge ${priBadge}">${priLabel}</span>
+      </div>
+      <div class="task-stage"><i class="fas fa-arrow-right" style="font-size:10px;margin-right:4px;color:var(--blue)"></i>Stage ${task.stageId}: ${task.stageName}</div>
+      ${task.note?`<div class="task-note">"${task.note}"</div>`:''}
+      <div class="task-meta">
+        <span class="task-time"><i class="fas fa-clock"></i> Assigned ${ago}</span>
+        <span class="task-time">${v.location||''}</span>
+      </div>
+    </div>
+    ${task.status==='pending'?`<div class="task-actions">
+      <button class="t-btn t-btn-start" onclick="openInspForTask('${task.stockNo}','${task.id}')">📋 Inspect Vehicle</button>
+      <button class="t-btn t-btn-done" onclick="openSignoff('${task.id}','${task.stockNo}')">✏️ Sign Off</button>
+    </div>`:'<div style="padding:8px 16px;font-size:12px;color:var(--green);font-weight:700">✓ Completed '+timeAgo(new Date(task.completedAt||Date.now()))+'</div>'}
+  </div>`;
+}
+
+/* ── INSPECTION ── */
+function startInspection() {
+  const stockNo = document.getElementById('quickVehicle').value;
+  if (!stockNo) { showScreen('inspect'); buildInspForm(null); return; }
+  openInspForTask(stockNo, null);
+}
+
+function openInspForTask(stockNo, taskId) {
+  inspVehicle = vehicles.find(v=>v.stockNo===stockNo);
+  signoffTaskId = taskId;
+  if (inspVehicle) {
+    document.getElementById('inspTitle').textContent = inspVehicle.registration;
+    document.getElementById('inspSub').textContent = `${inspVehicle.make} ${inspVehicle.model} · ${inspVehicle.stockNo}`;
+  }
+  buildInspForm(inspVehicle);
+  showScreen('inspect');
+}
+
+function buildInspForm(v) {
+  photos = {};
+  damagePins = [];
+  document.getElementById('inspFormBody').innerHTML = `
+    <!-- VEHICLE ID -->
+    <div class="insp-section">
+      <div class="insp-section-header">🚗 Vehicle</div>
+      <div class="insp-section-body">
+        ${v?`<div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:12px">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:1px;background:#f5c518;color:#000;padding:3px 12px;border-radius:6px">${v.registration}</span>
+          <div style="margin-top:8px;font-weight:700">${v.make} ${v.model}</div>
+          <div style="font-size:12px;color:var(--muted)">${v.stockNo} · ${v.fuel} · ${v.gearbox} · ${parseInt(v.mileage||0).toLocaleString()}mi</div>
+        </div>`:''}
+        <div class="insp-field"><div class="insp-label">Mileage at Inspection</div><input class="insp-input" type="number" id="insp_mileage" placeholder="${v?.mileage||'Enter mileage'}"></div>
+        <div class="insp-field"><div class="insp-label">Fuel Level</div>
+          <div class="rating-row">
+            ${['E','1/4','1/2','3/4','F'].map((l,i)=>`<button class="rating-btn" onclick="selectRating('fuel',${i+1},this)">${l}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTERIOR -->
+    <div class="insp-section">
+      <div class="insp-section-header">🎨 Exterior Condition</div>
+      <div class="insp-section-body">
+        <div class="insp-field"><div class="insp-label">Overall Exterior</div>
+          <div class="rating-row">
+            ${['Poor','Fair','OK','Good','Exc'].map((l,i)=>`<button class="rating-btn" onclick="selectRating('ext',${i+1},this)">${l}</button>`).join('')}
+          </div>
+        </div>
+        <div class="insp-field"><div class="insp-label">Damage / Defects</div>
+          <div class="check-grid">
+            ${['Scratches','Dents','Chips','Rust','Cracks','Glass Damage'].map(item=>`
+            <div class="check-item"><input type="checkbox" id="def_${item.replace(/\s/g,'_')}" value="${item}"><label for="def_${item.replace(/\s/g,'_')}">${item}</label></div>`).join('')}
+          </div>
+        </div>
+        <div class="insp-field"><div class="insp-label">Damage Notes</div><textarea class="insp-input" id="insp_dmg_notes" rows="2" placeholder="Describe any damage..."></textarea></div>
+        <div class="insp-field"><div class="insp-label">Tyre Condition</div>
+          <div class="check-grid">
+            ${['FL OK','FR OK','RL OK','RR OK','Spare OK'].map(item=>`
+            <div class="check-item"><input type="checkbox" id="tyre_${item.replace(/\s/g,'_')}" value="${item}" checked><label for="tyre_${item.replace(/\s/g,'_')}">${item}</label></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERIOR -->
+    <div class="insp-section">
+      <div class="insp-section-header">🪑 Interior Condition</div>
+      <div class="insp-section-body">
+        <div class="insp-field"><div class="insp-label">Overall Interior</div>
+          <div class="rating-row">
+            ${['Poor','Fair','OK','Good','Exc'].map((l,i)=>`<button class="rating-btn" onclick="selectRating('int',${i+1},this)">${l}</button>`).join('')}
+          </div>
+        </div>
+        <div class="check-grid">
+          ${['Seats Clean','Dashboard OK','Carpet Clean','Headlining OK','Mirrors OK','A/C Works','Infotainment OK','All Electrics'].map(item=>`
+          <div class="check-item"><input type="checkbox" id="int_${item.replace(/\s/g,'_')}" value="${item}"><label for="int_${item.replace(/\s/g,'_')}">${item}</label></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- MECHANICAL -->
+    <div class="insp-section">
+      <div class="insp-section-header">🔧 Mechanical</div>
+      <div class="insp-section-body">
+        <div class="check-grid">
+          ${['Engine OK','No Warning Lights','Gearbox OK','Brakes OK','Steering OK','Suspension OK','Lights OK','Horn OK'].map(item=>`
+          <div class="check-item"><input type="checkbox" id="mech_${item.replace(/\s/g,'_')}" value="${item}"><label for="mech_${item.replace(/\s/g,'_')}">${item}</label></div>`).join('')}
+        </div>
+        <div class="insp-field" style="margin-top:12px"><div class="insp-label">Mechanical Notes</div><textarea class="insp-input" id="insp_mech_notes" rows="2" placeholder="Any issues found..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- PHOTOS -->
+    <div class="insp-section">
+      <div class="insp-section-header">📸 Photos</div>
+      <div class="insp-section-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Tap any slot to take a photo or upload from gallery</p>
+        <div class="photo-grid" id="photoGrid">
+          ${['Front','Rear','Driver Side','Pass Side','Interior','Engine Bay'].map((label,i)=>`
+          <div class="photo-slot" id="slot_${i}" onclick="triggerPhoto(${i})">
+            <i class="fas fa-camera"></i><span>${label}</span>
+          </div>`).join('')}
+        </div>
+        <input type="file" class="photo-input" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button class="big-btn big-btn-green" onclick="submitInspection()" style="margin-top:4px;margin-bottom:16px">
+      <i class="fas fa-check-circle"></i> Complete Inspection
+    </button>
+  `;
+}
+
+let currentPhotoSlot = null;
+function triggerPhoto(slotIdx) {
+  currentPhotoSlot = slotIdx;
+  const input = document.getElementById('photoInput');
+  input.value = '';
+  input.click();
+}
+
+function handlePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    photos[currentPhotoSlot] = dataUrl;
+    const slot = document.getElementById('slot_'+currentPhotoSlot);
+    slot.innerHTML = `<img src="${dataUrl}" alt="photo"><button class="del-btn" onclick="event.stopPropagation();deletePhoto(${currentPhotoSlot})">✕</button>`;
+    slot.onclick = () => triggerPhoto(currentPhotoSlot);
+  };
+  reader.readAsDataURL(file);
+}
+
+function deletePhoto(idx) {
+  delete photos[idx];
+  const labels = ['Front','Rear','Driver Side','Pass Side','Interior','Engine Bay'];
+  const slot = document.getElementById('slot_'+idx);
+  slot.innerHTML = `<i class="fas fa-camera"></i><span>${labels[idx]||'Photo'}</span>`;
+  slot.onclick = () => triggerPhoto(idx);
+}
+
+function selectRating(key, val, btn) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.rating-btn').forEach(b=>b.className='rating-btn');
+  btn.className = `rating-btn sel-${val}`;
+  btn.dataset.selected = val;
+  if (!window._ratings) window._ratings = {};
+  window._ratings[key] = val;
+}
+
+function submitInspection() {
+  if (!inspVehicle && !document.getElementById('insp_mileage').value) {
+    showToast('Please select a vehicle first');
+    return;
+  }
+  const checks = {};
+  document.querySelectorAll('#inspFormBody input[type="checkbox"]').forEach(c=>{checks[c.id]=c.checked;});
+  const data = {
+    stockNo: inspVehicle?.stockNo,
+    inspectedBy: currentStaff,
+    inspectedAt: new Date().toISOString(),
+    mileage: document.getElementById('insp_mileage').value,
+    ratings: window._ratings||{},
+    checks,
+    dmgNotes: document.getElementById('insp_dmg_notes').value,
+    mechNotes: document.getElementById('insp_mech_notes').value,
+    photoCount: Object.keys(photos).length
+  };
+  // Save to localStorage
+  const existing = JSON.parse(localStorage.getItem('ac_inspections')||'[]');
+  existing.unshift(data);
+  localStorage.setItem('ac_inspections', JSON.stringify(existing.slice(0,200)));
+  // Log alert
+  if (inspVehicle) {
+    addAlert({type:'info',level:'success',
+      title:`Inspection complete: ${inspVehicle.registration}`,
+      body:`Inspected by ${currentStaff} · ${data.photoCount} photos · Mileage: ${data.mileage||'—'}`,
+      stockNo: inspVehicle.stockNo});
+  }
+  // Mark task done if applicable
+  if (signoffTaskId) completeTask(currentStaff, parseInt(signoffTaskId));
+  showToast('✓ Inspection saved!');
+  setTimeout(()=>{ showScreen('dash'); buildDash(); buildTasks(); }, 1500);
+}
+
+/* ── SIGN OFF ── */
+function openSignoff(taskId, stockNo) {
+  signoffTaskId = taskId;
+  const v = vehicles.find(x=>x.stockNo===stockNo)||{};
+  const tasks = getMyTasks(currentStaff);
+  const task = tasks.find(t=>t.id==taskId)||{};
+  document.getElementById('signoffTitle').textContent = 'Sign Off';
+  document.getElementById('signoffSub').textContent = `Stage ${task.stageId}: ${task.stageName}`;
+  document.getElementById('signoffVehicleInfo').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:1px;background:#f5c518;color:#000;padding:4px 12px;border-radius:6px">${v.registration||stockNo}</span>
+      <div>
+        <div style="font-weight:700">${v.make||''} ${v.model||''}</div>
+        <div style="font-size:12px;color:var(--muted)">${v.stockNo||''} · ${task.stageName||''}</div>
+      </div>
+    </div>
+    ${task.note?`<div style="margin-top:10px;font-size:13px;color:var(--gold);padding:8px 12px;background:rgba(232,184,75,.08);border-radius:8px;border-left:3px solid var(--gold)">"${task.note}"</div>`:''}`;
+  showScreen('signoff');
+  setTimeout(initSigCanvas, 100);
+}
+
+/* ── SIGNATURE CANVAS ── */
+function initSigCanvas() {
+  const canvas = document.getElementById('sigCanvas');
+  if (!canvas) return;
+  sigCtx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = canvas.offsetHeight * 2;
+  sigCtx.scale(2,2);
+  sigCtx.strokeStyle = '#e8b84b';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  canvas.addEventListener('mousedown', startSig);
+  canvas.addEventListener('mousemove', drawSig);
+  canvas.addEventListener('mouseup', () => sigDrawing=false);
+  canvas.addEventListener('touchstart', e=>{e.preventDefault();startSig(e.touches[0]);},{passive:false});
+  canvas.addEventListener('touchmove', e=>{e.preventDefault();drawSig(e.touches[0]);},{passive:false});
+  canvas.addEventListener('touchend', () => sigDrawing=false);
+}
+function getPos(canvas, e) {
+  const r = canvas.getBoundingClientRect();
+  return { x:(e.clientX-r.left), y:(e.clientY-r.top) };
+}
+function startSig(e) {
+  sigDrawing=true;
+  const p=getPos(document.getElementById('sigCanvas'),e);
+  sigLastX=p.x; sigLastY=p.y;
+}
+function drawSig(e) {
+  if(!sigDrawing||!sigCtx) return;
+  const p=getPos(document.getElementById('sigCanvas'),e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(sigLastX,sigLastY);
+  sigCtx.lineTo(p.x,p.y);
+  sigCtx.stroke();
+  sigLastX=p.x; sigLastY=p.y;
+}
+function clearSig() {
+  if(sigCtx){ const c=document.getElementById('sigCanvas'); sigCtx.clearRect(0,0,c.width,c.height); }
+}
+
+function submitSignoff() {
+  const note = document.getElementById('signoffNote').value;
+  const canvas = document.getElementById('sigCanvas');
+  const sig = canvas ? canvas.toDataURL() : null;
+  if (!note && !sig) { showToast('Add a note or signature first'); return; }
+  if (signoffTaskId) completeTask(currentStaff, parseInt(signoffTaskId));
+  // Save signoff record
+  const records = JSON.parse(localStorage.getItem('ac_signoffs')||'[]');
+  records.unshift({staffName:currentStaff, taskId:signoffTaskId, note, sig, signedAt:new Date().toISOString()});
+  localStorage.setItem('ac_signoffs', JSON.stringify(records.slice(0,200)));
+  addAlert({type:'handover',level:'success',
+    title:`Task signed off by ${currentStaff}`,
+    body:note||'No note provided'});
+  showToast('✓ Signed off successfully!');
+  setTimeout(()=>{ showScreen('tasks'); buildTasks(); buildDash(); },1500);
+}
+
+/* ── UTILS ── */
+function timeAgo(d) {
+  const diff = Date.now()-d.getTime();
+  const m = Math.floor(diff/60000);
+  if(m<1) return 'just now';
+  if(m<60) return `${m}m ago`;
+  const h=Math.floor(m/60); if(h<24) return `${h}h ago`;
+  return `${Math.floor(h/24)}d ago`;
+}
+
+function showToast(msg) {
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';
+});
+function doLogout(){window.location.href='./login.html';}
+</script>
+</body>
+</html>

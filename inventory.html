@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory | CapeEye Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{
+  --bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;
+  --border:#e2e6ed;--border2:#c8d0dc;
+  --red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);
+  --blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);
+  --gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);
+  --orange:#d4600a;--purple:#6d28d9;
+  --text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);
+  --card-radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.logo-area img{height:40px;width:auto}
+.logo-divider{width:1px;height:32px;background:var(--border)}
+
+.nav a.active{color:var(--gold)}
+
+
+.main{max-width:1600px;margin:0 auto;padding:28px}
+.page-title{margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+.page-title h1{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:1px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:10px;padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.filter-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%}
+.filter-input:focus{border-color:var(--blue)}
+.filter-input::placeholder{color:var(--muted)}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563eb}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{color:var(--text)}
+.ac-table{width:100%;border-collapse:collapse;font-size:13px}
+.ac-table th{padding:11px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;cursor:pointer;user-select:none;white-space:nowrap}
+.ac-table th:hover{color:var(--text)}
+.ac-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.ac-table tr:hover td{background:rgba(255,255,255,0.02)}
+.ac-table tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.badge-green{background:rgba(34,197,94,.15);color:var(--green)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+.badge-orange{background:rgba(249,115,22,.15);color:var(--orange)}
+.badge-blue{background:rgba(59,127,245,.15);color:var(--blue)}
+.badge-yellow{background:rgba(232,184,75,.15);color:var(--gold)}
+.badge-gray{background:rgba(100,116,139,.15);color:var(--muted)}
+.reg-plate{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;background:#f5c518;color:#000;padding:2px 8px;border-radius:4px;display:inline-block}
+.pager{display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+.pager-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;font-size:12px;font-family:'Barlow',sans-serif}
+.pager-btn:hover{color:var(--text)}
+.pager-btn:disabled{opacity:0.4;cursor:not-allowed}
+.pager-info{color:var(--muted);font-size:12px;flex:1;text-align:center}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-mini{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.kpi-mini-icon{font-size:18px;width:32px;text-align:center}
+.kpi-mini-label{font-size:11px;color:var(--muted);font-weight:500}
+.kpi-mini-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;line-height:1}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class="active"><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class=""><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class=""><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class=""><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class=""><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class=""><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-title">
+    <div>
+      <h1>Inventory</h1>
+      <p style="color:var(--muted);font-size:14px;margin-top:4px" id="inventorySubtitle">Loading...</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="exportCSV()"><i class="fas fa-download"></i> Export</button>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-mini"><div class="kpi-mini-icon" style="color:var(--blue)">🚗</div><div><div class="kpi-mini-label">Total Vehicles</div><div class="kpi-mini-val" id="sTotal">—</div></div></div>
+    <div class="kpi-mini"><div class="kpi-mini-icon" style="color:var(--green)">✅</div><div><div class="kpi-mini-label">In Stock</div><div class="kpi-mini-val" id="sInStock">—</div></div></div>
+    <div class="kpi-mini"><div class="kpi-mini-icon" style="color:var(--orange)">🚛</div><div><div class="kpi-mini-label">In Transit</div><div class="kpi-mini-val" id="sTransit">—</div></div></div>
+    <div class="kpi-mini"><div class="kpi-mini-icon" style="color:var(--gold)">💷</div><div><div class="kpi-mini-label">Total Value</div><div class="kpi-mini-val" id="sTotalVal" style="font-size:16px">—</div></div></div>
+    <div class="kpi-mini"><div class="kpi-mini-icon" style="color:var(--gold)">📊</div><div><div class="kpi-mini-label">Avg Price</div><div class="kpi-mini-val" id="sAvgVal" style="font-size:16px">—</div></div></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card">
+    <div class="filters">
+      <input class="filter-input" id="fSearch" placeholder="🔍  Search stock no, reg, make, model, variant..." oninput="applyFilters()">
+      <select class="filter-input" id="fStatus" onchange="applyFilters()">
+        <option value="">All Status</option>
+        <option>In Stock</option>
+        <option>In Transit</option>
+        <option>Off-site R</option>
+        <option>Subject to</option>
+      </select>
+      <select class="filter-input" id="fMake" onchange="applyFilters()">
+        <option value="">All Makes</option>
+      </select>
+      <select class="filter-input" id="fLocation" onchange="applyFilters()">
+        <option value="">All Locations</option>
+      </select>
+      <select class="filter-input" id="fFuel" onchange="applyFilters()">
+        <option value="">All Fuel</option>
+        <option>Diesel</option>
+        <option>Petrol</option>
+        <option>Electric</option>
+        <option>Hybrid</option>
+      </select>
+      <button class="btn btn-ghost" onclick="clearFilters()">Clear</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="ac-table">
+        <thead>
+          <tr>
+            <th onclick="sortBy('stockNo')">Stock No ↕</th>
+            <th>Reg</th>
+            <th onclick="sortBy('make')">Make / Model ↕</th>
+            <th>Variant</th>
+            <th>Colour</th>
+            <th onclick="sortBy('mileage')">Mileage ↕</th>
+            <th>Fuel</th>
+            <th>Gearbox</th>
+            <th onclick="sortBy('price')">Price ↕</th>
+            <th>MOT</th>
+            <th>Location</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+    <div class="pager">
+      <button class="pager-btn" id="prevBtn" onclick="changePage(-1)">← Prev</button>
+      <span class="pager-info" id="pagerInfo"></span>
+      <button class="pager-btn" id="nextBtn" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+</main>
+
+<script>
+let vehicles = getVehicles();
+let filtered = [...vehicles];
+let page = 1;
+const PAGE_SIZE = 50;
+let sortCol = '';
+let sortDir = 1;
+
+// Populate filter dropdowns
+function populateFilters() {
+  const makes = [...new Set(vehicles.map(v=>v.make))].sort();
+  const locs = [...new Set(vehicles.map(v=>v.location).filter(Boolean))].sort();
+  document.getElementById('fMake').innerHTML = '<option value="">All Makes</option>' + makes.map(m=>`<option>${m}</option>`).join('');
+  document.getElementById('fLocation').innerHTML = '<option value="">All Locations</option>' + locs.map(l=>`<option>${l}</option>`).join('');
+}
+
+function motDays(motStr) {
+  if (!motStr) return null;
+  const parts = motStr.split('/');
+  if (parts.length !== 3) return null;
+  const d = new Date(parts[2], parts[1]-1, parts[0]);
+  return Math.ceil((d - Date.now()) / 86400000);
+}
+
+function statusBadge(s) {
+  const m = {'In Stock':'badge-green','In Transit':'badge-orange','Off-site R':'badge-red','Subject to':'badge-yellow'};
+  return `<span class="badge ${m[s]||'badge-gray'}">${s||'Unknown'}</span>`;
+}
+
+function applyFilters() {
+  const search = document.getElementById('fSearch').value.toLowerCase();
+  const status = document.getElementById('fStatus').value;
+  const make = document.getElementById('fMake').value;
+  const location = document.getElementById('fLocation').value;
+  const fuel = document.getElementById('fFuel').value;
+  filtered = vehicles.filter(v => {
+    if (search && ![v.stockNo,v.registration,v.make,v.model,v.variant,v.colour].some(f=>f&&f.toLowerCase().includes(search))) return false;
+    if (status && v.status !== status) return false;
+    if (make && v.make !== make) return false;
+    if (location && v.location !== location) return false;
+    if (fuel && !v.fuel.toLowerCase().includes(fuel.toLowerCase())) return false;
+    return true;
+  });
+  if (sortCol) filtered.sort((a,b) => {
+    const av = a[sortCol]||'', bv = b[sortCol]||'';
+    return typeof av === 'number' ? (av-bv)*sortDir : String(av).localeCompare(String(bv))*sortDir;
+  });
+  page = 1;
+  render();
+}
+
+function clearFilters() {
+  ['fSearch','fStatus','fMake','fLocation','fFuel'].forEach(id => document.getElementById(id).value='');
+  applyFilters();
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  applyFilters();
+}
+
+function changePage(dir) {
+  const maxPage = Math.ceil(filtered.length / PAGE_SIZE);
+  page = Math.max(1, Math.min(maxPage, page + dir));
+  render();
+}
+
+function render() {
+  const start = (page-1)*PAGE_SIZE;
+  const pageVehicles = filtered.slice(start, start+PAGE_SIZE);
+  const maxPage = Math.ceil(filtered.length/PAGE_SIZE);
+
+  // KPIs
+  document.getElementById('sTotal').textContent = filtered.length;
+  document.getElementById('sInStock').textContent = filtered.filter(v=>v.status==='In Stock').length;
+  document.getElementById('sTransit').textContent = filtered.filter(v=>v.status==='In Transit').length;
+  const total = filtered.reduce((s,v)=>s+(v.price||0),0);
+  document.getElementById('sTotalVal').textContent = formatGBP(total);
+  const withPrice = filtered.filter(v=>v.price>0);
+  document.getElementById('sAvgVal').textContent = withPrice.length ? formatGBP(total/withPrice.length) : '—';
+  document.getElementById('inventorySubtitle').textContent = `${filtered.length} of ${vehicles.length} vehicles · Page ${page} of ${maxPage||1}`;
+
+  // Table
+  const tbody = document.getElementById('invBody');
+  tbody.innerHTML = pageVehicles.map(v => {
+    const days = motDays(v.mot);
+    const motColor = days === null ? '' : days < 0 ? 'color:var(--red)' : days < 30 ? 'color:var(--orange)' : '';
+    return `<tr>
+      <td style="font-weight:700;color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-size:15px">${v.stockNo}</td>
+      <td><span class="reg-plate">${v.registration}</span></td>
+      <td><div style="font-weight:600">${v.make}</div><div style="font-size:12px;color:var(--muted)">${v.model}</div></td>
+      <td style="font-size:12px;color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.variant||'—'}</td>
+      <td style="font-size:12px">${v.colour||'—'}</td>
+      <td style="font-size:13px">${parseInt(v.mileage||0).toLocaleString()}</td>
+      <td><span class="badge badge-gray">${v.fuel||'—'}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${v.gearbox||'—'}</td>
+      <td style="font-weight:700;color:${v.price?'var(--text)':'var(--muted)'}">${v.price?formatGBP(v.price):'—'}</td>
+      <td style="font-size:12px;${motColor}">${v.mot||'—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${v.location||'—'}</td>
+      <td>${statusBadge(v.status)}</td>
+    </tr>`;
+  }).join('');
+
+  // Pager
+  document.getElementById('pagerInfo').textContent = `Showing ${start+1}–${Math.min(start+PAGE_SIZE,filtered.length)} of ${filtered.length} vehicles`;
+  document.getElementById('prevBtn').disabled = page <= 1;
+  document.getElementById('nextBtn').disabled = page >= maxPage;
+}
+
+function exportCSV() {
+  const headers = ['Stock No','Registration','Make','Model','Variant','Colour','Mileage','Fuel','Gearbox','Price','MOT','Status','Location'];
+  const rows = filtered.map(v => [v.stockNo,v.registration,v.make,v.model,v.variant,v.colour,v.mileage,v.fuel,v.gearbox,v.price,v.mot,v.status,v.location]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'auto-capital-inventory.csv';
+  a.click();
+}
+
+populateFilters();
+applyFilters();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

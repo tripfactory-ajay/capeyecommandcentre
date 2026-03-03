@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerts | Auto Capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="./firebase-config.js"></script>
+<script src="./ac-data.js"></script>
+<style>
+:root{--bg:#f4f6f9;--bg2:#fff;--bg3:#f0f2f6;--bg4:#eef0f5;--border:#e2e6ed;--border2:#c8d0dc;--red:#C8102E;--red2:#a00d24;--red-light:rgba(200,16,46,.07);--blue:#003DA5;--blue2:#002d7a;--blue-light:rgba(0,61,165,.07);--gold:#d4980a;--green:#1a7f37;--green-light:rgba(26,127,55,.07);--orange:#d4600a;--text:#0f1923;--text2:#3d4d5c;--muted:#7a8fa6;--shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.07);--card-radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ═══ 2-ROW HEADER ═══ */
+.header{background:#fff;border-bottom:2px solid var(--border);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border)}
+.header-bot{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:38px;background:var(--bg3)}
+.logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.system-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.nav{display:flex;gap:1px;flex-wrap:nowrap;align-items:center;overflow:visible}
+.nav a{padding:5px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav a i{font-size:10px}
+.nav a:hover{background:var(--bg2);color:var(--text)}
+.nav a.active{background:var(--red);color:#fff;font-weight:700}
+.toolbar{display:flex;gap:3px;align-items:center}
+.tlink{padding:4px 9px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;border:1px solid var(--border)}
+.tlink:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.last-import{font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.last-import.fresh{color:var(--green);border-color:var(--green);background:var(--green-light)}
+.last-import.stale{color:var(--orange);border-color:var(--orange)}
+.user-badge{background:var(--blue);color:#fff;font-weight:700;font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:"DM Sans",sans-serif}
+.btn-logout:hover{color:var(--red);border-color:var(--red)}
+
+.main{max-width:1400px;margin:0 auto;padding:24px}
+.page-hdr{margin-bottom:20px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-hdr h1{font-size:24px;font-weight:800}.page-hdr h1 .r{color:var(--red)}
+.page-hdr p{color:var(--muted);font-size:13px;margin-top:3px}
+/* FILTER TABS */
+.filter-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.ftab{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:#fff;color:var(--muted);transition:all .18s;display:flex;align-items:center;gap:6px}
+.ftab:hover{border-color:var(--blue);color:var(--blue)}
+.ftab.active{color:#fff;border-color:transparent}
+.ftab .cnt{font-size:10px;background:rgba(255,255,255,.25);padding:1px 5px;border-radius:8px;font-weight:800}
+/* SUMMARY CARDS */
+.alert-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.as-card{border-radius:var(--card-radius);padding:14px 16px;cursor:pointer;transition:all .2s;border:2px solid transparent;background:#fff;box-shadow:var(--shadow)}
+.as-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.as-card.active{border-color:var(--ac,var(--blue))}
+.as-count{font-size:30px;font-weight:800;color:var(--ac)}
+.as-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:4px;color:var(--text2)}
+.as-sub{font-size:11px;color:var(--muted);margin-top:1px}
+/* SECTION */
+.section-card{background:#fff;border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;transition:all .2s}
+.section-card.hidden{display:none}
+.section-hdr{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.section-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.section-title{font-size:13px;font-weight:700}
+.section-sub{font-size:11px;color:var(--muted);margin-top:1px}
+/* ALERT ROWS */
+.alert-list{padding:0}
+.ai{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .12s;cursor:pointer}
+.ai:last-child{border-bottom:none}
+.ai:hover{background:var(--bg3)}
+.ai-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ai-body{flex:1;min-width:0}
+.ai-title{font-size:13px;font-weight:700}
+.ai-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.ai-right{text-align:right;flex-shrink:0}
+.ai-val{font-size:14px;font-weight:800}
+.ai-val-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.rp{font-family:"DM Mono",monospace;font-size:10px;background:#fff9db;color:#7a5c00;padding:2px 6px;border-radius:4px;border:1px solid #e6d080;letter-spacing:1px;margin-right:6px}
+.empty{text-align:center;padding:28px;color:var(--muted);font-size:13px}
+.empty i{font-size:26px;display:block;margin-bottom:8px;color:var(--green);opacity:.6}
+.btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--text)}
+/* WORKFLOW LINK */
+.wf-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--blue);font-weight:600;text-decoration:none;padding:2px 6px;border-radius:4px;border:1px solid var(--blue-light);background:var(--blue-light);margin-top:3px}
+.wf-link:hover{background:var(--blue);color:#fff}
+@media(max-width:900px){.alert-strip{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <img class="logo-img" src="./auto-capital-logo.png" alt="Auto Capital" onerror="this.style.opacity=0">
+      <div class="logo-divider"></div>
+      <span class="system-name">Back Office</span>
+    </div>
+    <div class="header-right">
+      <div class="last-import" id="lastImportBadge"><i class="fas fa-database"></i> <span id="lastImportTime">No import</span></div>
+      <span id="userBadge" class="user-badge">Auto Capital</span>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+  <div class="header-bot">
+    <nav class="nav">
+      <a href="./index.html" class=""><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="./inventory.html" class=""><i class="fas fa-car"></i> Inventory</a>
+    <a href="./workflow.html" class=""><i class="fas fa-tasks"></i> Workflow</a>
+    <a href="./alerts.html" class="active"><i class="fas fa-bell"></i> Alerts</a>
+    <a href="./analytics.html" class=""><i class="fas fa-chart-bar"></i> Analytics</a>
+    <a href="./marketing.html" class=""><i class="fas fa-chart-line"></i> Marketing</a>
+    <a href="./keys.html" class=""><i class="fas fa-key"></i> Keys</a>
+    <a href="./import.html" class=""><i class="fas fa-upload"></i> Import</a>
+    <a href="./team.html" class=""><i class="fas fa-users"></i> Team</a>
+    <a href="./admin.html" class=""><i class="fas fa-cog"></i> Admin</a>
+    <a href="./audit.html" class=""><i class="fas fa-clipboard-list"></i> Audit</a>
+    </nav>
+    <div class="toolbar">
+      <a href="https://trade.hpi.co.uk/trade/preLogin.do" target="_blank" class="tlink"><i class="fas fa-search-dollar"></i> HPI</a>
+      <a href="https://www.autocapital.co.uk/" target="_blank" class="tlink"><i class="fas fa-globe"></i> Website</a>
+      <a href="https://www.autocapital.co.uk/finance.php" target="_blank" class="tlink"><i class="fas fa-file-invoice-pound"></i> Finance</a>
+    </div>
+  </div>
+</header>
+<main class="main">
+  <div class="page-hdr">
+    <div>
+      <h1>Vehicle <span class="r">Alerts</span></h1>
+      <p id="alertSub">Scanning all vehicles for issues...</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="buildAlerts()"><i class="fas fa-sync-alt"></i> Refresh</button>
+      <a href="./audit.html" class="btn btn-ghost"><i class="fas fa-clipboard-list"></i> Audit Trail</a>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-row">
+    <button class="ftab active" id="ftab-all" onclick="setFilter('all')" style="background:var(--blue);border-color:var(--blue)">
+      <i class="fas fa-list"></i> All <span class="cnt" id="cnt-all">0</span>
+    </button>
+    <button class="ftab" id="ftab-mot" onclick="setFilter('mot')" style="--ac:var(--red)">
+      <i class="fas fa-calendar-times"></i> MOT <span class="cnt" id="cnt-mot">0</span>
+    </button>
+    <button class="ftab" id="ftab-blocked" onclick="setFilter('blocked')" style="--ac:var(--orange)">
+      <i class="fas fa-lock"></i> Blocked <span class="cnt" id="cnt-blocked">0</span>
+    </button>
+    <button class="ftab" id="ftab-aged" onclick="setFilter('aged')" style="--ac:var(--gold)">
+      <i class="fas fa-hourglass-end"></i> Aged 60d+ <span class="cnt" id="cnt-aged">0</span>
+    </button>
+    <button class="ftab" id="ftab-price" onclick="setFilter('price')" style="--ac:var(--blue)">
+      <i class="fas fa-tag"></i> No Price <span class="cnt" id="cnt-price">0</span>
+    </button>
+    <button class="ftab" id="ftab-stage" onclick="setFilter('stage')" style="--ac:var(--green)">
+      <i class="fas fa-clock"></i> Stuck 7d+ <span class="cnt" id="cnt-stage">0</span>
+    </button>
+  </div>
+
+  <!-- SECTIONS -->
+  <div id="sec-mot" class="section-card">
+    <div class="section-hdr">
+      <div class="section-icon" style="background:var(--red-light);color:var(--red)"><i class="fas fa-calendar-times"></i></div>
+      <div><div class="section-title">MOT Expiring Within 30 Days</div><div class="section-sub">Book immediately — expired MOT cannot be driven</div></div>
+      <span id="badge-mot" style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--red-light);color:var(--red)">0</span>
+    </div>
+    <div class="alert-list" id="motList"></div>
+  </div>
+
+  <div id="sec-blocked" class="section-card">
+    <div class="section-hdr">
+      <div class="section-icon" style="background:var(--red-light);color:var(--red)"><i class="fas fa-lock"></i></div>
+      <div><div class="section-title">Blocked Vehicles</div><div class="section-sub">Action required — these vehicles cannot progress</div></div>
+      <span id="badge-blocked" style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--red-light);color:var(--red)">0</span>
+    </div>
+    <div class="alert-list" id="blockedList"></div>
+  </div>
+
+  <div id="sec-aged" class="section-card">
+    <div class="section-hdr">
+      <div class="section-icon" style="background:rgba(212,96,10,.1);color:var(--orange)"><i class="fas fa-hourglass-end"></i></div>
+      <div><div class="section-title">Aged Stock — 60+ Days</div><div class="section-sub">Consider price reduction or remarketing strategy</div></div>
+      <span id="badge-aged" style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(212,96,10,.1);color:var(--orange)">0</span>
+    </div>
+    <div class="alert-list" id="agedList"></div>
+  </div>
+
+  <div id="sec-price" class="section-card">
+    <div class="section-hdr">
+      <div class="section-icon" style="background:var(--blue-light);color:var(--blue)"><i class="fas fa-tag"></i></div>
+      <div><div class="section-title">Vehicles Without a Retail Price</div><div class="section-sub">Cannot be advertised until priced</div></div>
+      <span id="badge-price" style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--blue-light);color:var(--blue)">0</span>
+    </div>
+    <div class="alert-list" id="priceList"></div>
+  </div>
+
+  <div id="sec-stage" class="section-card">
+    <div class="section-hdr">
+      <div class="section-icon" style="background:var(--green-light);color:var(--green)"><i class="fas fa-clock"></i></div>
+      <div><div class="section-title">Stuck in Stage 7+ Days</div><div class="section-sub">These vehicles have not moved departments in over a week</div></div>
+      <span id="badge-stage" style="margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green)">0</span>
+    </div>
+    <div class="alert-list" id="stageList"></div>
+  </div>
+</main>
+
+<script>
+const V = getVehicles();
+let activeFilter = 'all';
+
+function motDays(s){if(!s)return null;const p=s.split("/");if(p.length!==3)return null;return Math.ceil((new Date(+p[2],+p[1]-1,+p[0]).getTime()-Date.now())/86400000);}
+function fgbp(n){return n?"£"+new Intl.NumberFormat("en-GB",{maximumFractionDigits:0}).format(n):"No price";}
+
+function ai(v, icon, ibg, icol, sub, valHtml){
+  return `<div class="ai" onclick="window.location='./workflow.html?stock=${v.stockNo}'">
+    <div class="ai-icon" style="background:${ibg};color:${icol}"><i class="fas ${icon}"></i></div>
+    <div class="ai-body">
+      <div class="ai-title"><span class="rp">${v.registration}</span><strong>${v.make} ${v.model}</strong></div>
+      <div class="ai-sub">${sub}</div>
+      <a class="wf-link" href="./workflow.html?stock=${v.stockNo}" onclick="event.stopPropagation()"><i class="fas fa-tasks"></i> Open in Workflow</a>
+    </div>
+    <div class="ai-right">${valHtml}</div>
+  </div>`;
+}
+function empty(){return '<div class="empty"><i class="fas fa-check-circle"></i>No issues here — all clear!</div>';}
+
+function setFilter(f){
+  activeFilter = f;
+  document.querySelectorAll('.ftab').forEach(t=>{
+    const id = t.id.replace('ftab-','');
+    t.classList.toggle('active', id===f);
+    if(id===f){ t.style.background='var(--blue)'; t.style.borderColor='var(--blue)'; t.style.color='#fff'; }
+    else{ t.style.background=''; t.style.borderColor=''; t.style.color=''; }
+  });
+  const sections = ['mot','blocked','aged','price','stage'];
+  sections.forEach(s=>{
+    const el=document.getElementById('sec-'+s);
+    if(el) el.classList.toggle('hidden', f!=='all' && f!==s);
+  });
+}
+
+function buildAlerts(){
+  const mot30   = V.filter(x=>{const d=motDays(x.mot);return d!==null&&d<=30;}).map(x=>({...x,motD:motDays(x.mot)})).sort((a,b)=>a.motD-b.motD);
+  const blocked  = V.filter(x=>x.blocked);
+  const aged     = V.filter(x=>x.daysInStock>=60).sort((a,b)=>b.daysInStock-a.daysInStock);
+  const noPrice  = V.filter(x=>(!x.price||x.price===0)&&x.status!=="Sold");
+  const longStage= V.filter(x=>x.daysInStage>=7).sort((a,b)=>b.daysInStage-a.daysInStage);
+  const total = mot30.length+blocked.length+aged.length+noPrice.length+longStage.length;
+
+  const set = (id,n) => { ['cnt-','badge-'].forEach(p=>{ const e=document.getElementById(p+id); if(e)e.textContent=n; }); };
+  set('all', total); set('mot', mot30.length); set('blocked', blocked.length);
+  set('aged', aged.length); set('price', noPrice.length); set('stage', longStage.length);
+  document.getElementById('cnt-all').textContent = total;
+  document.getElementById('alertSub').textContent = total+' active alerts across '+V.length+' vehicles · Updated '+new Date().toLocaleTimeString('en-GB');
+
+  document.getElementById('motList').innerHTML = mot30.length ? mot30.map(x=>{
+    const [col,lbl] = x.motD<0?['var(--red)','EXPIRED']:x.motD<14?['var(--red)',x.motD+'d']:['var(--orange)',x.motD+'d'];
+    return ai(x,'fa-calendar-times','var(--red-light)','var(--red)',
+      `MOT: ${x.mot} · ${x.location||'—'} · ${x.workflowStage||'—'}`,
+      `<div class="ai-val" style="color:${col}">${lbl}</div><div class="ai-val-sub">${fgbp(x.price)}</div>`);
+  }).join('') : empty();
+
+  document.getElementById('blockedList').innerHTML = blocked.length ? blocked.map(x=>
+    ai(x,'fa-lock','var(--red-light)','var(--red)',
+      `Stage: ${x.workflowStage||'—'} · Dept: ${x.workflowDept||'—'} · ${x.location||'—'}`,
+      `<div class="ai-val" style="color:var(--orange)">${x.daysInStage||0}d in stage</div><div class="ai-val-sub">${x.daysInStock||0}d total</div>`)
+  ).join('') : empty();
+
+  document.getElementById('agedList').innerHTML = aged.length ? aged.map(x=>{
+    const col = x.daysInStock>=90?'var(--red)':'var(--orange)';
+    return ai(x,'fa-hourglass-end','rgba(212,96,10,.1)','var(--orange)',
+      `${x.make} ${x.model} · ${x.workflowStage||'—'} · ${x.location||'—'}`,
+      `<div class="ai-val" style="color:${col}">${x.daysInStock}d</div><div class="ai-val-sub">${fgbp(x.price)}</div>`);
+  }).join('') : empty();
+
+  document.getElementById('priceList').innerHTML = noPrice.length ? noPrice.map(x=>
+    ai(x,'fa-tag','var(--blue-light)','var(--blue)',
+      `${x.make} ${x.model} · ${x.status||'—'} · ${x.workflowStage||'—'}`,
+      `<div class="ai-val" style="color:var(--blue)">${x.daysInStock||0}d</div><div class="ai-val-sub">Needs pricing</div>`)
+  ).join('') : empty();
+
+  document.getElementById('stageList').innerHTML = longStage.length ? longStage.map(x=>{
+    const col = x.daysInStage>=14?'var(--red)':'var(--orange)';
+    return ai(x,'fa-clock','var(--green-light)','var(--green)',
+      `Dept: ${x.workflowDept||'—'} · ${x.location||'—'} · ${x.daysInStock||0}d in stock`,
+      `<div class="ai-val" style="color:${col}">${x.daysInStage||0}d</div><div class="ai-val-sub">in ${x.workflowStage||'—'}</div>`);
+  }).join('') : empty();
+}
+
+buildAlerts();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('userBadge');if(b)b.textContent='AUTO CAPITAL';});
+function doLogout(){window.location.href='./login.html';}
+</script>
+<script>
+(function(){
+  try{
+    var cd=localStorage.getItem('ac_import_clickdealer_ts');
+    var et=localStorage.getItem('ac_import_etrack_ts');
+    var ts=[cd,et].filter(Boolean).map(Number).sort(function(a,b){return b-a;})[0];
+    var badge=document.getElementById('lastImportBadge');
+    var span=document.getElementById('lastImportTime');
+    if(!ts||!badge||!span)return;
+    var age=(Date.now()-ts)/3600000;
+    var d=new Date(ts);
+    var label=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    span.textContent=label;
+    badge.className='last-import '+(age<24?'fresh':age>48?'stale':'');
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
