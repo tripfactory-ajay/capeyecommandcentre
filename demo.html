@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapeEye — Demo Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --red:#C8102E;--blue:#003DA5;--dark:#0a0f1e;
+  --bg:#f4f6f9;--border:#e2e6ed;--muted:#7a8fa6;
+  --gold:#d4980a;--green:#1a7f37;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--dark)}
+
+/* ══ ROOT LAYOUT ══ */
+.app{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  grid-template-rows:50px calc(100vh - 50px);
+  height:100vh;overflow:hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  grid-column:1/-1;grid-row:1;
+  background:#fff;border-bottom:2px solid var(--border);
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:100;
+}
+.tb-brand{display:flex;align-items:center;gap:8px;margin-right:8px;padding-right:14px;border-right:1px solid var(--border);flex-shrink:0}
+.tb-mark{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;padding:4px 8px;border-radius:5px;letter-spacing:1px}
+.tb-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:var(--dark);line-height:1}
+.tb-sub2{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.tb-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:8px}
+.slide-ctr{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;white-space:nowrap}
+.prog-track{width:160px;height:3px;background:var(--border);border-radius:2px;flex-shrink:0}
+.prog-fill{height:100%;background:var(--red);border-radius:2px;transition:width .35s ease}
+.tb-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tbtn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+.tbtn-ghost{background:var(--bg);border:1px solid var(--border);color:var(--muted)}.tbtn-ghost:hover{color:var(--dark)}
+.tbtn-red{background:var(--red);color:#fff}.tbtn-red:hover{background:#a00d24}
+.tbtn-blue{background:var(--blue);color:#fff}.tbtn-blue:hover{background:#002d7a}
+.kbd{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:9px;color:var(--muted);font-family:'DM Mono',monospace}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  grid-column:1;grid-row:2;
+  background:#0f172a;overflow-y:auto;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.sec-lbl{padding:14px 14px 5px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sthumb{padding:8px 12px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;display:flex;align-items:flex-start;gap:8px}
+.sthumb:hover{background:rgba(255,255,255,.04);border-left-color:rgba(255,255,255,.15)}
+.sthumb.active{background:rgba(200,16,46,.12);border-left-color:var(--red)}
+.sth-num{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);min-width:16px;margin-top:2px;font-family:'DM Mono',monospace}
+.sth-title{font-size:11px;font-weight:600;color:rgba(255,255,255,.55);line-height:1.3}
+.sthumb.active .sth-title{color:#fff}
+.sthumb.active .sth-num{color:var(--red)}
+.sth-time{font-size:9px;color:rgba(255,255,255,.2);margin-top:1px}
+.sth-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;margin-top:3px;letter-spacing:.3px}
+.b-intro{background:rgba(200,16,46,.2);color:#ff8096}
+.b-demo{background:rgba(0,61,165,.3);color:#7eb8ff}
+.b-detail{background:rgba(26,127,55,.2);color:#6ee7a0}
+
+/* ── RIGHT COLUMN: slide + notes ── */
+.right-col{
+  grid-column:2;grid-row:2;
+  display:grid;
+  grid-template-rows:1fr 160px;
+  overflow:hidden;
+}
+
+/* ── SLIDE AREA ── */
+.slide-area{overflow:hidden;background:var(--dark);position:relative}
+.slide{display:none;width:100%;height:100%}
+.slide.active{display:flex;animation:sIn .25s ease}
+@keyframes sIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── TITLE SLIDE ── */
+.sl-title{
+  flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#070c1a 0%,#0c1836 60%,#070c1a 100%);
+  padding:40px;text-align:center;position:relative;overflow:hidden;
+}
+.sl-title::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 350px at 50% 55%,rgba(0,61,165,.25),transparent);pointer-events:none}
+.sl-title::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--blue));pointer-events:none}
+.t-eye{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(200,16,46,.7);margin-bottom:12px}
+.t-h1{font-family:'Barlow Condensed',sans-serif;font-size:68px;font-weight:900;color:#fff;line-height:.9;letter-spacing:-1px;margin-bottom:12px}
+.t-h1 span{color:var(--red)}
+.t-h2{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:18px}
+.t-body{font-size:14px;color:rgba(255,255,255,.45);max-width:480px;line-height:1.6}
+.t-pills{display:flex;gap:6px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.t-pill{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:rgba(26,127,55,.1);padding:4px 10px;border-radius:20px;border:1px solid rgba(26,127,55,.2)}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── SPLIT SLIDE ── */
+.sl-split{flex-direction:row}
+.sp-left{width:320px;flex-shrink:0;padding:24px 22px;background:#fff;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.sp-right{flex:1;overflow:hidden;position:relative;background:#eef0f5}
+.sp-right iframe{width:100%;height:100%;border:none;display:block}
+.iframe-tag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;z-index:10;pointer-events:none}
+.sl-eye{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
+.sl-h{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin:3px 0 6px}
+.sl-sub{font-size:12px;color:var(--muted);line-height:1.5}
+.pts{display:flex;flex-direction:column;gap:7px;flex:1}
+.pt{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--bg);border-radius:7px;border-left:3px solid var(--red)}
+.pt i{color:var(--red);font-size:12px;margin-top:1px;flex-shrink:0}
+.pt-t{font-size:12px;color:#1e293b;font-weight:500;line-height:1.4}
+.pt-t strong{color:var(--red)}
+.pt.b{border-left-color:var(--blue)}.pt.b i{color:var(--blue)}.pt.b .pt-t strong{color:var(--blue)}
+.pt.g{border-left-color:var(--green)}.pt.g i{color:var(--green)}.pt.g .pt-t strong{color:var(--green)}
+.pt.o{border-left-color:var(--gold)}.pt.o i{color:var(--gold)}.pt.o .pt-t strong{color:var(--gold)}
+.sp-note{font-size:11px;color:var(--muted);background:var(--bg);padding:9px 11px;border-radius:7px;border-left:3px solid var(--blue);line-height:1.5}
+
+/* ── STATS/DETAIL SLIDE ── */
+.sl-detail{flex-direction:column;background:#fff;padding:32px 36px;gap:20px;overflow-y:auto}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sc{background:var(--bg);border-radius:10px;padding:18px;border-top:3px solid var(--sc,var(--red));text-align:center}
+.sc-v{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;color:var(--sc,var(--red));line-height:1}
+.sc-l{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.sc-s{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── NOTES PANEL ── */
+.notes-panel{
+  background:#1a2537;
+  border-top:2px solid rgba(255,255,255,.05);
+  padding:12px 20px;overflow-y:auto;
+}
+.notes-hdr{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.notes-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.notes-t{font-size:9px;color:rgba(255,255,255,.2);margin-left:auto;font-family:'DM Mono',monospace}
+.notes-body{font-size:12px;color:rgba(255,255,255,.65);line-height:1.7;white-space:pre-wrap}
+.nh{color:#fcd34d;font-weight:700}
+.ntip{display:inline-flex;align-items:center;gap:4px;background:rgba(212,152,10,.15);color:#fcd34d;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.ncue{display:inline-flex;align-items:center;gap:4px;background:rgba(0,61,165,.25);color:#7eb8ff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-mark">CE</div>
+      <div><div class="tb-name">CapeEye</div><div class="tb-sub2">Demo Deck</div></div>
+    </div>
+    <div class="tb-mid">
+      <span class="slide-ctr" id="ctr">1 / 12</span>
+      <div class="prog-track"><div class="prog-fill" id="prog" style="width:8%"></div></div>
+    </div>
+    <div class="tb-right">
+      <span class="kbd">←</span><span class="kbd">→</span>
+      <button class="tbtn tbtn-ghost" onclick="prevSlide()"><i class="fas fa-chevron-left"></i> Prev</button>
+      <button class="tbtn tbtn-red" onclick="nextSlide()">Next <i class="fas fa-chevron-right"></i></button>
+      <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="_blank" class="tbtn tbtn-blue"><i class="fas fa-external-link-alt"></i> Full Screen</a>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+    <div class="slide-area" id="slideArea"></div>
+    <div class="notes-panel">
+      <div class="notes-hdr">
+        <i class="fas fa-microphone" style="color:rgba(255,255,255,.25);font-size:10px"></i>
+        <span class="notes-lbl">Speaker Notes</span>
+        <span class="notes-t" id="notesT">~0 min</span>
+      </div>
+      <div class="notes-body" id="notesBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BASE = './';
+
+const SLIDES = [
+  // ── 0: TITLE ──
+  {
+    type:'title', section:'Introduction', label:'Title', time:'2 min',
+    html:`
+      <div class="slide slide-title">
+        <div class="title-eyebrow">Auto Capital · Back-Office System</div>
+        <div class="title-h1">Cape<span>Eye</span></div>
+        <div class="title-h2">Command Centre</div>
+        <div class="title-body">A complete vehicle operations platform — from intake to sale, every step tracked, every handover logged.</div>
+        <div class="title-pills">
+          <div class="pill"><i class="fas fa-car" style="margin-right:6px;color:var(--red)"></i>Stock Management</div>
+          <div class="pill"><i class="fas fa-tasks" style="margin-right:6px;color:var(--blue)"></i>Workflow & Handovers</div>
+          <div class="pill"><i class="fas fa-key" style="margin-right:6px;color:var(--gold)"></i>Keys Tracking</div>
+          <div class="pill"><i class="fas fa-chart-bar" style="margin-right:6px;color:var(--green)"></i>Analytics & Alerts</div>
+          <div class="pill"><i class="fas fa-clipboard-list" style="margin-right:6px;color:#a78bfa)"></i>Full Audit Trail</div>
+        </div>
+        <div style="margin-top:40px;display:flex;align-items:center;gap:10px">
+          <div class="live-badge"><div class="live-dot"></div>Live Demo Available</div>
+          <span style="color:rgba(255,255,255,.3);font-size:12px">tripfactory-ajay.github.io/capeyecommandcentre</span>
+        </div>
+      </div>`,
+    notes:`Welcome everyone to the CapeEye demo. 
+
+CapeEye is Auto Capital's new back-office command centre — it replaces the mix of spreadsheets, WhatsApp messages and verbal handovers with a single place that tracks every vehicle from the moment it arrives on site to the moment it's sold.
+
+<span class="note-highlight">Key message:</span> Everything is connected. Stock, workflow, keys, alerts, analytics — all in one system, all in real time.
+
+Today's run-through is about 35 minutes. I'll walk through each section, show it live, and we can take questions at the end.`
+  },
+
+  // ── 1: THE PROBLEM ──
+  {
+    type:'stats', section:'Introduction', label:'Why We Built This', time:'3 min',
+    html:`
+      <div class="slide slide-stats">
+        <div>
+          <div class="slide-eyebrow">The Problem We Solved</div>
+          <div class="slide-h" style="font-size:36px">Before CapeEye</div>
+          <div class="slide-sub">Every dealership runs into the same operational headaches as the team grows</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card" style="--sc:var(--red)">
+            <div class="stat-val">?</div>
+            <div class="stat-lbl">Where's that car?</div>
+            <div class="stat-sub">No single source of truth for vehicle location or stage</div>
+          </div>
+          <div class="stat-card" style="--sc:var(--gold)">
+            <div class="stat-val">📱</div>
+            <div class="stat-lbl">WhatsApp Handovers</div>
+            <div class="stat-sub">Handovers buried in group chats — no record, no accountability</div>
+          </div>
+          <div class="stat-card" style="--sc:var(--blue)">
+            <div class="stat-val">📊</div>
+            <div class="stat-lbl">Spreadsheet Chaos</div>
+            <div class="stat-sub">Multiple spreadsheets, always out of date, different versions</div>
+          </div>
+          <div class="stat-card" style="--sc:var(--orange,#d4600a)">
+            <div class="stat-val">🔑</div>
+            <div class="stat-lbl">Lost Keys</div>
+            <div class="stat-sub">Keys go missing, no log of who took what or when</div>
+          </div>
+          <div class="stat-card" style="--sc:var(--green)">
+            <div class="stat-val">⏰</div>
+            <div class="stat-lbl">Aged Stock</div>
+            <div class="stat-sub">Vehicles sitting 90+ days unnoticed — no automatic alerts</div>
+          </div>
+          <div class="stat-card" style="--sc:#6366f1">
+            <div class="stat-val">🚫</div>
+            <div class="stat-lbl">No Audit Trail</div>
+            <div class="stat-sub">Can't see who did what, when — disputes with no paper trail</div>
+          </div>
+        </div>
+      </div>`,
+    notes:`Before we look at the system, let's talk about why it was built.
+
+These are the six things that slow every growing dealership down. You've probably experienced most of them.
+
+<span class="note-highlight">The key insight:</span> None of these are unique problems — they're all symptoms of the same thing: no single connected system.
+
+CapeEye solves all six. Let me show you how.
+
+<span class="note-tip">💡 Tip</span> — pause here and ask if any of these resonate with the people on the call before moving on.`
+  },
+
+  // ── 2: DASHBOARD OVERVIEW ──
+  {
+    type:'split', section:'Pages', label:'Dashboard', time:'4 min',
+    url: BASE+'index.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 1 of 11</div>
+            <div class="slide-h">Command<br>Dashboard</div>
+            <div class="slide-sub">The first thing you see every morning. All the numbers that matter, at a glance.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-th-large"></i><div class="point-text"><strong>6 live KPIs</strong> — total stock, in stock, in transit, off-site, subject to finance, total value</div></div>
+            <div class="point blue"><i class="fas fa-bell"></i><div class="point-text"><strong>Alert strip</strong> — MOT expiring, no price, blocked vehicles flagged immediately</div></div>
+            <div class="point green"><i class="fas fa-car"></i><div class="point-text"><strong>Stock table</strong> — search and filter all 300+ vehicles instantly by status or keyword</div></div>
+            <div class="point gold"><i class="fas fa-chart-bar"></i><div class="point-text"><strong>Live charts</strong> — top makes, stock by status, price distribution at a glance</div></div>
+          </div>
+          <div class="live-badge"><div class="live-dot"></div>Live on screen right now</div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}index.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`This is the home screen — what the team sees when they open CapeEye.
+
+<span class="demo-cue">🖥 DEMO</span> — The iframe on the right is the actual live site. You can interact with it.
+
+Walk them through:
+1. The KPI cards at the top — total stock, total value
+2. The alert strip — if there are MOTs expiring or vehicles with no price, they show here
+3. The stock table — show the search box working, show the status filter
+
+<span class="note-highlight">Talking point:</span> "Instead of opening ClickDealer and a spreadsheet and checking a WhatsApp group, everything is on one screen."`
+  },
+
+  // ── 3: INVENTORY ──
+  {
+    type:'split', section:'Pages', label:'Inventory', time:'3 min',
+    url: BASE+'inventory.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 2 of 11</div>
+            <div class="slide-h">Inventory</div>
+            <div class="slide-sub">The full stock list — every vehicle, every detail, fully searchable and sortable.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-search"></i><div class="point-text"><strong>Smart search</strong> — type any reg, stock no, make or model and results filter instantly</div></div>
+            <div class="point blue"><i class="fas fa-filter"></i><div class="point-text"><strong>4 live filters</strong> — status, make, location, fuel type — all interactive, data updates immediately</div></div>
+            <div class="point green"><i class="fas fa-sort"></i><div class="point-text"><strong>Sort any column</strong> — click any header to sort by stock no, mileage, price, or make</div></div>
+            <div class="point gold"><i class="fas fa-download"></i><div class="point-text"><strong>Export to CSV</strong> — download the filtered view anytime for reporting</div></div>
+          </div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}inventory.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`The Inventory page is where you see every vehicle in the system.
+
+<span class="demo-cue">🖥 DEMO</span> — Show the filters working:
+1. Type a make in the search box — "Ford" — watch the table filter
+2. Change the Status dropdown — show "In Stock" vs "In Transit"
+3. Click a column header to sort
+
+<span class="note-highlight">Key point:</span> The filters are all live — no "search" button to press, data changes as you type. This is how modern systems should work.
+
+Data is imported daily from ClickDealer — I'll show that later.`
+  },
+
+  // ── 4: WORKFLOW ──
+  {
+    type:'split', section:'Pages', label:'Workflow', time:'6 min',
+    url: BASE+'workflow.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 3 of 11 — Core Feature</div>
+            <div class="slide-h">Vehicle<br>Workflow</div>
+            <div class="slide-sub">Tracks every vehicle through 12 stages from intake to accounts. Every handover recorded.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-route"></i><div class="point-text"><strong>12 pipeline stages</strong> — Intake → Bodywork → Paint → Workshop → Valeting → Advertising → Delivery → Accounts</div></div>
+            <div class="point blue"><i class="fas fa-clipboard-check"></i><div class="point-text"><strong>Stage forms</strong> — each stage has its own checklist: condition, mechanic assigned, parts replaced, valet checklist, advertising channels</div></div>
+            <div class="point green"><i class="fas fa-exchange-alt"></i><div class="point-text"><strong>Smart handover</strong> — completing a stage opens a popup showing what was done + what happens next, then hands to the right person</div></div>
+            <div class="point gold"><i class="fas fa-lock"></i><div class="point-text"><strong>Blocked vehicles</strong> — flag a vehicle if it's stuck, shows up immediately in alerts</div></div>
+          </div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}workflow.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`This is the most important page in the system — the Workflow.
+
+<span class="demo-cue">🖥 DEMO — Step by step:</span>
+1. Select a vehicle from the dropdown at the top — try "R0461 RF66UBC AUDI A7"
+2. The vehicle info card appears with the reg plate and details
+3. Show the 12 stage dots — coloured dots show completed stages
+4. Click a stage dot to jump to that stage
+5. Show a form — e.g. Stage 1 Intake — date acquired, condition, documentation checklist
+6. Click "Complete Stage" — the handover modal opens
+7. Show the modal: <span class="note-highlight">this is the key bit</span> — it shows what happened in previous stages, what the next stage involves, who's available in that department, then you pick the person and priority
+
+<span class="note-highlight">Talking point:</span> "Every handover is permanent. You can always look back and see who signed a vehicle off at every stage, what notes they left, and when."`
+  },
+
+  // ── 5: HANDOVER MODAL DETAIL ──
+  {
+    type:'stats', section:'Pages', label:'Handover Deep Dive', time:'2 min',
+    html:`
+      <div class="slide slide-stats">
+        <div>
+          <div class="slide-eyebrow">Workflow · Handover Modal</div>
+          <div class="slide-h" style="font-size:36px">The Handover Popup</div>
+          <div class="slide-sub">When you complete a stage, a full-context popup appears before you confirm</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div style="background:rgba(26,127,55,.06);border:1px solid rgba(26,127,55,.2);border-radius:12px;padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">📋</div>
+            <div style="font-weight:800;font-size:15px;color:#1a7f37;margin-bottom:8px">What Happened</div>
+            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Shows a compact timeline of every previous stage — who completed it, their note, when. Plus a summary of what was filled in on the current form (cost, mechanic, parts, condition).</div>
+          </div>
+          <div style="background:rgba(0,61,165,.05);border:1px solid rgba(0,61,165,.15);border-radius:12px;padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">⏭</div>
+            <div style="font-weight:800;font-size:15px;color:#003DA5;margin-bottom:8px">What's Next</div>
+            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Shows the next stage name, which department owns it, who's available in that team, and a plain-English explanation of what that stage involves.</div>
+          </div>
+          <div style="background:rgba(200,16,46,.05);border:1px solid rgba(200,16,46,.15);border-radius:12px;padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">🎯</div>
+            <div style="font-weight:800;font-size:15px;color:#C8102E;margin-bottom:8px">Hand Over + Priority</div>
+            <div style="font-size:13px;color:#3d4d5c;line-height:1.6">Pick a person or department. Add a note. Set priority: Normal, Urgent (deal in progress), or Critical (needs immediate attention). All logged permanently.</div>
+          </div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;color:#3d4d5c;line-height:1.7">
+          <strong style="color:var(--dark)">Why this matters:</strong> The person receiving the handover sees exactly what was done before them and what they need to do next — without needing to ask anyone. Every handover creates a permanent record visible in the Audit Trail.
+        </div>
+      </div>`,
+    notes:`Take a moment to explain the handover modal in detail — this is the feature people will ask most about.
+
+The three panels work together:
+- <span class="note-highlight">What happened</span> = context from every completed stage
+- <span class="note-highlight">What's next</span> = the receiver knows what to expect
+- <span class="note-highlight">Priority</span> = urgent deals get flagged so nobody misses them
+
+<span class="note-tip">💡 Example to give:</span> "Imagine a mechanic completes the workshop stage. They click Complete Stage. The popup shows that intake found a few scratches, bodyshop fixed them, valeting is next. They type a note: 'engine oil done, brakes checked, ready for valet'. They pick Gorgino, set Normal priority. Gorgino now has a task in their queue — even if they're not in the office yet."`
+  },
+
+  // ── 6: ALERTS ──
+  {
+    type:'split', section:'Pages', label:'Alerts', time:'3 min',
+    url: BASE+'alerts.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 4 of 11</div>
+            <div class="slide-h">Vehicle<br>Alerts</div>
+            <div class="slide-sub">Automatic flags for every vehicle that needs attention — nothing slips through.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-calendar-times"></i><div class="point-text"><strong>MOT expiry</strong> — any vehicle with MOT due in 30 days or less, sorted by most urgent</div></div>
+            <div class="point blue"><i class="fas fa-lock"></i><div class="point-text"><strong>Blocked vehicles</strong> — flagged in workflow as stuck, shows dept and how many days</div></div>
+            <div class="point gold"><i class="fas fa-hourglass-end"></i><div class="point-text"><strong>Aged stock</strong> — 60+ days in stock without selling — needs price review or remarketing</div></div>
+            <div class="point green"><i class="fas fa-tag"></i><div class="point-text"><strong>No price / stuck in stage</strong> — vehicles that can't be advertised yet, plus anything 7+ days in one dept</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);background:var(--bg);padding:10px 12px;border-radius:8px;border-left:3px solid var(--blue)">Click any filter tab to instantly show only that category. Click any vehicle to open it directly in Workflow.</div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}alerts.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`The Alerts page is the morning health check.
+
+<span class="demo-cue">🖥 DEMO:</span>
+1. Show the filter tabs at the top — click MOT, then Blocked, then Aged Stock
+2. Watch the sections hide/show immediately
+3. Click a vehicle row — it opens that vehicle in the Workflow page
+
+<span class="note-highlight">Talking point:</span> "Before this system, you'd only find out a vehicle's MOT had expired when someone tried to move it. Now you see it 30 days in advance.
+
+Same with aged stock — that Ford that's been sitting 84 days? The system has been flagging it for 24 days. This is how you catch things before they become expensive problems."`
+  },
+
+  // ── 7: ANALYTICS ──
+  {
+    type:'split', section:'Pages', label:'Analytics', time:'2 min',
+    url: BASE+'analytics.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 5 of 11</div>
+            <div class="slide-h">Analytics</div>
+            <div class="slide-sub">Visual breakdown of the whole stock and pipeline at a glance.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-chart-bar"></i><div class="point-text"><strong>10 live charts</strong> — stock by make, fuel type, price band, days in stock distribution</div></div>
+            <div class="point blue"><i class="fas fa-table"></i><div class="point-text"><strong>Oldest stock table</strong> — top 15 vehicles by days in stock with stage and price</div></div>
+            <div class="point green"><i class="fas fa-calendar-times"></i><div class="point-text"><strong>MOT overview</strong> — all vehicles with upcoming MOTs sorted by urgency</div></div>
+            <div class="point gold"><i class="fas fa-tag"></i><div class="point-text"><strong>Unpriced vehicles</strong> — instant list of everything missing a retail price</div></div>
+          </div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}analytics.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`Analytics is where management gets the big picture.
+
+<span class="demo-cue">🖥 DEMO:</span> Scroll down slowly to show the charts — make distribution, status doughnut, price bands, days-in-stock histogram.
+
+<span class="note-highlight">Talking point:</span> "This replaces the 'what have we got?' conversation at every Monday meeting. It's all here, always up to date."
+
+Keep this section brief — 2 minutes is enough. Move on to Keys which is very visual.`
+  },
+
+  // ── 8: KEYS ──
+  {
+    type:'split', section:'Pages', label:'Keys', time:'3 min',
+    url: BASE+'keys.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 7 of 11</div>
+            <div class="slide-h">Keys<br>Tracker</div>
+            <div class="slide-sub">Know where every key is, who has it, and for how long — no more lost keys.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-key"></i><div class="point-text"><strong>298 keys tracked</strong> — every vehicle key in the system with current status (In / Out)</div></div>
+            <div class="point blue"><i class="fas fa-user"></i><div class="point-text"><strong>Staff assignment</strong> — who signed out each key and when, shown on every card</div></div>
+            <div class="point gold"><i class="fas fa-clock"></i><div class="point-text"><strong>Time alerts</strong> — keys out for 24+ hours are highlighted in amber automatically</div></div>
+            <div class="point green"><i class="fas fa-upload"></i><div class="point-text"><strong>eTrack import</strong> — daily CSV upload from eTrack keeps everything current automatically</div></div>
+          </div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}keys.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`The Keys page is one of the most practical pages in the system.
+
+<span class="demo-cue">🖥 DEMO:</span>
+1. Show the key cards — registration, box number, who has it
+2. Show the filter tabs: All Keys / Out / Under 24h / In Boxes
+3. Show the search box — type a reg to find a specific key instantly
+
+<span class="note-highlight">Real scenario to describe:</span> "Customer calls wanting to test drive a specific van. Rather than walking around asking 'who's got the keys for FE72ZKD', you type the reg here — it tells you Gorgino has them, they're in box 14, been out for 3 hours."
+
+Daily import from eTrack keeps this current — just upload the CSV each morning.`
+  },
+
+  // ── 9: IMPORT ──
+  {
+    type:'split', section:'Pages', label:'Data Import', time:'3 min',
+    url: BASE+'import.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 8 of 11</div>
+            <div class="slide-h">Daily<br>Data Import</div>
+            <div class="slide-sub">Two uploads keep the whole system current — takes under a minute each morning.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-car"></i><div class="point-text"><strong>ClickDealer stock</strong> — drag & drop the daily CSV export. Smart merge: new vehicles added, existing updated, nothing deleted</div></div>
+            <div class="point blue"><i class="fas fa-key"></i><div class="point-text"><strong>eTrack keys</strong> — upload the eTrack daily export. Auto-detects Keys In/Out, Staff and Audit tabs</div></div>
+            <div class="point green"><i class="fas fa-eye"></i><div class="point-text"><strong>Preview before applying</strong> — see exactly what's new, what's changed, and what's missing before you confirm</div></div>
+            <div class="point gold"><i class="fas fa-history"></i><div class="point-text"><strong>Import history</strong> — every import logged with filename, date, and counts so you can always check what was loaded</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);background:var(--bg);padding:10px 12px;border-radius:8px;border-left:3px solid var(--green)">The <strong>Last Import</strong> badge in the header turns green when data is fresh (under 24h) and orange when it's getting stale.</div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}import.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`The import page is the daily ritual — takes about 60 seconds.
+
+<span class="demo-cue">🖥 DEMO — explain the flow:</span>
+1. Show the two tabs: ClickDealer Stock and eTrack Keys
+2. Explain: export CSV from ClickDealer each morning → drop it here
+3. The system shows you a preview — green rows are new vehicles, amber are updates, grey are unchanged
+4. You see a count of anything that's "not in the CSV" — these are flagged but NOT deleted (they might just be missing from that day's export)
+5. Click Apply — done. All other pages now show updated data.
+
+<span class="note-highlight">Talking point:</span> "The reason we don't just pull from ClickDealer automatically is that the import gives you a moment to review — if 50 vehicles suddenly disappear from a CSV, you'd want to know before the system acts on it."`
+  },
+
+  // ── 10: AUDIT TRAIL ──
+  {
+    type:'split', section:'Pages', label:'Audit Trail', time:'3 min',
+    url: BASE+'audit.html',
+    html:`
+      <div class="slide slide-split">
+        <div class="split-left">
+          <div>
+            <div class="slide-eyebrow">Page 11 of 11</div>
+            <div class="slide-h">Audit<br>Trail</div>
+            <div class="slide-sub">A permanent, searchable log of every single action in the system — by who, when, and what.</div>
+          </div>
+          <div class="points">
+            <div class="point"><i class="fas fa-exchange-alt"></i><div class="point-text"><strong>Every handover logged</strong> — who passed what to whom, with their note and priority, timestamped to the second</div></div>
+            <div class="point blue"><i class="fas fa-file-upload"></i><div class="point-text"><strong>Imports recorded</strong> — every ClickDealer and eTrack import appears with filename and counts</div></div>
+            <div class="point green"><i class="fas fa-filter"></i><div class="point-text"><strong>Filter by anything</strong> — search by reg, staff name, department, priority, or date range</div></div>
+            <div class="point gold"><i class="fas fa-download"></i><div class="point-text"><strong>Export to CSV</strong> — download a filtered audit log for management reporting or compliance</div></div>
+          </div>
+        </div>
+        <div class="split-right">
+          <div class="iframe-label">LIVE DEMO</div>
+          <iframe src="${BASE}audit.html" loading="lazy"></iframe>
+        </div>
+      </div>`,
+    notes:`The Audit Trail is the accountability layer.
+
+<span class="demo-cue">🖥 DEMO:</span>
+1. Show the timeline — each event is a row with colour-coded type
+2. Show filtering by Department — e.g. Workshop shows only workshop handovers
+3. Show filtering by Staff — pick a name to see exactly what that person has done
+4. Show the Export CSV button — useful for management reports
+
+<span class="note-highlight">Talking point:</span> "If there's ever a dispute — 'I never received that vehicle', 'nobody told me it was ready' — you open the audit trail, filter by that reg, and you can see every single handover with the exact note that was written, who sent it, and when."
+
+This is also useful for performance reviews — you can see how many handovers a team member processed in a month.`
+  },
+
+  // ── 11: CLOSE / NEXT STEPS ──
+  {
+    type:'title', section:'Close', label:'Next Steps', time:'3 min',
+    html:`
+      <div class="slide slide-title">
+        <div class="title-eyebrow">What comes next</div>
+        <div class="title-h1" style="font-size:56px">Ready to<br><span>Go Live</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:28px auto;text-align:left">
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
+            <div style="font-size:18px;margin-bottom:8px">✅</div>
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Already done</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">11 pages live · All 305 vehicles imported · 298 keys tracked · Workflow with 12 stages · Audit trail · Import system</div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
+            <div style="font-size:18px;margin-bottom:8px">🔜</div>
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Recommended next</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">Firebase sync (team-wide data) · Staff logins per user · Mobile app view · ClickDealer auto-pull</div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
+            <div style="font-size:18px;margin-bottom:8px">📋</div>
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Daily routine</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">Upload ClickDealer CSV · Upload eTrack CSV · Check alerts · Use workflow for all handovers</div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px">
+            <div style="font-size:18px;margin-bottom:8px">🔗</div>
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;font-size:13px">Access now</div>
+            <div style="font-size:12px;color:rgba(0,200,255,.7);line-height:1.6;word-break:break-all">tripfactory-ajay.github.io/<br>capeyecommandcentre</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:8px">
+          <a href="${BASE}index.html" target="_blank" style="padding:12px 24px;background:var(--red);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fas fa-external-link-alt"></i> Open CapeEye Live</a>
+        </div>
+      </div>`,
+    notes:`Wrap up slide.
+
+Summarise what you've covered:
+- Dashboard for the daily overview
+- Inventory with live filtering  
+- Workflow with 12-stage pipeline and handover system
+- Alerts for anything needing attention
+- Analytics for the big picture
+- Keys tracking via eTrack
+- Daily import from ClickDealer and eTrack
+- Audit trail for full accountability
+
+<span class="note-highlight">The big ask:</span> The system is live right now and ready to use. The single biggest thing that will make this work is everyone using the workflow for handovers — not WhatsApp, not verbal. One click, one note, done.
+
+<span class="note-tip">💡 Questions to expect:</span>
+- "What happens if I make a mistake in a handover?" → Can be noted in the next stage's form
+- "Can different people have different access?" → Currently everyone sees everything; user logins are on the roadmap
+- "Can it connect directly to ClickDealer?" → Yes, that's a future phase — for now daily CSV import takes 60 seconds`
+  },
+];
+let current = 0;
+
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  let html='', sec='';
+  SLIDES.forEach((s,i)=>{
+    if(s.section!==sec){sec=s.section;html+=`<div class="sec-lbl">${sec}</div>`;}
+    const bc=s.type==='title'?'b-intro':s.url?'b-demo':'b-detail';
+    const bl=s.type==='title'?'Intro':s.url?'Live Demo':'Detail';
+    html+=`<div class="sthumb${i===0?' active':''}" id="th-${i}" onclick="goTo(${i})">
+      <div class="sth-num">${String(i+1).padStart(2,'0')}</div>
+      <div><div class="sth-title">${s.label}</div><div class="sth-time">${s.time}</div><span class="sth-badge ${bc}">${bl}</span></div>
+    </div>`;
+  });
+  sb.innerHTML=html;
+}
+
+function buildSlides(){
+  document.getElementById('slideArea').innerHTML=
+    SLIDES.map((s,i)=>`<div class="slide${i===0?' active':''}" id="sl-${i}">${s.html}</div>`).join('');
+}
+
+function goTo(n){
+  if(n<0||n>=SLIDES.length)return;
+  document.querySelector('.slide.active')?.classList.remove('active');
+  document.querySelector('.sthumb.active')?.classList.remove('active');
+  document.getElementById('sl-'+n).classList.add('active');
+  document.getElementById('th-'+n).classList.add('active');
+  document.getElementById('th-'+n).scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('notesBody').innerHTML=SLIDES[n].notes||'';
+  document.getElementById('notesT').textContent=SLIDES[n].time;
+  document.getElementById('ctr').textContent=`${n+1} / ${SLIDES.length}`;
+  document.getElementById('prog').style.width=((n+1)/SLIDES.length*100)+'%';
+  current=n;
+}
+
+function nextSlide(){goTo(current+1);}
+function prevSlide(){goTo(current-1);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();}
+  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}
+});
+
+buildSidebar();
+buildSlides();
+goTo(0);
+</script>
+</body>
+</html>
