@@ -106,6 +106,14 @@ html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-se
 .sp-right{flex:1;overflow:hidden;position:relative;background:#eef0f5}
 .sp-right iframe{width:100%;height:100%;border:none;display:block}
 .iframe-tag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;z-index:10;pointer-events:none}
+/* URL bar on split slides */
+.sp-right{position:relative;display:flex;flex-direction:column}
+.sp-right iframe{flex:1;min-height:0}
+.url-bar{background:#0f172a;padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.06)}
+.url-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.url-text{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.url-open{font-size:9px;font-weight:700;color:var(--blue);text-decoration:none;background:rgba(0,61,165,.2);padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.url-open:hover{background:rgba(0,61,165,.4);color:#7eb8ff}
 .sl-eye{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
 .sl-h{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin:3px 0 6px}
 .sl-sub{font-size:12px;color:var(--muted);line-height:1.5}
@@ -128,18 +136,33 @@ html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-se
 .sc-s{font-size:11px;color:var(--muted);margin-top:3px}
 
 /* ── NOTES PANEL ── */
+/* ── KEY POINTS BAR ── */
 .notes-panel{
-  background:#1a2537;
-  border-top:2px solid rgba(255,255,255,.05);
-  padding:12px 20px;overflow-y:auto;
+  background:#0f172a;
+  border-top:2px solid rgba(200,16,46,.4);
+  padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
 }
-.notes-hdr{display:flex;align-items:center;gap:7px;margin-bottom:8px}
-.notes-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25)}
-.notes-t{font-size:9px;color:rgba(255,255,255,.2);margin-left:auto;font-family:'DM Mono',monospace}
-.notes-body{font-size:12px;color:rgba(255,255,255,.65);line-height:1.7;white-space:pre-wrap}
-.nh{color:#fcd34d;font-weight:700}
-.ntip{display:inline-flex;align-items:center;gap:4px;background:rgba(212,152,10,.15);color:#fcd34d;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
-.ncue{display:inline-flex;align-items:center;gap:4px;background:rgba(0,61,165,.25);color:#7eb8ff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.kp-hdr{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px 6px;border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;
+}
+.kp-lbl{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--red)}
+.kp-slide-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);margin-left:auto}
+.kp-body{display:flex;gap:10px;padding:10px 16px;overflow-x:auto;align-items:stretch;flex:1}
+.kp-body::-webkit-scrollbar{height:3px}
+.kp-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.kp{
+  flex-shrink:0;min-width:180px;max-width:220px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:10px 13px;
+  display:flex;flex-direction:column;gap:5px;
+  border-top:2px solid var(--kc,var(--red));
+}
+.kp-icon{font-size:16px;line-height:1}
+.kp-title{font-size:11px;font-weight:800;color:#fff;line-height:1.2}
+.kp-desc{font-size:10px;color:rgba(255,255,255,.5);line-height:1.5;flex:1}
 </style>
 </head>
 <body>
@@ -170,12 +193,12 @@ html,body{height:100vh;width:100vw;overflow:hidden;font-family:'DM Sans',sans-se
   <div class="right-col">
     <div class="slide-area" id="slideArea"></div>
     <div class="notes-panel">
-      <div class="notes-hdr">
-        <i class="fas fa-microphone" style="color:rgba(255,255,255,.25);font-size:10px"></i>
-        <span class="notes-lbl">Speaker Notes</span>
-        <span class="notes-t" id="notesT">~0 min</span>
+      <div class="kp-hdr">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;display:inline-block"></span>
+        <span class="kp-lbl">Key Points</span>
+        <span class="kp-slide-name" id="kpSlideName"></span>
       </div>
-      <div class="notes-body" id="notesBody"></div>
+      <div class="kp-body" id="notesBody"></div>
     </div>
   </div>
 
@@ -206,13 +229,7 @@ const SLIDES = [
           <span style="color:rgba(255,255,255,.3);font-size:12px">tripfactory-ajay.github.io/capeyecommandcentre</span>
         </div>
       </div>`,
-    notes:`Welcome everyone to the CapeEye demo. 
-
-CapeEye is Auto Capital's new back-office command centre — it replaces the mix of spreadsheets, WhatsApp messages and verbal handovers with a single place that tracks every vehicle from the moment it arrives on site to the moment it's sold.
-
-<span class="note-highlight">Key message:</span> Everything is connected. Stock, workflow, keys, alerts, analytics — all in one system, all in real time.
-
-Today's run-through is about 35 minutes. I'll walk through each section, show it live, and we can take questions at the end.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🚗</div><div class="kp-title">One system for everything</div><div class="kp-desc">Every vehicle from arrival to sale — all tracked in one place, by the whole team</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">⚡</div><div class="kp-title">Live right now</div><div class="kp-desc">Already running with your 305 vehicles and 298 keys loaded in</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">👥</div><div class="kp-title">Built for your team</div><div class="kp-desc">Designed around how Auto Capital actually works day to day</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📱</div><div class="kp-title">Works anywhere</div><div class="kp-desc">Open it in any browser — phone, tablet, desktop</div></div>`
   },
 
   // ── 1: THE PROBLEM ──
@@ -258,15 +275,7 @@ Today's run-through is about 35 minutes. I'll walk through each section, show it
           </div>
         </div>
       </div>`,
-    notes:`Before we look at the system, let's talk about why it was built.
-
-These are the six things that slow every growing dealership down. You've probably experienced most of them.
-
-<span class="note-highlight">The key insight:</span> None of these are unique problems — they're all symptoms of the same thing: no single connected system.
-
-CapeEye solves all six. Let me show you how.
-
-<span class="note-tip">💡 Tip</span> — pause here and ask if any of these resonate with the people on the call before moving on.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">❌</div><div class="kp-title">No more WhatsApp handovers</div><div class="kp-desc">Every stage handover is logged in the system with a note, timestamp and who did it</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">📋</div><div class="kp-title">Replace the spreadsheets</div><div class="kp-desc">One live system replaces multiple spreadsheets that are always out of date</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔑</div><div class="kp-title">Keys always accounted for</div><div class="kp-desc">Every key tracked to a person — no more "who has the keys for that van?"</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">⏰</div><div class="kp-title">Catch aged stock early</div><div class="kp-desc">Automatic alerts before vehicles become a problem — not after</div></div>`
   },
 
   // ── 2: DASHBOARD OVERVIEW ──
@@ -291,19 +300,15 @@ CapeEye solves all six. Let me show you how.
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}index.html" loading="lazy"></iframe>
+          <iframe src="${BASE}index.html" loading="lazy" id="frame-index" name="frame-index"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/index.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/index.html" target="frame-index" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`This is the home screen — what the team sees when they open CapeEye.
-
-<span class="demo-cue">🖥 DEMO</span> — The iframe on the right is the actual live site. You can interact with it.
-
-Walk them through:
-1. The KPI cards at the top — total stock, total value
-2. The alert strip — if there are MOTs expiring or vehicles with no price, they show here
-3. The stock table — show the search box working, show the status filter
-
-<span class="note-highlight">Talking point:</span> "Instead of opening ClickDealer and a spreadsheet and checking a WhatsApp group, everything is on one screen."`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📊</div><div class="kp-title">Total stock value at a glance</div><div class="kp-desc">See how many vehicles you have, what they're worth, and where they are — instantly</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔔</div><div class="kp-title">Alerts on the homepage</div><div class="kp-desc">MOT expiring or vehicle with no price? You see it the moment you open the system</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔍</div><div class="kp-title">Search any vehicle instantly</div><div class="kp-desc">Type a reg or make in the search box — results appear as you type</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📈</div><div class="kp-title">Charts updated live</div><div class="kp-desc">Every chart reflects the current stock — no manual refresh needed</div></div>`
   },
 
   // ── 3: INVENTORY ──
@@ -327,19 +332,15 @@ Walk them through:
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}inventory.html" loading="lazy"></iframe>
+          <iframe src="${BASE}inventory.html" loading="lazy" id="frame-inventory" name="frame-inventory"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/inventory.html" target="frame-inventory" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`The Inventory page is where you see every vehicle in the system.
-
-<span class="demo-cue">🖥 DEMO</span> — Show the filters working:
-1. Type a make in the search box — "Ford" — watch the table filter
-2. Change the Status dropdown — show "In Stock" vs "In Transit"
-3. Click a column header to sort
-
-<span class="note-highlight">Key point:</span> The filters are all live — no "search" button to press, data changes as you type. This is how modern systems should work.
-
-Data is imported daily from ClickDealer — I'll show that later.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🚘</div><div class="kp-title">Every vehicle, every detail</div><div class="kp-desc">All 305 vehicles in one searchable table — make, model, reg, price, stage, location</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔽</div><div class="kp-title">Filter by anything</div><div class="kp-desc">Status, make, location, fuel type — results update instantly as you change filters</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">↕️</div><div class="kp-title">Sort any column</div><div class="kp-desc">Click any column header to sort — find the cheapest, oldest or most expensive vehicle in one click</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">💾</div><div class="kp-title">Export to CSV</div><div class="kp-desc">Download whatever you're looking at as a spreadsheet for reports or sharing</div></div>`
   },
 
   // ── 4: WORKFLOW ──
@@ -363,21 +364,15 @@ Data is imported daily from ClickDealer — I'll show that later.`
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}workflow.html" loading="lazy"></iframe>
+          <iframe src="${BASE}workflow.html" loading="lazy" id="frame-workflow" name="frame-workflow"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/workflow.html" target="frame-workflow" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`This is the most important page in the system — the Workflow.
-
-<span class="demo-cue">🖥 DEMO — Step by step:</span>
-1. Select a vehicle from the dropdown at the top — try "R0461 RF66UBC AUDI A7"
-2. The vehicle info card appears with the reg plate and details
-3. Show the 12 stage dots — coloured dots show completed stages
-4. Click a stage dot to jump to that stage
-5. Show a form — e.g. Stage 1 Intake — date acquired, condition, documentation checklist
-6. Click "Complete Stage" — the handover modal opens
-7. Show the modal: <span class="note-highlight">this is the key bit</span> — it shows what happened in previous stages, what the next stage involves, who's available in that department, then you pick the person and priority
-
-<span class="note-highlight">Talking point:</span> "Every handover is permanent. You can always look back and see who signed a vehicle off at every stage, what notes they left, and when."`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🔄</div><div class="kp-title">12-stage pipeline</div><div class="kp-desc">Every vehicle follows the same path: Intake → Workshop → Valet → Advertising → Sale</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">📝</div><div class="kp-title">Stage forms</div><div class="kp-desc">Each stage has its own form — condition, mechanic, parts replaced, valet checklist, ad channels</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">✅</div><div class="kp-title">Handover with full context</div><div class="kp-desc">Completing a stage shows what was done before and what happens next — before you confirm</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🔒</div><div class="kp-title">Block a vehicle</div><div class="kp-desc">Flag any vehicle as blocked if it's stuck — it shows up immediately in Alerts</div></div>`
   },
 
   // ── 5: HANDOVER MODAL DETAIL ──
@@ -411,14 +406,7 @@ Data is imported daily from ClickDealer — I'll show that later.`
           <strong style="color:var(--dark)">Why this matters:</strong> The person receiving the handover sees exactly what was done before them and what they need to do next — without needing to ask anyone. Every handover creates a permanent record visible in the Audit Trail.
         </div>
       </div>`,
-    notes:`Take a moment to explain the handover modal in detail — this is the feature people will ask most about.
-
-The three panels work together:
-- <span class="note-highlight">What happened</span> = context from every completed stage
-- <span class="note-highlight">What's next</span> = the receiver knows what to expect
-- <span class="note-highlight">Priority</span> = urgent deals get flagged so nobody misses them
-
-<span class="note-tip">💡 Example to give:</span> "Imagine a mechanic completes the workshop stage. They click Complete Stage. The popup shows that intake found a few scratches, bodyshop fixed them, valeting is next. They type a note: 'engine oil done, brakes checked, ready for valet'. They pick Gorgino, set Normal priority. Gorgino now has a task in their queue — even if they're not in the office yet."`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Full history in the popup</div><div class="kp-desc">See every completed stage, who did it, their note, and when — all in one popup</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">⏭</div><div class="kp-title">What happens next</div><div class="kp-desc">The popup tells you which department takes over and who's available — no need to ask</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🎯</div><div class="kp-title">Set the priority</div><div class="kp-desc">Normal, Urgent (deal in progress), or Critical — the receiver knows what's needed</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📁</div><div class="kp-title">Permanent record</div><div class="kp-desc">Every handover is saved forever and visible in the Audit Trail</div></div>`
   },
 
   // ── 6: ALERTS ──
@@ -443,19 +431,15 @@ The three panels work together:
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}alerts.html" loading="lazy"></iframe>
+          <iframe src="${BASE}alerts.html" loading="lazy" id="frame-alerts" name="frame-alerts"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/alerts.html" target="frame-alerts" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`The Alerts page is the morning health check.
-
-<span class="demo-cue">🖥 DEMO:</span>
-1. Show the filter tabs at the top — click MOT, then Blocked, then Aged Stock
-2. Watch the sections hide/show immediately
-3. Click a vehicle row — it opens that vehicle in the Workflow page
-
-<span class="note-highlight">Talking point:</span> "Before this system, you'd only find out a vehicle's MOT had expired when someone tried to move it. Now you see it 30 days in advance.
-
-Same with aged stock — that Ford that's been sitting 84 days? The system has been flagging it for 24 days. This is how you catch things before they become expensive problems."`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📅</div><div class="kp-title">MOT expiry warnings</div><div class="kp-desc">Any vehicle with MOT due in 30 days or less — sorted most urgent first</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔒</div><div class="kp-title">Blocked vehicles</div><div class="kp-desc">Anything flagged as stuck in the pipeline with how many days it's been waiting</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">⏳</div><div class="kp-title">Aged stock — 60+ days</div><div class="kp-desc">Vehicles sitting too long without selling — consider price review or remarketing</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🏷️</div><div class="kp-title">Unpriced vehicles</div><div class="kp-desc">Can't advertise without a price — these vehicles are flagged until pricing is added</div></div>`
   },
 
   // ── 7: ANALYTICS ──
@@ -479,16 +463,15 @@ Same with aged stock — that Ford that's been sitting 84 days? The system has b
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}analytics.html" loading="lazy"></iframe>
+          <iframe src="${BASE}analytics.html" loading="lazy" id="frame-analytics" name="frame-analytics"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/analytics.html" target="frame-analytics" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`Analytics is where management gets the big picture.
-
-<span class="demo-cue">🖥 DEMO:</span> Scroll down slowly to show the charts — make distribution, status doughnut, price bands, days-in-stock histogram.
-
-<span class="note-highlight">Talking point:</span> "This replaces the 'what have we got?' conversation at every Monday meeting. It's all here, always up to date."
-
-Keep this section brief — 2 minutes is enough. Move on to Keys which is very visual.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📊</div><div class="kp-title">Stock by make & type</div><div class="kp-desc">See instantly which makes dominate your stock and what fuel types you carry</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">💷</div><div class="kp-title">Price band breakdown</div><div class="kp-desc">Where is your stock sitting price-wise? Useful for buying decisions</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">📆</div><div class="kp-title">Days in stock chart</div><div class="kp-desc">Visualise how long stock is sitting — spot patterns before they become problems</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📋</div><div class="kp-title">MOT & oldest stock tables</div><div class="kp-desc">Scrollable tables for upcoming MOTs and your longest-sitting vehicles</div></div>`
   },
 
   // ── 8: KEYS ──
@@ -512,19 +495,15 @@ Keep this section brief — 2 minutes is enough. Move on to Keys which is very v
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}keys.html" loading="lazy"></iframe>
+          <iframe src="${BASE}keys.html" loading="lazy" id="frame-keys" name="frame-keys"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/keys.html" target="frame-keys" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`The Keys page is one of the most practical pages in the system.
-
-<span class="demo-cue">🖥 DEMO:</span>
-1. Show the key cards — registration, box number, who has it
-2. Show the filter tabs: All Keys / Out / Under 24h / In Boxes
-3. Show the search box — type a reg to find a specific key instantly
-
-<span class="note-highlight">Real scenario to describe:</span> "Customer calls wanting to test drive a specific van. Rather than walking around asking 'who's got the keys for FE72ZKD', you type the reg here — it tells you Gorgino has them, they're in box 14, been out for 3 hours."
-
-Daily import from eTrack keeps this current — just upload the CSV each morning.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">🔑</div><div class="kp-title">Every key tracked</div><div class="kp-desc">298 keys — which box, which vehicle, who has it and since when</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔴</div><div class="kp-title">Keys out too long</div><div class="kp-desc">Any key out for 24+ hours is highlighted in amber automatically</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔍</div><div class="kp-title">Find a key in seconds</div><div class="kp-desc">Type any reg to find exactly where the key is right now</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📤</div><div class="kp-title">Daily eTrack upload</div><div class="kp-desc">Import the eTrack CSV each morning to keep everything current — takes 30 seconds</div></div>`
   },
 
   // ── 9: IMPORT ──
@@ -549,19 +528,15 @@ Daily import from eTrack keeps this current — just upload the CSV each morning
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}import.html" loading="lazy"></iframe>
+          <iframe src="${BASE}import.html" loading="lazy" id="frame-import" name="frame-import"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/import.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/import.html" target="frame-import" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`The import page is the daily ritual — takes about 60 seconds.
-
-<span class="demo-cue">🖥 DEMO — explain the flow:</span>
-1. Show the two tabs: ClickDealer Stock and eTrack Keys
-2. Explain: export CSV from ClickDealer each morning → drop it here
-3. The system shows you a preview — green rows are new vehicles, amber are updates, grey are unchanged
-4. You see a count of anything that's "not in the CSV" — these are flagged but NOT deleted (they might just be missing from that day's export)
-5. Click Apply — done. All other pages now show updated data.
-
-<span class="note-highlight">Talking point:</span> "The reason we don't just pull from ClickDealer automatically is that the import gives you a moment to review — if 50 vehicles suddenly disappear from a CSV, you'd want to know before the system acts on it."`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📥</div><div class="kp-title">Two uploads, everything synced</div><div class="kp-desc">ClickDealer stock CSV + eTrack keys CSV — that's the daily routine</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">👁️</div><div class="kp-title">Preview before applying</div><div class="kp-desc">See every new, updated and unchanged vehicle before you confirm the import</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">🔀</div><div class="kp-title">Smart merge</div><div class="kp-desc">New vehicles are added, existing ones updated — nothing is deleted automatically</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">📜</div><div class="kp-title">Full import history</div><div class="kp-desc">Every import logged with filename, date and counts so you always know what was loaded</div></div>`
   },
 
   // ── 10: AUDIT TRAIL ──
@@ -585,20 +560,15 @@ Daily import from eTrack keeps this current — just upload the CSV each morning
         </div>
         <div class="split-right">
           <div class="iframe-label">LIVE DEMO</div>
-          <iframe src="${BASE}audit.html" loading="lazy"></iframe>
+          <iframe src="${BASE}audit.html" loading="lazy" id="frame-audit" name="frame-audit"></iframe>
+          <div class="url-bar">
+            <div class="url-dot" style="background:#22c55e"></div>
+            <span class="url-text">https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html</span>
+            <a href="https://tripfactory-ajay.github.io/capeyecommandcentre/audit.html" target="frame-audit" class="url-open"><i class="fas fa-external-link-alt"></i> Open in frame</a>
+          </div>
         </div>
       </div>`,
-    notes:`The Audit Trail is the accountability layer.
-
-<span class="demo-cue">🖥 DEMO:</span>
-1. Show the timeline — each event is a row with colour-coded type
-2. Show filtering by Department — e.g. Workshop shows only workshop handovers
-3. Show filtering by Staff — pick a name to see exactly what that person has done
-4. Show the Export CSV button — useful for management reports
-
-<span class="note-highlight">Talking point:</span> "If there's ever a dispute — 'I never received that vehicle', 'nobody told me it was ready' — you open the audit trail, filter by that reg, and you can see every single handover with the exact note that was written, who sent it, and when."
-
-This is also useful for performance reviews — you can see how many handovers a team member processed in a month.`
+    notes:`<div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Every action logged</div><div class="kp-desc">Who did what, on which vehicle, at what time — a permanent record of everything</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔍</div><div class="kp-title">Filter by person or dept</div><div class="kp-desc">Search by staff name, department or registration to see exactly who did what</div></div><div class="kp" style="--kc:var(--green)"><div class="kp-icon">⚖️</div><div class="kp-title">Resolve disputes instantly</div><div class="kp-desc">Any disagreement about a handover — open the audit trail and see the proof</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">💾</div><div class="kp-title">Export for reporting</div><div class="kp-desc">Download the filtered log as CSV for management reporting or compliance</div></div>`
   },
 
   // ── 11: CLOSE / NEXT STEPS ──
@@ -634,24 +604,7 @@ This is also useful for performance reviews — you can see how many handovers a
           <a href="${BASE}index.html" target="_blank" style="padding:12px 24px;background:var(--red);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fas fa-external-link-alt"></i> Open CapeEye Live</a>
         </div>
       </div>`,
-    notes:`Wrap up slide.
-
-Summarise what you've covered:
-- Dashboard for the daily overview
-- Inventory with live filtering  
-- Workflow with 12-stage pipeline and handover system
-- Alerts for anything needing attention
-- Analytics for the big picture
-- Keys tracking via eTrack
-- Daily import from ClickDealer and eTrack
-- Audit trail for full accountability
-
-<span class="note-highlight">The big ask:</span> The system is live right now and ready to use. The single biggest thing that will make this work is everyone using the workflow for handovers — not WhatsApp, not verbal. One click, one note, done.
-
-<span class="note-tip">💡 Questions to expect:</span>
-- "What happens if I make a mistake in a handover?" → Can be noted in the next stage's form
-- "Can different people have different access?" → Currently everyone sees everything; user logins are on the roadmap
-- "Can it connect directly to ClickDealer?" → Yes, that's a future phase — for now daily CSV import takes 60 seconds`
+    notes:`<div class="kp" style="--kc:var(--green)"><div class="kp-icon">✅</div><div class="kp-title">Live today</div><div class="kp-desc">The system is running right now with your real stock data</div></div><div class="kp" style="--kc:var(--red)"><div class="kp-icon">📋</div><div class="kp-title">Daily routine</div><div class="kp-desc">Upload ClickDealer CSV · Upload eTrack CSV · Check alerts · Use workflow for all handovers</div></div><div class="kp" style="--kc:#d4980a"><div class="kp-icon">🔜</div><div class="kp-title">Coming next</div><div class="kp-desc">Firebase team sync · Staff logins · Mobile view · Auto ClickDealer pull</div></div><div class="kp" style="--kc:var(--blue)"><div class="kp-icon">🔗</div><div class="kp-title">Access it now</div><div class="kp-desc">tripfactory-ajay.github.io/capeyecommandcentre</div></div>`
   },
 ];
 let current = 0;
@@ -684,7 +637,7 @@ function goTo(n){
   document.getElementById('th-'+n).classList.add('active');
   document.getElementById('th-'+n).scrollIntoView({behavior:'smooth',block:'nearest'});
   document.getElementById('notesBody').innerHTML=SLIDES[n].notes||'';
-  document.getElementById('notesT').textContent=SLIDES[n].time;
+  document.getElementById('kpSlideName').textContent=SLIDES[n].label||'';
   document.getElementById('ctr').textContent=`${n+1} / ${SLIDES.length}`;
   document.getElementById('prog').style.width=((n+1)/SLIDES.length*100)+'%';
   current=n;
